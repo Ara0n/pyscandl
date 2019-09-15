@@ -1,8 +1,10 @@
 from enum import Enum
+from fetchers import nh
 
 
 class fetcher(Enum):
 	# TODO: implement fetchers and add them to this enum
+	NHENTAI = nh.Nhentai
 
 	@classmethod
 	def get(cls, string: str):
