@@ -5,7 +5,7 @@ import subprocess
 
 
 class Pyscandl:
-	def __init__(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None,manga:str=None, download_number:int=1):
+	def __init__(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1):
 		# must have either a link or a manga
 		if link is not None and manga is None or link is None and manga is not None:
 			self.fetcher = fetcher(link=link, manga=manga, chapstart=chapstart)
