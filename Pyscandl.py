@@ -38,7 +38,7 @@ class Pyscandl:
 
 	def _to_pdf(self):
 		# create the pdf and delete the images if needed
-		subprocess.run(f"convert \"{self.path}*{self.fetcher.ext}\" \"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name} ch.{self.fetcher.chapter_number}.pdf\"", shell=True)
+		subprocess.run(f"convert \"{self.path}%d{self.fetcher.ext}[1-{self.fetcher.npage}]\" \"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name} ch.{self.fetcher.chapter_number}.pdf\"", shell=True)
 		if not self.keepimage:
 			shutil.rmtree(self.path)
 
