@@ -1,4 +1,5 @@
 import argparse
+from fetchers import fetcher_enum
 
 
 def parse_arg():
@@ -17,4 +18,6 @@ def parse_arg():
 	parser.add_argument("-c", "--chapter-start", default=1, type=int, help="gives the chapter to start the download on (defaults at 1)")
 	parser.add_argument("-k", "--keep-images", action="store_true", help="the images used for the pdf will be kept in their corresponding folder")
 
-	args = parser.parse_args()
+	parser.epilog = "The current list of image fetcher is: " + ", ".join(fetcher_enum.fetcher.list())
+
+	return parser.parse_args()
