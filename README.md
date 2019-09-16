@@ -32,7 +32,6 @@ To install the program clone or download the repository and either launch from c
 - `.image` is a `string` with link to the image  
 - `.next_image()` changes `.image` to the next in the chapter  
 - `.next_chapter()` changes `.image` to the first in the next chapter
-- `.next()` changes to the next image of the chapter and to the first of the next chapter if you finished the current chapter
 - `.is_last_image()` which returns `True` if it's the last page of the chapter
 - `.is_last_chapter()` which returns `True` if it's the last chapter available 
 - `.manga_name` is a `string` with the complete name of the manga or the webtoon of the current `.image`
@@ -48,8 +47,6 @@ To install the program clone or download the repository and either launch from c
 - `output=` determines the output folder for the pdfs and the images (if kept)
 - `keepimage=` determines if the images will be kept or not after the chapter is transformed into a pdf
 - `all=` determines if you need to download all the available chapters or not
-
-### **kwargs
 - `link=` **required if not using `manga=`**, is a `string` containing the link to the root page with the list of all the chapters
 - `manga=` **required if not using `link=`**, is a `string` containing the complete manga name
 - `download=` **required if `all=False`**, is an `int` containing the number of chapters we need to download

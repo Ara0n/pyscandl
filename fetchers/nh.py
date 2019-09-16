@@ -36,9 +36,6 @@ class Nhentai:
 		# there is only one chapter for every scan in nhentai
 		pass
 
-	def next(self):
-		self.next_image()
-
 	def is_last_image(self):
 		return self.npage == self._last_page
 
