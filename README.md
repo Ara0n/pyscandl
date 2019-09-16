@@ -17,7 +17,7 @@ As for other linux distribution I haven't tested the compatibility but it may wo
 To install the program clone or download the repository and either launch from command line the program or use it in python3 itself.
 
 ## command line interface
-`pyscandl [--keep-images] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path]`
+`python3 main.py [--keep-images] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path]`
 
 - `--output` or `-o` **required**: the path (absolute or relative) to the folder where to save the data, the images will be stored in a subfolder `images` with inside one folder per chapter and the pdfs will be stored in a `pdf` subfolder 
 - `--fetcher` or `-f` **required**: the name of the image links fetcher that will be used for the download
