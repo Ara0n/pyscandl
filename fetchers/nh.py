@@ -16,16 +16,16 @@ class Nhentai:
 		# getting the source code of the web page
 		self._page = requests.get(self._link).content.decode("utf-8").replace("\n", "").replace("\t", "").replace("&#39;", "'")
 
+		self._npage = 1
+		self.chapter_number = 1
+
 		# finding the chapter name in the title
 		self.chapter_name = self._page[self._page.find("<title>") + 7:self._page.find("</title>") - 53]
+		self._last_page = int(re.search(r"<span class=\"num-pages\">(\d{1,3})", self._page).group(1))
 
 		# initializing for the image url
 		self._image_root = re.search(r"https://i.nhentai.net/galleries/\d+/", self._page).group()
 		self.image = self._image_root + str(self._npage) + ".jpg"
-
-		self.chapter_number = 1
-		self._npage = 1
-		self._last_page = int(re.search(r"<span class=\"num-pages\">(\d{1,3})", self._page).group(1))
 
 	def next_image(self):
 		self._npage += 1
