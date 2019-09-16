@@ -37,6 +37,7 @@ To install the program clone or download the repository and either launch from c
 - `.manga_name` is a `string` with the complete name of the manga or the webtoon of the current `.image`
 - `.chapter_number` is an `int` (or a `float` if the chapter is an extra) containing the number of the chapter or the current `.image`
 - `.chapter_name` is a `string` containing the title of the chapter of the current `.image` (the `string` is empty if no name is detected) 
+- `.npage` is an `int` giving the current page of the fetcher
 
 ## Pyscandl()
 `Pyscandl(fetcher, chapstart=1, output=".", keepimage=False, all=False, **kwargs)`
