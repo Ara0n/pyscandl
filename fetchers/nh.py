@@ -3,7 +3,7 @@ import re
 
 
 class Nhentai:
-	def __init__(self, link:str=None, manga:str=None):
+	def __init__(self, link:str=None, manga:str=None, **kwargs):
 		# creating the chapter link
 		if link is not None:
 			self._link = link + (link[-1] == "/" and "1" or "/1/")
@@ -16,8 +16,9 @@ class Nhentai:
 		# getting the source code of the web page
 		self._page = requests.get(self._link).content.decode("utf-8").replace("\n", "").replace("\t", "").replace("&#39;", "'")
 
-		self._npage = 1
+		self.npage = 1
 		self.chapter_number = 1
+		self.ext = ".jpg"
 
 		# finding the chapter name in the title
 		self.chapter_name = self._page[self._page.find("<title>") + 7:self._page.find("</title>") - 53]
@@ -25,11 +26,11 @@ class Nhentai:
 
 		# initializing for the image url
 		self._image_root = re.search(r"https://i.nhentai.net/galleries/\d+/", self._page).group()
-		self.image = self._image_root + str(self._npage) + ".jpg"
+		self.image = self._image_root + str(self.npage) + self.ext
 
 	def next_image(self):
-		self._npage += 1
-		self.image = self._image_root + str(self._npage) + ".jpg"
+		self.npage += 1
+		self.image = self._image_root + str(self.npage) + self.ext
 
 	def next_chapter(self):
 		# there is only one chapter for every scan in nhentai
@@ -39,7 +40,7 @@ class Nhentai:
 		self.next_image()
 
 	def is_last_image(self):
-		return self._page == self._last_page
+		return self.npage == self._last_page
 
 	@staticmethod
 	def is_last_chapter():
