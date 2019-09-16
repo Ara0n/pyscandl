@@ -2,7 +2,7 @@ from enum import Enum
 from fetchers import nh
 
 
-class fetcher(Enum):
+class Fetcher(Enum):
 	# TODO: implement fetchers and add them to this enum
 	NHENTAI = nh.Nhentai
 
