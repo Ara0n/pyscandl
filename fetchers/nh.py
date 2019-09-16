@@ -3,12 +3,12 @@ import re
 
 
 class Nhentai:
-	def __init__(self, link:str=None, manga:str=None, **kwargs):
+	def __init__(self, link:str=None, manga:int=None, **kwargs):
 		# creating the chapter link
 		if link is not None:
 			self._link = link + (link[-1] == "/" and "1" or "/1/")
 		else:
-			self._link = "https://nhentai.net/g/" + str(manga) + "/1/"
+			self._link = f"https://nhentai.net/g/{manga}/1/"
 
 		# nhentai has chapters and no manga name so using the tag NSFW as a name
 		self.manga_name = "NSFW"
