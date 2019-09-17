@@ -14,7 +14,7 @@ class Fanfox:
 			self.manga_name = manga.replace("_", " ").title()
 
 		option = webdriver.FirefoxOptions()
-		option.headless = False
+		option.headless = True
 		self.driver = webdriver.Firefox(options=option)
 
 		self.urlpage = f"{self._link}c{str(chapstart).zfill(3)}/1.html"
