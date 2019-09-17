@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common import exceptions
 import re
 import os
 
@@ -19,6 +20,13 @@ class Fanfox:
 
 		self.urlpage = f"{self._link}c{str(chapstart).zfill(3)}/1.html"
 		self.driver.get(self.urlpage)
+
+		# do the adult check if needed
+		try:
+			self.driver.find_element_by_id("checkAdult").click()
+		except exceptions.NoSuchElementException:
+			pass
+
 		self.npage = 1
 		self.chapter_number = chapstart
 		self.ext = ".jpg"
