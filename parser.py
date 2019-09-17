@@ -18,6 +18,7 @@ def parse_arg():
 	parser.add_argument("-c", "--chapter-start", default=1, type=int, help="gives the chapter to start the download on (defaults at 1)")
 	parser.add_argument("-k", "--keep-images", action="store_true", help="the images used for the pdf will be kept in their corresponding folder")
 	parser.add_argument("-q", "--quiet", action="store_true", help="removes the verbose of the downloads")
+	parser.add_argument("-s", "--start", default=1, type=int, help="skips to this image to start the download")
 
 	parser.epilog = "The current list of image fetcher is: " + ", ".join(fetcher_enum.Fetcher.list())
 

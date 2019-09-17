@@ -17,7 +17,7 @@ As for other linux distribution I haven't tested the compatibility but it may wo
 To install the program clone or download the repository and either launch from command line the program or use it in python3 itself.
 
 ## command line interface
-`python3 main.py [--keep-images|-k] [--quiet|-q] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path]`
+`python3 main.py [--keep-images|-k] [--quiet|-q] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path] [--start|-s number]`
 
 - `--output` or `-o` **required**: the path (absolute or relative) to the folder where to save the data, the images will be stored in a subfolder `images` with inside one folder per chapter and the pdfs will be stored in a `pdf` subfolder 
 - `--fetcher` or `-f` **required**: the name of the image links fetcher that will be used for the download
@@ -28,6 +28,7 @@ To install the program clone or download the repository and either launch from c
 - `--all` or `-a`: downloads all the chapters from the starting point to the end
 - `--keep-images` or `-k`: the images used for the pdf will be kept in their corresponding folder
 - `--quiet` or `-q`: removes the verbose of the downloads
+- `--start` or `-s`: starts to this image to start the download
 
 ## image fetcher API
 - `.image` is a `string` with link to the image  

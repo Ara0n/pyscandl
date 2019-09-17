@@ -5,7 +5,7 @@ import subprocess
 
 
 class Pyscandl:
-	def __init__(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False):
+	def __init__(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, start:int=0):
 		# must have either a link or a manga
 		if link is not None and manga is None or link is None and manga is not None:
 			self.fetcher = fetcher(link=link, manga=manga, chapstart=chapstart)
@@ -13,6 +13,7 @@ class Pyscandl:
 			# TODO: make custom exception one day to implement them here
 			pass
 
+		self.start = start
 		self.quiet = quiet
 		self.output = (output[-1]=="/" and output or output+"/") + self.fetcher.manga_name + "/"
 		self.keepimage = keepimage
@@ -41,6 +42,9 @@ class Pyscandl:
 			self.fetcher.next_image()
 		self._dl_image()
 
+	def _skip(self):
+		for loop in range(self.start):
+			self.fetcher.next_image()
 
 	def _to_pdf(self):
 		# create the pdf and delete the images if needed
@@ -59,6 +63,7 @@ class Pyscandl:
 	def full_download(self):
 		# download the full request
 		# emulating a do while
+		self._skip()
 		counter = 1
 		self._full_chapter()
 		self._to_pdf()
