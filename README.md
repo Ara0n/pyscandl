@@ -8,11 +8,12 @@ The API will enable you to create your own image fetchers for other websites not
 This is a python3 program that uses:
 - `argparse` for the main
 - [`selenium`](https://selenium-python.readthedocs.io/installation.html) for some of the default parsers
-- `convert` from `imagemagick` to create the pdfs
-- `subprocess` to call `convert` from the system
+- `requests` for some other parsers
+- `img2pdf` to create the pdfs of the scans
+- `os`, `re` and `enum` are also needed
 
 It is developed on a Debian 10 Buster computer so it is verified for Debian 10 and should work at least for the older debians and the debian-likes, provided that you have the dependencies listed up above.  
-As for other linux distribution I haven't tested the compatibility but it may work if you have all the dependencies. Windows is not supported as it calls `convert` via `subprocess`.
+As for other linux distribution, windows and MacOSX I haven't tested the compatibility but it may work if you have all the dependencies.
 
 To install the program clone or download the repository and either launch from command line the program or use it in python3 itself.
 
@@ -28,7 +29,7 @@ To install the program clone or download the repository and either launch from c
 - `--all` or `-a`: downloads all the chapters from the starting point to the end
 - `--keep-images` or `-k`: the images used for the pdf will be kept in their corresponding folder
 - `--quiet` or `-q`: removes the verbose of the downloads
-- `--start` or `-s`: starts to this image to start the download
+- `--skip` or `-s`: skips `n` images before starting to download the first chapter
 
 ## image fetcher API
 - `.image` is a `string` with link to the image  
@@ -43,15 +44,16 @@ To install the program clone or download the repository and either launch from c
 - `quit()` to close properly the fetcher
 
 ## Pyscandl()
-`Pyscandl(fetcher, chapstart=1, output=".", keepimage=False, all=False, **kwargs)`
+`Pyscandl(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, start:int=0)`
 
 ### args and kwargs
 - `fetcher` will be the fetcher object used in this instance, there will be an `enum` with all the fetchers available (I strongly recommend if you make your own fetcher to place it in the enum too)
 - `chapstart=` is an `int` (or a `float` in case of extra chapters) for the starting point of the fetching
 - `output=` determines the output folder for the pdfs and the images (if kept)
-- `keepimage=` determines if the images will be kept or not after the chapter is transformed into a pdf
+- `keepimage=` determines if the images are downloaded instead of loaded into the RAM
 - `all=` determines if you need to download all the available chapters or not
 - `link=` **required if not using `manga=`**, is a `string` containing the link to the root page with the list of all the chapters
 - `manga=` **required if not using `link=`**, is a `string` containing the complete manga name
-- `download=` **required if `all=False`**, is an `int` containing the number of chapters we need to download
+- `download_number=` **required if `all=False`**, is an `int` containing the number of chapters we need to download
+- `quiet=` deactivates the verbose while downloading
 

@@ -1,6 +1,6 @@
 from selenium import webdriver
-from selenium.common import exceptions
 import re
+import os
 
 
 class Fanfox:
@@ -60,3 +60,8 @@ class Fanfox:
 
 	def quit(self):
 		self.driver.quit()
+		# removing the logs of selenium
+		try:
+			os.remove("geckodriver.log")
+		except FileNotFoundError:
+			pass
