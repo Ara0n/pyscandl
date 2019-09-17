@@ -7,7 +7,7 @@ The API will enable you to create your own image fetchers for other websites not
 ## dependence and installation
 This is a python3 program that uses:
 - `argparse` for the main
-- `selenium` for some of the default parsers
+- [`selenium`](https://selenium-python.readthedocs.io/installation.html) for some of the default parsers
 - `convert` from `imagemagick` to create the pdfs
 - `subprocess` to call `convert` from the system
 
