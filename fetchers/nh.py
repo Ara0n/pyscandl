@@ -21,12 +21,12 @@ class Nhentai:
 		self.ext = ".jpg"
 
 		# finding the chapter name in the title
-		self.chapter_name = self._page[self._page.find("<title>") + 7:self._page.find("</title>") - 53]
+		self.chapter_name = self._page[self._page.find("<title>")+7:self._page.find("</title>")-53]
 		self._last_page = int(re.search(r"<span class=\"num-pages\">(\d{1,3})", self._page).group(1))
 
 		# initializing for the image url
 		self._image_root = re.search(r"https://i.nhentai.net/galleries/\d+/", self._page).group()
-		self.image = self._image_root + str(self.npage) + self.ext
+		self.image = f"{self._image_root}{self.npage}{self.ext}"
 
 	def next_image(self):
 		self.npage += 1
@@ -39,7 +39,10 @@ class Nhentai:
 	def is_last_image(self):
 		return self.npage == self._last_page
 
-	@staticmethod
-	def is_last_chapter():
+	def is_last_chapter(self):
 		# there is only one chapter for nhentai so it's always true
 		return True
+
+	def quit(self):
+		# nothing needing a proper closing
+		pass
