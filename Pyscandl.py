@@ -30,7 +30,7 @@ class Pyscandl:
 		with open(f"{self.path}{self.fetcher.npage}{self.fetcher.ext}", "wb") as img:
 			img.write(img_bin)
 			if not self.quiet:
-				print(".", end="")
+				print(".", end="", flush=True)
 
 	def _full_chapter(self):
 		# download a full chapter
