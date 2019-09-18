@@ -3,3 +3,7 @@ tests/
 
 # removing pycharm files
 .idea/
+
+# __pycache__
+__pycache__/
+*/__pycache__/
