@@ -94,22 +94,26 @@ class Pyscandl:
 		self._img_bin_list = []
 
 	def full_download(self):
-		# download the full request
-		# emulating a do while
-		self._skip()
-		counter = 1
-		if self.keepimage:
-			self._keep_full_chapter()
-		else:
-			self._full_chapter()
-		self._create_pdf()
-		while not self.fetcher.is_last_chapter() and self.all or counter < self.download_number:
-			self._next_chapter()
+		try:
+			# download the full request
+			# emulating a do while
+			self._skip()
+			counter = 1
 			if self.keepimage:
 				self._keep_full_chapter()
 			else:
 				self._full_chapter()
 			self._create_pdf()
-			counter += 1
-		self.fetcher.quit()
-		print("end of the download")
+			while not self.fetcher.is_last_chapter() and self.all or counter < self.download_number:
+				self._next_chapter()
+				if self.keepimage:
+					self._keep_full_chapter()
+				else:
+					self._full_chapter()
+				self._create_pdf()
+				counter += 1
+		except KeyboardInterrupt:
+			print("\nmanual interruption")
+		finally:
+			self.fetcher.quit()
+			print("end of the download")
