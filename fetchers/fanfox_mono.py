@@ -29,6 +29,7 @@ class FanfoxMono:
 
 		self.npage = 1
 		self.chapter_number = chapstart
+		self._re_compiled = re.compile(r"(?:Vol\.\d+ )?Ch.(\d+(\.\d+)?)")
 		self.ext = ".jpg"
 
 		self._img_list = []
@@ -60,6 +61,9 @@ class FanfoxMono:
 		self.npage = 1
 		chap_name.click()
 		self._refresh_images()
+
+		temp_name = self.driver.find_element_by_class_name("reader-header-title-2").text
+		self.chapter_number = self._re_compiled.match(temp_name).group(1)
 
 	def is_last_image(self):
 		return self.npage == self._last_page
