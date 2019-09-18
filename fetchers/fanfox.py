@@ -56,6 +56,7 @@ class Fanfox:
 		self.chapter_name = chap_name.get_attribute("title")
 		self.npage = 1
 		chap_name.click()
+		self.image = self.driver.find_element_by_class_name("reader-main-img").get_attribute("src").split("?")[0]
 
 		self._last_page = self.driver.find_element_by_css_selector(".pager-list-left span a:last-child").text
 		if self._last_page == ">":
