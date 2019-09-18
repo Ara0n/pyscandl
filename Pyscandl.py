@@ -25,6 +25,12 @@ class Pyscandl:
 		self.path = f"{self.output}{self.fetcher.chapter_name} ch.{self.fetcher.chapter_number}/"  # save path for images
 		self._img_bin_list = []
 
+		self._banlist = []
+		ban_path = f"{os.path.dirname(os.path.abspath(__file__))}/banlist"
+		for img in os.listdir(ban_path):
+			with open(f"{ban_path}/{img}", "rb") as img_bin:
+				self._banlist.append(img_bin.read())
+
 	def _dl_image(self):
 		# single image download
 		img_bin = requests.get(self.fetcher.image).content
@@ -71,6 +77,12 @@ class Pyscandl:
 				with open(f"{self.path}{loop}{self.fetcher.ext}", "rb") as img:
 					self._img_bin_list.append(img.read())
 
+		# removing the images found in the banlist
+		for img in self._img_bin_list:
+			if img in self._banlist:
+				self._img_bin_list.remove(img)
+
+		# creating the pdf
 		with open(f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name} ch.{self.fetcher.chapter_number}.pdf", "wb") as pdf:
 			pdf.write(img2pdf.convert(self._img_bin_list))
 		print("converted")

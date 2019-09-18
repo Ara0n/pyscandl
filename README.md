@@ -2,7 +2,8 @@
 **DISCLAIMER:** This project is just a technical demo, don't download scans and get the mangas from official retailers when they are accessible in your country
 
 This modular program to be able to download manga and webtoon scans from the internet, it'll use an image fetcher specific for each website while respecting an API.  
-The API will enable you to create your own image fetchers for other websites not supported yet by the program.
+The API will enable you to create your own image fetchers for other websites not supported yet by the program.  
+There is a `banlist/` folder where you can place the images you don't want to appear in your pdf.
 
 ## dependence and installation
 This is a python3 program that uses:
