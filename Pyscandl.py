@@ -22,7 +22,7 @@ class Pyscandl:
 		self.keepimage = keepimage
 		self.all = all
 		self.download_number = download_number
-		self.path = f"{self.output}{self.fetcher.chapter_name} ch.{self.fetcher.chapter_number}/"  # save path for images
+		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"  # save path for images
 		self._img_bin_list = []
 
 		self._banlist = []
@@ -83,14 +83,14 @@ class Pyscandl:
 				self._img_bin_list.remove(img)
 
 		# creating the pdf
-		with open(f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name} ch.{self.fetcher.chapter_number}.pdf", "wb") as pdf:
+		with open(f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf", "wb") as pdf:
 			pdf.write(img2pdf.convert(self._img_bin_list))
 		print("converted")
 
 	def _next_chapter(self):
 		# changes to the next chapter and prepare the next image folder
 		self.fetcher.next_chapter()
-		self.path = f"{self.output}{self.fetcher.chapter_name} ch.{self.fetcher.chapter_number}/"
+		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
 		self._img_bin_list = []
 
 	def full_download(self):
