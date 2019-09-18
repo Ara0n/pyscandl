@@ -36,7 +36,7 @@ class Fanfox:
 			self._last_page = self.driver.find_element_by_css_selector(".pager-list-left span a:nth-last-child(2)").text
 		self._last_page = int(self._last_page)
 
-		self.image =  self.driver.find_element_by_class_name("reader-main-img").get_attribute("src").split("?")[0]
+		self.image = self.driver.find_element_by_class_name("reader-main-img").get_attribute("src").split("?")[0]
 
 		temp_title = self.driver.find_element_by_class_name("reader-header-title-2").text
 		self.chapter_name = re.search(r"(?:Vol\.\d{2} Ch\.\d{3}(\.\d)? )(.*)", temp_title).group(2)
@@ -52,9 +52,10 @@ class Fanfox:
 
 	def next_chapter(self):
 		self.chapter_number += 1
-		self.chapter_name = self.driver.find_element_by_css_selector(".pager-list-left span a:nth-last-child(2)").get_attribute("title")
+		chap_name = self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child")
+		self.chapter_name = chap_name.get_attribute("title")
 		self.npage = 1
-		self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child").click()
+		chap_name.click()
 
 		self._last_page = self.driver.find_element_by_css_selector(".pager-list-left span a:last-child").text
 		if self._last_page == ">":
