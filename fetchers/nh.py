@@ -27,6 +27,11 @@ class Nhentai:
 		# initializing for the image url
 		self._image_root = re.search(r"https://i.nhentai.net/galleries/\d+/", self._page).group()
 		self.image = f"{self._image_root}{self.npage}{self.ext}"
+		# if the first image is a png switch to it for the default extension
+		test_ext = requests.get(self.image)
+		if b"404 Not Found" in test_ext.content:
+			self.ext = ".png"
+			self.image = f"{self._image_root}{self.npage}{self.ext}"
 
 	def next_image(self):
 		self.npage += 1

@@ -34,17 +34,20 @@ class Pyscandl:
 	def _dl_image(self):
 		# single image download
 		img_bin = requests.get(self.fetcher.image).content
+		ext = self.fetcher.ext
 
 		if b"404 Not Found" in img_bin:
-			if self.fetcher.ext==".jpg" or self.fetcher.ext==".jpeg":
+			if self.fetcher.ext==".jpg":
 				img_bin = requests.get(self.fetcher.image.replace(".jpg", ".png").replace(".jpeg", ".png")).content
+				ext = ".png"
 			else:
 				img_bin = requests.get(self.fetcher.image.replace(".png", '.jpg')).content
+				ext = ".jpg"
 
 		if not os.path.exists(self.path):
 			os.makedirs(self.path)
 
-		with open(f"{self.path}{self.fetcher.npage}{self.fetcher.ext}", "wb") as img:
+		with open(f"{self.path}{self.fetcher.npage}{ext}", "wb") as img:
 			img.write(img_bin)
 			if not self.quiet:
 				print(".", end="", flush=True)
@@ -80,8 +83,14 @@ class Pyscandl:
 		# loading the downloaded images if keep mode
 		if self.keepimage:
 			for loop in range(1, self.fetcher.npage+1):
-				with open(f"{self.path}{loop}{self.fetcher.ext}", "rb") as img:
-					self._img_bin_list.append(img.read())
+				try:
+					with open(f"{self.path}{loop}{self.fetcher.ext}", "rb") as img:
+						self._img_bin_list.append(img.read())
+				except FileNotFoundError:
+					ext = self.fetcher.ext==".png" and ".jpg" or ".png"
+					with open(f"{self.path}{loop}{ext}", "rb") as img:
+						self._img_bin_list.append(img.read())
+
 
 		# removing the images found in the banlist
 		for img in self._img_bin_list:
