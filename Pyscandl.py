@@ -31,8 +31,7 @@ class Pyscandl:
 			with open(f"{ban_path}/{img}", "rb") as img_bin:
 				self._banlist.append(img_bin.read())
 
-	def _dl_image(self):
-		# single image download
+	def _ext_check(self):
 		img_bin = requests.get(self.fetcher.image).content
 		ext = self.fetcher.ext
 
@@ -43,6 +42,11 @@ class Pyscandl:
 			else:
 				img_bin = requests.get(self.fetcher.image.replace(".png", '.jpg')).content
 				ext = ".jpg"
+		return img_bin, ext
+
+	def _dl_image(self):
+		# single image download
+		img_bin, ext = self._ext_check()
 
 		if not os.path.exists(self.path):
 			os.makedirs(self.path)
@@ -57,11 +61,13 @@ class Pyscandl:
 		if not self.quiet:
 			print(f"fetching: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
 		while not self.fetcher.is_last_image():
-			self._img_bin_list.append(requests.get(self.fetcher.image).content)
+			img_bin, ext = self._ext_check()
+			self._img_bin_list.append(img_bin)
 			if not self.quiet:
 				print(".", end="", flush=True)
 			self.fetcher.next_image()
-		self._img_bin_list.append(requests.get(self.fetcher.image).content)
+		img_bin, ext = self._ext_check()
+		self._img_bin_list.append(img_bin)
 		if not self.quiet:
 			print(".", end="", flush=True)
 
@@ -90,7 +96,6 @@ class Pyscandl:
 					ext = self.fetcher.ext==".png" and ".jpg" or ".png"
 					with open(f"{self.path}{loop}{ext}", "rb") as img:
 						self._img_bin_list.append(img.read())
-
 
 		# removing the images found in the banlist
 		for img in self._img_bin_list:
