@@ -35,6 +35,12 @@ class Pyscandl:
 		# single image download
 		img_bin = requests.get(self.fetcher.image).content
 
+		if b"404 Not Found" in img_bin:
+			if self.fetcher.ext==".jpg" or self.fetcher.ext==".jpeg":
+				img_bin = requests.get(self.fetcher.image.replace(".jpg", ".png").replace(".jpeg", ".png")).content
+			else:
+				img_bin = requests.get(self.fetcher.image.replace(".png", '.jpg')).content
+
 		if not os.path.exists(self.path):
 			os.makedirs(self.path)
 
