@@ -1,3 +1,4 @@
+from exceptions import MangaNotFound
 import requests
 import re
 
@@ -9,6 +10,12 @@ class Nhentai:
 			self._link = link + (link[-1] == "/" and "1/" or "/1/")
 		else:
 			self._link = f"https://nhentai.net/g/{manga}/1/"
+
+		# check if exists
+		test404 = requests.get(self._link).content
+		if b"container error" in test404:
+			name = self._link.split("/")[-3]
+			raise MangaNotFound(name)
 
 		# nhentai has chapters and no manga name so using the tag NSFW as a name
 		self.manga_name = "NSFW"
