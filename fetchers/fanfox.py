@@ -8,7 +8,10 @@ class Fanfox:
 	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
 		# creating the chapter link
 		if link is not None:
-			self._link = link + (link[-1] == "/" and "" or "/")
+			if link[-1] == "/":
+				self._link = link
+			else:
+				self._link = link + "/"
 			self.manga_name = self._link.split("/")[-2].replace("_", " ").title()
 		else:
 			self._link = f"https://fanfox.net/manga/{manga.replace(' ', '_').lower()}/"
