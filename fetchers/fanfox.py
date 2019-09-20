@@ -1,3 +1,4 @@
+from exceptions import MangaNotFound
 from selenium import webdriver
 from selenium.common import exceptions
 import re
@@ -23,6 +24,10 @@ class Fanfox:
 
 		self.urlpage = f"{self._link}c{str(chapstart).zfill(3)}/1.html"
 		self.driver.get(self.urlpage)
+
+		if self.driver.current_url != self.urlpage:
+			name = self.driver.current_url.split("=")[-1].replace("_", " ").title()
+			raise MangaNotFound(name)
 
 		# do the adult check if needed
 		try:

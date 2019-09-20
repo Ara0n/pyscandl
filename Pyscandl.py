@@ -1,3 +1,4 @@
+from exceptions import DryNoSauceHere, TooManySauce
 import img2pdf
 import requests
 import os
@@ -8,9 +9,10 @@ class Pyscandl:
 		# must have either a link or a manga
 		if link is not None and manga is None or link is None and manga is not None:
 			self.fetcher = fetcher(link=link, manga=manga, chapstart=chapstart)
+		elif link is None and manga is None:
+			raise DryNoSauceHere
 		else:
-			# TODO: make custom exception one day to implement them here
-			pass
+			raise TooManySauce
 
 		# creating output folder
 		self.output = (output[-1]=="/" and output or output+"/") + self.fetcher.manga_name + "/"
