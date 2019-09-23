@@ -26,8 +26,8 @@ class FanfoxMono:
 		self.driver.get(self.urlpage)
 
 		if self.driver.current_url != self.urlpage:
-			name = self.driver.current_url.split("=")[-1].replace("_", " ").title()
-			raise MangaNotFound(name)
+			self.quit()
+			raise MangaNotFound(self.manga_name)
 
 		# do the adult check if needed
 		try:
