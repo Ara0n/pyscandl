@@ -5,7 +5,29 @@ This modular program to be able to download manga and webtoon scans from the int
 The API will enable you to create your own image fetchers for other websites not supported yet by the program.  
 There is a `banlist/` folder where you can place the images you don't want to appear in your pdf.
 
-## dependence and installation
+## installation
+### linux
+1) check if you have `python3.7` installed and if not
+```sh
+sudo apt install python3.7
+```
+2) get `pip3.7` installed and if not
+```sh
+sudo python3.7 -m pip install pip
+```
+3) install the repository from the latest release
+4) install the dependencies from the program
+```sh
+cd path/to/project/root
+sudo pip3.7 install -r requirements.txt
+```
+5) install the [geckodriver](https://github.com/mozilla/geckodriver/releases/latest) for firefox
+6) you can now use the program
+
+### windows
+in progress
+
+## dependence
 This is a python3 program that uses:
 - `argparse` for the main
 - [`selenium`](https://selenium-python.readthedocs.io/installation.html) for some of the default parsers
@@ -14,9 +36,7 @@ This is a python3 program that uses:
 - `os`, `re` and `enum` are also needed
 
 It is developed on a Debian 10 Buster computer so it is verified for Debian 10 and should work at least for the older debians and the debian-likes, provided that you have the dependencies listed up above.  
-As for other linux distribution, windows and MacOSX I haven't tested the compatibility but it may work if you have all the dependencies.
-
-To install the program clone or download the repository and either launch from command line the program or use it in python3 itself.
+As for other linux distribution, windows and MacOSX I haven't tested the compatibility (windows will be tested later down the run) but it may work if you have all the dependencies.
 
 ## command line interface
 `python3 main.py [--keep-images|-k] [--quiet|-q] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path] [--start|-s number]`
