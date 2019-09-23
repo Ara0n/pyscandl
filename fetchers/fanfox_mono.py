@@ -46,7 +46,7 @@ class FanfoxMono:
 		self._refresh_images()
 
 		temp_title = self.driver.find_element_by_class_name("reader-header-title-2").text
-		self.chapter_name = re.search(r"(?:(Vol\.\d{2})?Ch\.\d{3}(\.\d)?)(.*)", temp_title).group(2)
+		self.chapter_name = re.search(r"(?:(Vol\.\d{2} )?Ch\.\d{3}(\.\d)?\s?)(.*)", temp_title).group(3)
 		if self.chapter_name is None:
 			self.chapter_name = ""
 
@@ -63,7 +63,6 @@ class FanfoxMono:
 		self.npage += 1
 
 	def next_chapter(self):
-		self.chapter_number += 1
 		chap_name = self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child")
 		self.chapter_name = chap_name.get_attribute("title")
 		self.npage = 1
