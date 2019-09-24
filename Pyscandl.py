@@ -100,14 +100,18 @@ class Pyscandl:
 						self._img_bin_list.append(img.read())
 
 		# removing the images found in the banlist
-		for img in self._img_bin_list:
-			if img in self._banlist:
-				self._img_bin_list.remove(img)
+		self._img_bin_list = [img for img in self._img_bin_list if img not in self._banlist]
 
-		# creating the pdf
-		with open(f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf", "wb") as pdf:
-			pdf.write(img2pdf.convert(self._img_bin_list, title=f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}", author="TBD"))
-		print("converted")
+		if len(self._img_bin_list) > 0:
+			# creating the pdf
+			with open(f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf", "wb") as pdf:
+				pdf.write(img2pdf.convert(self._img_bin_list, title=f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}", author="TBD"))
+			print("converted")
+		else:
+			# creating an empty file to aknowledge the presence of a downed chapter
+			with open(f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf.empty", "wb"):
+				pass
+			print("empty")
 
 	def _next_chapter(self):
 		# changes to the next chapter and prepare the next image folder
