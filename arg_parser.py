@@ -15,7 +15,7 @@ def parse_arg():
 
 	parser.add_argument("-f", "--fetcher", type=str, required=True, help="the name of the image links fetcher that will be used for the download")
 	parser.add_argument("-o", "--output", default=".", type=str, help="the path (absolute or relative) to the folder where to save the data, the images will be stored in a subfolder images with inside one folder per chapter and the pdfs will be stored in a pdf subfolder")
-	parser.add_argument("-c", "--chapter-start", default=1, type=int, help="gives the chapter to start the download on (defaults at 1)")
+	parser.add_argument("-c", "--chapter-start", default=1, type=str, help="gives the chapter to start the download on (defaults at 1)")
 	parser.add_argument("-k", "--keep-images", action="store_true", help="the images used for the pdf will be kept in their corresponding folder")
 	parser.add_argument("-q", "--quiet", action="store_true", help="removes the verbose of the downloads")
 	parser.add_argument("-s", "--start", default=0, type=int, help="skips n images before starting to download the first chapter")

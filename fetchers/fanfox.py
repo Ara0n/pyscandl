@@ -22,10 +22,13 @@ class Fanfox:
 		option.headless = True
 		self.driver = webdriver.Firefox(options=option)
 
-		self.urlpage = f"{self._link}c{str(chapstart).zfill(3)}/1.html"
+		temp_num = str(chapstart).split(".")[0].zfill(3)
+		if "." in str(chapstart):
+			temp_num += "." + str(chapstart).split(".")[1]
+		self.urlpage = f"{self._link}c{temp_num}/1.html"
 		self.driver.get(self.urlpage)
 
-		if self.driver.current_url != self.urlpage:
+		if self.driver.current_url.split("#")[0] != self.urlpage:
 			self.quit()
 			raise MangaNotFound(self.manga_name)
 
