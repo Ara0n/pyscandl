@@ -2,12 +2,13 @@ import arg_parser
 import Pyscandl
 from fetchers import fetcher_enum
 from exceptions import NoFetcherGiven
+from install import updater
 
 if __name__ == "__main__":
 	args = arg_parser.parse_arg()
 
 	if args.update:
-		# TODO: update system via GitPython
+		updater.update()
 		pass
 
 	if args.fetcher is None:

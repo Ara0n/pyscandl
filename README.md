@@ -6,26 +6,34 @@ The API will enable you to create your own image fetchers for other websites not
 There is a `banlist/` folder where you can place the images you don't want to appear in your pdf.
 
 ## installation
-### linux
-1) check if you have `python3.7` installed and if not
-```sh
-sudo apt install python3.7
+### from source
+1) check if you have `python3.7` installed
+
+2) check if you have `pip` for python3.7 installed
+3) clone the repository from source
+4) install the dependencies for the program
 ```
-2) get `pip3.7` installed and if not
-```sh
-sudo python3.7 -m pip install pip
-```
-3) install the repository from the latest release
-4) install the dependencies from the program
-```sh
 cd path/to/project/root
-sudo pip3.7 install -r requirements.txt
+pip3 install -r requirements.txt #might be pip instead of pip3 and need to be done as admin/sudo or in a venv
 ```
 5) install the [geckodriver](https://github.com/mozilla/geckodriver/releases/latest) for firefox
 6) you can now use the program
 
-### windows
-in progress
+**you can update it by running `python3 main.py -U`**
+
+### from release
+1) check if you have `python3.7` installed
+
+2) check if you have `pip` for python3.7 installed
+3) install the repository from the [latest release](https://github.com/Ara0n/pyscandl/release/latest)
+4) install the dependencies for the program
+```
+cd path/to/project/root
+pip3 install -r requirements.txt #might be pip instead of pip3 and need to be done as admin/sudo or in a venv
+```
+5) install the [geckodriver](https://github.com/mozilla/geckodriver/releases/latest) for firefox
+6) you can now use the program  
+**you'll need to download each release from the [release page](https://github.com/Ara0n/pyscandl/release), but it'll be lighter in comparison**
 
 ## dependence
 This is a python3 program that uses:
@@ -33,13 +41,16 @@ This is a python3 program that uses:
 - [`selenium`](https://selenium-python.readthedocs.io/installation.html) for some of the default parsers
 - `requests` for some other parsers
 - `img2pdf` to create the pdfs of the scans
-- `os`, `re` and `enum` are also needed
+- `os`, `re`, `GitPython` and `enum` are also needed
+
+**for the full dependence list, check `requirments.txt`**
 
 It is developed on a Debian 10 Buster computer so it is verified for Debian 10 and should work at least for the older debians and the debian-likes, provided that you have the dependencies listed up above.  
 As for other linux distribution, windows and MacOSX I haven't tested the compatibility (windows will be tested later down the run) but it may work if you have all the dependencies.
 
 ## command line interface
-`python3 main.py [--keep-images|-k] [--quiet|-q] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path] [--start|-s number]`
+`python3 main.py [--keep-images|-k] [--quiet|-q] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path] [--start|-s number] [-U|--update]`
+*might be only `python` for windows*
 
 - `--output` or `-o` **required**: the path (absolute or relative) to the folder where to save the data, the images will be stored in a subfolder `images` with inside one folder per chapter and the pdfs will be stored in a `pdf` subfolder 
 - `--fetcher` or `-f` **required**: the name of the image links fetcher that will be used for the download
@@ -51,6 +62,7 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `--keep-images` or `-k`: the images used for the pdf will be kept in their corresponding folder
 - `--quiet` or `-q`: removes the verbose of the downloads
 - `--skip` or `-s`: skips `n` images before starting to download the first chapter
+- `--update` or `-U`: updates the program to the latest release on github, **you must have cloned the repo to use it**
 
 ## image fetcher API
 - `.image` is a `string` with link to the image  
@@ -63,6 +75,7 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `.chapter_name` is a `string` containing the title of the chapter of the current `.image` (the `string` is empty if no name is detected) 
 - `.npage` is an `int` giving the current page of the fetcher
 - `quit()` to close properly the fetcher
+- needs to raise the `MangaNotFound` exception from `exceptions` if the manga is not found
 
 ## Pyscandl()
 `Pyscandl(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, start:int=0)`
