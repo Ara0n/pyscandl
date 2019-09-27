@@ -1,9 +1,11 @@
+import os
+import sys
 from git import Repo
 
 
 def update():
 	print("checking if update is needed")
-	rep = Repo("..")
+	rep = Repo(os.path.dirname(sys.modules['__main__'].__file__))
 
 	# checking if on the release tagged commit
 	if not rep.tags[-1].commit == rep.head.commit:

@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
 	if args.update:
 		updater.update()
-		pass
+		exit(0)
 
 	if args.fetcher is None:
 		raise NoFetcherGiven
