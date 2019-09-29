@@ -83,7 +83,7 @@ class Fanfox:
 		try:
 			return self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child").text != "Next Chapter"
 		except exceptions.NoSuchElementException:
-			return False
+			return True
 
 	def quit(self):
 		self.driver.quit()

@@ -79,7 +79,10 @@ class FanfoxMono:
 		return self.npage == self._last_page
 
 	def is_last_chapter(self):
-		return self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child").text != "Next Chapter"
+		try:
+			return self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child").text != "Next Chapter"
+		except exceptions.NoSuchElementException:
+			return True
 
 	def quit(self):
 		self.driver.quit()
