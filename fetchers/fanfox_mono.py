@@ -41,7 +41,7 @@ class FanfoxMono:
 		self.npage = 1
 		self.chapter_number = temp_num
 		self._re_chapnum = re.compile(r"(?:Vol\.\d+ )?Ch.(\d+(\.\d+)?)")
-		self._re_chapname = re.compile(r"(?:(Vol.\d+ )?(Ch.\d+:? ))(.*)")
+		self._re_chapname = re.compile(r"(?:(Vol.\d+ )?(Ch.\d+:? ))?(.*)")
 		self.ext = ".jpg"
 
 		self._img_list = []
