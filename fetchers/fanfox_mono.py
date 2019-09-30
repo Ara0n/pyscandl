@@ -49,7 +49,7 @@ class FanfoxMono:
 		self._refresh_images()
 
 		temp_title = self.driver.find_element_by_class_name("reader-header-title-2").text
-		self.chapter_name = re.search(r"(?:(Vol\.\d{2} )?Ch\.\d{3}(\.\d)?\s?)(.*)", temp_title).group(3)
+		self.chapter_name = re.search(r"(?:(Vol\.\d{2} )?Ch\.\d{3}(\.\d)?\s?(- (Vol.\d+ )?(Ch.\d+: ))?)(.*)", temp_title).group(6)
 		if self.chapter_name is None:
 			self.chapter_name = ""
 
