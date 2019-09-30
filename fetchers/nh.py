@@ -1,4 +1,4 @@
-from exceptions import MangaNotFound
+import exceptions
 import requests
 import re
 
@@ -15,7 +15,7 @@ class Nhentai:
 		test404 = requests.get(self._link).content
 		if b"container error" in test404:
 			name = self._link.split("/")[-3]
-			raise MangaNotFound(name)
+			raise exceptions.MangaNotFound(name)
 
 		# nhentai has chapters and no manga name so using the tag NSFW as a name
 		self.manga_name = "NSFW"

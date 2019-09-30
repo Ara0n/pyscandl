@@ -1,6 +1,6 @@
 from enum import Enum
 from fetchers import nh, fanfox, fanfox_mono
-from exceptions import NoFetcherFound
+import exceptions
 
 
 class Fetcher(Enum):
@@ -14,7 +14,7 @@ class Fetcher(Enum):
 		for i in cls:
 			if i.name == fetcher_name_request.upper():
 				return i
-		raise NoFetcherFound(fetcher_name_request)
+		raise exceptions.NoFetcherFound(fetcher_name_request)
 
 	@classmethod
 	def list(cls):
