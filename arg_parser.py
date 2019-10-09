@@ -21,6 +21,7 @@ def parse_arg():
 	commands.add_argument("-k", "--keep-images", action="store_true", help="the images used for the pdf will be kept in their corresponding folder")
 	commands.add_argument("-q", "--quiet", action="store_true", help="removes the verbose of the downloads")
 	commands.add_argument("-s", "--start", default=0, type=int, help="skips n images before starting to download the first chapter")
+	commands.add_argument("-t", "--tiny", action="store_true", help="don't write the manga name in the title (useful if using collections)")
 	parser.add_argument("-U", "--update", action="store_true", help="updates the program")
 
 	parser.epilog = "The current list of image fetcher is: " + ", ".join(Fetcher.list())
