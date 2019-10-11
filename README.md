@@ -72,6 +72,8 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `.is_last_image()` which returns `True` if it's the last page of the chapter
 - `.is_last_chapter()` which returns `True` if it's the last chapter available 
 - `.manga_name` is a `string` with the complete name of the manga or the webtoon of the current `.image`
+- `.author` string containing the name of the author (not the artist) if nothing is found it has a value of `"TBD"`
+- `.ext` is a string containing the extension type of the image
 - `.chapter_number` is an `int` (or a `float` if the chapter is an extra) containing the number of the chapter or the current `.image`
 - `.chapter_name` is a `string` containing the title of the chapter of the current `.image` (the `string` is empty if no name is detected) 
 - `.npage` is an `int` giving the current page of the fetcher
