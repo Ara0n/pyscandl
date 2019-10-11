@@ -26,8 +26,9 @@ class Pyscandl:
 		self.download_number = download_number
 		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"  # save path for images
 		self._img_bin_list = []
+		self.tiny = tiny
 
-		if tiny:
+		if self.tiny:
 			self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
 		else:
 			self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
@@ -123,6 +124,11 @@ class Pyscandl:
 		self.fetcher.next_chapter()
 		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
 		self._img_bin_list = []
+		# prepares the next pdf path and name
+		if self.tiny:
+			self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+		else:
+			self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
 
 	def full_download(self):
 		try:
