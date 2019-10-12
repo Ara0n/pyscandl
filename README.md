@@ -49,7 +49,7 @@ It is developed on a Debian 10 Buster computer so it is verified for Debian 10 a
 As for other linux distribution, windows and MacOSX I haven't tested the compatibility (windows will be tested later down the run) but it may work if you have all the dependencies.
 
 ## command line interface
-`python3 main.py [--keep-images|-k] [--quiet|-q] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path] [--start|-s number] [-U|--update]`
+`python3 main.py [--keep-images|-k] [--quiet|-q] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path] [--start|-s number] [-t|--tiny] [-U|--update]`
 *might be only `python` for windows*
 
 - `--output` or `-o` **required**: the path (absolute or relative) to the folder where to save the data, the images will be stored in a subfolder `images` with inside one folder per chapter and the pdfs will be stored in a `pdf` subfolder 
@@ -62,6 +62,7 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `--keep-images` or `-k`: the images used for the pdf will be kept in their corresponding folder
 - `--quiet` or `-q`: removes the verbose of the downloads
 - `--skip` or `-s`: skips `n` images before starting to download the first chapter
+- `--tiny` or `-t`: don't write the manga name in the title (useful if using collections)
 - `--update` or `-U`: updates the program to the latest release on github, **you must have cloned the repo to use it**
 
 ## image fetcher API
@@ -73,6 +74,8 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `.author` string with the name of the author, defaults to `"TBD"` if nothing is found
 - `.ext` string with the image extention name
 - `.manga_name` is a `string` with the complete name of the manga or the webtoon of the current `.image`
+- `.author` string containing the name of the author (not the artist) if nothing is found it has a value of `"TBD"`
+- `.ext` is a string containing the extension type of the image
 - `.chapter_number` is an `int` (or a `float` if the chapter is an extra) containing the number of the chapter or the current `.image`
 - `.chapter_name` is a `string` containing the title of the chapter of the current `.image` (the `string` is empty if no name is detected) 
 - `.npage` is an `int` giving the current page of the fetcher
@@ -80,7 +83,7 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - needs to raise the `MangaNotFound` exception from `exceptions` if the manga is not found
 
 ## Pyscandl()
-`Pyscandl(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, start:int=0)`
+`Pyscandl(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, start:int=0, tiny:bool=False)`
 
 ### args and kwargs
 - `fetcher` will be the fetcher object used in this instance, there will be an `enum` with all the fetchers available (I strongly recommend if you make your own fetcher to place it in the enum too)

@@ -5,7 +5,7 @@ import os
 
 
 class Pyscandl:
-	def __init__(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, skip:int=0):
+	def __init__(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, skip:int=0, tiny:bool=False):
 		# must have either a link or a manga
 		if link is not None and manga is None or link is None and manga is not None:
 			self.fetcher = fetcher(link=link, manga=manga, chapstart=chapstart)
@@ -26,6 +26,12 @@ class Pyscandl:
 		self.download_number = download_number
 		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"  # save path for images
 		self._img_bin_list = []
+		self.tiny = tiny
+
+		if self.tiny:
+			self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+		else:
+			self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
 
 		self._banlist = []
 		ban_path = f"{os.path.dirname(os.path.abspath(__file__))}/banlist"
@@ -104,12 +110,12 @@ class Pyscandl:
 
 		if len(self._img_bin_list) > 0:
 			# creating the pdf
-			with open(f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf", "wb") as pdf:
-				pdf.write(img2pdf.convert(self._img_bin_list, title=f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}", author=self.fetcher.author))
+			with open(self.pdf_path, "wb") as pdf:
+				pdf.write(img2pdf.convert(self._img_bin_list, title=f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}", author="TBD", keywords=[self.fetcher.manga_name]))
 			print("converted")
 		else:
 			# creating an empty file to aknowledge the presence of a downed chapter
-			with open(f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf.empty", "wb"):
+			with open(f"{self.pdf_path}.empty", "wb"):
 				pass
 			print("empty")
 
@@ -118,6 +124,11 @@ class Pyscandl:
 		self.fetcher.next_chapter()
 		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
 		self._img_bin_list = []
+		# prepares the next pdf path and name
+		if self.tiny:
+			self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+		else:
+			self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
 
 	def full_download(self):
 		try:
