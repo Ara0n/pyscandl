@@ -113,7 +113,7 @@ class Pyscandl:
 		if len(self._img_bin_list) > 0:
 			# creating the pdf
 			with open(self.pdf_path, "wb") as pdf:
-				pdf.write(img2pdf.convert(self._img_bin_list, title=self.name_matadata_pdf, author="TBD", keywords=[self.fetcher.manga_name]))
+				pdf.write(img2pdf.convert(self._img_bin_list, title=self.name_matadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
 			print("converted")
 		else:
 			# creating an empty file to aknowledge the presence of a downed chapter
