@@ -70,6 +70,8 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `.next_chapter()` changes `.image` to the first in the next chapter
 - `.is_last_image()` which returns `True` if it's the last page of the chapter
 - `.is_last_chapter()` which returns `True` if it's the last chapter available 
+- `.author` string with the name of the author, defaults to `"TBD"` if nothing is found
+- `.ext` string with the image extention name
 - `.manga_name` is a `string` with the complete name of the manga or the webtoon of the current `.image`
 - `.chapter_number` is an `int` (or a `float` if the chapter is an extra) containing the number of the chapter or the current `.image`
 - `.chapter_name` is a `string` containing the title of the chapter of the current `.image` (the `string` is empty if no name is detected) 

@@ -2,7 +2,7 @@ import exceptions
 import requests
 import re
 
-
+#TODO: rework with the class with the api
 class Nhentai:
 	def __init__(self, link:str=None, manga:int=None, **kwargs):
 		# creating the chapter link
@@ -23,6 +23,8 @@ class Nhentai:
 		# getting the source code of the web page
 		self._page = requests.get(self._link).content.decode("utf-8").replace("\n", "").replace("\t", "").replace("&#39;", "'")
 
+		# TODO: add self.author
+		self.author = "TBD"
 		self.npage = 1
 		self.chapter_number = 1
 		self.ext = ".jpg"

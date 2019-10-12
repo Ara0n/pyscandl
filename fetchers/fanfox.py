@@ -38,6 +38,8 @@ class Fanfox:
 		except exceptions.NoSuchElementException:
 			pass
 
+		#TODO: add self.author
+		self.author = "TBD"
 		self.npage = 1
 		self.chapter_number = temp_num
 		self._re_chapnum = re.compile(r"(?:Vol\.\d+ )?Ch.(\d+(\.\d+)?)")
