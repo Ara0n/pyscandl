@@ -30,8 +30,10 @@ class Pyscandl:
 
 		if self.tiny:
 			self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+			self.name_matadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
 			self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+			self.name_matadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 		self._banlist = []
 		ban_path = f"{os.path.dirname(os.path.abspath(__file__))}/banlist"
@@ -111,7 +113,7 @@ class Pyscandl:
 		if len(self._img_bin_list) > 0:
 			# creating the pdf
 			with open(self.pdf_path, "wb") as pdf:
-				pdf.write(img2pdf.convert(self._img_bin_list, title=f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}", author="TBD", keywords=[self.fetcher.manga_name]))
+				pdf.write(img2pdf.convert(self._img_bin_list, title=self.name_matadata_pdf, author="TBD", keywords=[self.fetcher.manga_name]))
 			print("converted")
 		else:
 			# creating an empty file to aknowledge the presence of a downed chapter
@@ -127,8 +129,10 @@ class Pyscandl:
 		# prepares the next pdf path and name
 		if self.tiny:
 			self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+			self.name_matadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
 			self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+			self.name_matadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 	def full_download(self):
 		try:
