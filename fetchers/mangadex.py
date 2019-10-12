@@ -26,12 +26,13 @@ class Mangadex:
 		self._ordered_chaps_json = []
 		for item in sorted(self._chapters_json.keys(), key=lambda x: self._chapters_json[x]["chapter"].zfill(10)):
 			self._ordered_chaps_json.append((item, self._chapters_json.get(item)))
+		self._ordered_chaps_json = [chap for chap in self._ordered_chaps_json if chap[1].get("lang_code")=="gb"]
 
 		self.manga_name = manga_json.get("manga").get("title")
 		self.author = manga_json.get("manga").get("author")
 
 		self._chap_id_pos = 0
-		while self._chap_id_pos < len(self._ordered_chaps_json) and self._ordered_chaps_json[self._chap_id_pos][1].get("chapter") != chapstart:
+		while self._chap_id_pos < len(self._ordered_chaps_json) and self._ordered_chaps_json[self._chap_id_pos][1].get("chapter") != str(chapstart):
 			self._chap_id_pos += 1
 		if self._chap_id_pos >= len(self._ordered_chaps_json):
 			raise exceptions.MangaNotFound(f"{self.manga_name}, chapter {chapstart}")
