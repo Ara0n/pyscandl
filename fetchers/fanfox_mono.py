@@ -7,6 +7,7 @@ import os
 
 class FanfoxMono:
 	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
+		self.standalone = False
 		# creating the chapter link
 		if link is not None:
 			if link[-1] == "/":

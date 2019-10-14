@@ -5,7 +5,6 @@ import os
 
 
 class Pyscandl:
-	# TODO: add stand-alone chapter support (replacing if self.fetcher.__class__.__name__ == "NHentai":)
 	def __init__(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, skip:int=0, tiny:bool=False):
 		# must have either a link or a manga
 		if link is not None and manga is None or link is None and manga is not None:
@@ -29,14 +28,14 @@ class Pyscandl:
 		self.tiny = tiny
 
 		if self.tiny:
-			if self.fetcher.__class__.__name__ == "NHentai":
+			if self.fetcher.standalone:
 				self.pdf_path = f"{self.output}{self.fetcher.chapter_name}.pdf"
 				self.name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
 				self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
 				self.name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
-			if self.fetcher.__class__.__name__ == "NHentai":
+			if self.fetcher.standalone:
 				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
 				self.name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
@@ -62,7 +61,7 @@ class Pyscandl:
 	def _full_chapter(self):
 		# fetching binary data an entire chapter
 		if not self.quiet:
-			if self.fetcher.__class__.__name__ == "NHentai":
+			if self.fetcher.standalone:
 				print(f"fetching: {self.fetcher.chapter_name}")
 			else:
 				print(f"fetching: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
@@ -78,7 +77,7 @@ class Pyscandl:
 	def _keep_full_chapter(self):
 		# download a full chapter
 		if not self.quiet:
-			if self.fetcher.__class__.__name__ == "NHentai":
+			if self.fetcher.standalone:
 				print(f"downloading: {self.fetcher.chapter_name}")
 			else:
 				print(f"downloading: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
@@ -125,14 +124,14 @@ class Pyscandl:
 		self._img_bin_list = []
 		# prepares the next pdf path and name
 		if self.tiny:
-			if self.fetcher.__class__.__name__ == "NHentai":
+			if self.fetcher.standalone:
 				self.pdf_path = f"{self.output}{self.fetcher.chapter_name}.pdf"
 				self.name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
 				self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
 				self.name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
-			if self.fetcher.__class__.__name__ == "NHentai":
+			if self.fetcher.standalone:
 				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
 				self.name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
