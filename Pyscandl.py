@@ -5,6 +5,7 @@ import os
 
 
 class Pyscandl:
+	# TODO: add stand-alone chapter support (replacing if self.fetcher.__class__.__name__ == "NHentai":)
 	def __init__(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, skip:int=0, tiny:bool=False):
 		# must have either a link or a manga
 		if link is not None and manga is None or link is None and manga is not None:
@@ -13,7 +14,6 @@ class Pyscandl:
 			raise DryNoSauceHere
 		else:
 			raise TooManySauce
-
 		# creating output folder
 		self.output = (output[-1]=="/" and output or output+"/") + self.fetcher.manga_name + "/"
 		if not os.path.exists(self.output):
@@ -29,11 +29,19 @@ class Pyscandl:
 		self.tiny = tiny
 
 		if self.tiny:
-			self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-			self.name_matadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+			if self.fetcher.__class__.__name__ == "NHentai":
+				self.pdf_path = f"{self.output}{self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"{self.fetcher.chapter_name}"
+			else:
+				self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
-			self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-			self.name_matadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+			if self.fetcher.__class__.__name__ == "NHentai":
+				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
+			else:
+				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 		self._banlist = []
 		ban_path = f"{os.path.dirname(os.path.abspath(__file__))}/banlist"
@@ -69,7 +77,10 @@ class Pyscandl:
 	def _full_chapter(self):
 		# fetching binary data an entire chapter
 		if not self.quiet:
-			print(f"fetching: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
+			if self.fetcher.__class__.__name__ == "NHentai":
+				print(f"fetching: {self.fetcher.chapter_name}")
+			else:
+				print(f"fetching: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
 		while not self.fetcher.is_last_image():
 			img_bin, ext = self._ext_check()
 			self._img_bin_list.append(img_bin)
@@ -84,7 +95,10 @@ class Pyscandl:
 	def _keep_full_chapter(self):
 		# download a full chapter
 		if not self.quiet:
-			print(f"downloading: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
+			if self.fetcher.__class__.__name__ == "NHentai":
+				print(f"downloading: {self.fetcher.chapter_name}")
+			else:
+				print(f"downloading: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
 		while not self.fetcher.is_last_image():
 			self._dl_image()
 			self.fetcher.next_image()
@@ -113,7 +127,7 @@ class Pyscandl:
 		if len(self._img_bin_list) > 0:
 			# creating the pdf
 			with open(self.pdf_path, "wb") as pdf:
-				pdf.write(img2pdf.convert(self._img_bin_list, title=self.name_matadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
+				pdf.write(img2pdf.convert(self._img_bin_list, title=self.name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
 			print("converted")
 		else:
 			# creating an empty file to aknowledge the presence of a downed chapter
@@ -128,11 +142,19 @@ class Pyscandl:
 		self._img_bin_list = []
 		# prepares the next pdf path and name
 		if self.tiny:
-			self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-			self.name_matadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+			if self.fetcher.__class__.__name__ == "NHentai":
+				self.pdf_path = f"{self.output}{self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"{self.fetcher.chapter_name}"
+			else:
+				self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
-			self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-			self.name_matadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+			if self.fetcher.__class__.__name__ == "NHentai":
+				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
+			else:
+				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 	def full_download(self):
 		try:
