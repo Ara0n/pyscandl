@@ -3,60 +3,58 @@ import requests
 import re
 
 #TODO: rework with the class with the api
-class Nhentai:
-	def __init__(self, link:str=None, manga:int=None, **kwargs):
-		# creating the chapter link
-		if link is not None:
-			self._link = link + (link[-1] == "/" and "1/" or "/1/")
+class NHentai:
+	def __init__(self, link:str=None, manga:int=None, chapstart=None):
+		# chapstart is not used here but needs to be in the definition to respect the fetcher api
+		if link is None:
+			self._manga_json = requests.get(f"https://nhentai.net/api/gallery/{manga}").json()
 		else:
-			self._link = f"https://nhentai.net/g/{manga}/1/"
+			if link[-1] == "/":
+				manga = link.split("/")[-2]
+			else:
+				manga = link.split("/")[-1]
+			self._manga_json = requests.get(f"https://nhentai.net/api/gallery/{manga}").json()
+		# checking if manga exists
+		if self._manga_json.get("error"):
+			raise exceptions.MangaNotFound(manga)
 
-		# check if exists
-		test404 = requests.get(self._link).content
-		if b"container error" in test404:
-			name = self._link.split("/")[-3]
-			raise exceptions.MangaNotFound(name)
+		self._corresponding_table = { 'j': "jpg", 'p': "png", 'g': "gif"}
 
-		# nhentai has chapters and no manga name so using the tag NSFW as a name
-		self.manga_name = "NSFW"
+		# getting the author
+		found = False
+		i = 0
+		while not found:
+			if self._manga_json.get("tags")[i].get("type") == "artist":
+				found = True
+				self.author = self._manga_json.get("tags")[i].get("name").title()
+			else:
+				i += 1
 
-		# getting the source code of the web page
-		self._page = requests.get(self._link).content.decode("utf-8").replace("\n", "").replace("\t", "").replace("&#39;", "'")
-
-		# TODO: add self.author
-		self.author = "TBD"
 		self.npage = 1
+		self._image_list = self._manga_json.get("images").get("pages")
+		self.ext = self._corresponding_table.get(self._image_list[0].get('t'))
+		self._image_root = f"https://i.nhentai.net/galleries/{self._manga_json.get('media_id')}/"  # https://i.nhentai.net/galleries/849121/1.jpg
+		self.image = f"{self._image_root}{self.npage}.{self.ext}"
+		self.manga_name = "NSFW"
 		self.chapter_number = 1
-		self.ext = ".jpg"
-
-		# finding the chapter name in the title
-		self.chapter_name = self._page[self._page.find("<title>")+7:self._page.find("</title>")-53]
-		self._last_page = int(re.search(r"<span class=\"num-pages\">(\d{1,3})", self._page).group(1))
-
-		# initializing for the image url
-		self._image_root = re.search(r"https://i.nhentai.net/galleries/\d+/", self._page).group()
-		self.image = f"{self._image_root}{self.npage}{self.ext}"
-		# if the first image is a png switch to it for the default extension
-		test_ext = requests.get(self.image)
-		if b"404 Not Found" in test_ext.content:
-			self.ext = ".png"
-			self.image = f"{self._image_root}{self.npage}{self.ext}"
+		self.chapter_name = self._manga_json.get("title").get("pretty")
 
 	def next_image(self):
+		self.ext = self._corresponding_table.get(self._image_list[self.npage].get('t'))
 		self.npage += 1
-		self.image = self._image_root + str(self.npage) + self.ext
+		self.image = f"{self._image_root}{self.npage}.{self.ext}"
 
 	def next_chapter(self):
-		# there is only one chapter for every scan in nhentai
+		# there is only one chapter for nhentai
 		pass
 
 	def is_last_image(self):
-		return self.npage == self._last_page
+		return self.npage == self._manga_json.get("num_pages")
 
 	def is_last_chapter(self):
-		# there is only one chapter for nhentai so it's always true
+		# there is only one chapter for nhentai
 		return True
 
 	def quit(self):
-		# nothing needing a proper closing
+		# nothing needs to be closed here
 		pass
