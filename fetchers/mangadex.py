@@ -59,7 +59,7 @@ class Mangadex:
 		self.npage += 1
 
 	def is_last_image(self):
-		return self.npage+1 == len(self._img_ids)
+		return self.npage == len(self._img_ids)
 
 	def next_chapter(self):
 		self._chap_id_pos += 1
