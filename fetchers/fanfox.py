@@ -44,7 +44,6 @@ class Fanfox:
 		self.chapter_number = temp_num
 		self._re_chapnum = re.compile(r"(?:Vol\.\d+ )?Ch.(\d+(\.\d+)?)")
 		self._re_chapname = re.compile(r"(?:(Vol.\d+ )?(Ch.\d+:? ))?(.*)")
-		self.ext = ".jpg"
 
 		self._last_page = self.driver.find_element_by_css_selector(".pager-list-left span a:last-child").text
 		if self._last_page == ">":
@@ -52,6 +51,7 @@ class Fanfox:
 		self._last_page = int(self._last_page)
 
 		self.image = self.driver.find_element_by_class_name("reader-main-img").get_attribute("src").split("?")[0]
+		self.ext = self.image.split(".")[-1]
 
 		temp_title = self.driver.find_element_by_class_name("reader-header-title-2").text
 		self.chapter_name = re.search(r"(?:(Vol\.\d{2} )?Ch\.\d{3}(\.\d)?\s?((- )?(Vol.\d+ )?(Ch.\d+:? ))?)(.*)", temp_title).group(7)
@@ -64,6 +64,7 @@ class Fanfox:
 		while "https://static.fanfox.net/v201906282/mangafox/images/loading.gif" in self.driver.find_element_by_class_name("reader-main-img").get_attribute("src"):
 			pass
 		self.image = self.driver.find_element_by_class_name("reader-main-img").get_attribute("src").split("?")[0]
+		self.ext = self.image.split(".")[-1]
 
 	def next_chapter(self):
 		chap_name = self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child")
