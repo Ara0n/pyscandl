@@ -4,7 +4,7 @@ import exceptions
 
 
 class Fetcher(Enum):
-	NHENTAI = nh.Nhentai
+	NHENTAI = nh.NHentai
 	FANFOX = fanfox.Fanfox
 	FANFOX_MONO = fanfox_mono.FanfoxMono
 	MANGADEX = mangadex.Mangadex

@@ -7,6 +7,7 @@ import os
 
 class FanfoxMono:
 	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
+		self.standalone = False
 		# creating the chapter link
 		if link is not None:
 			if link[-1] == "/":
@@ -44,12 +45,12 @@ class FanfoxMono:
 		self.chapter_number = temp_num
 		self._re_chapnum = re.compile(r"(?:Vol\.\d+ )?Ch.(\d+(\.\d+)?)")
 		self._re_chapname = re.compile(r"(?:(Vol.\d+ )?(Ch.\d+:? ))?(.*)")
-		self.ext = ".jpg"
 
 		self._img_list = []
 		self._last_page = 0
 		self.image = ""
 		self._refresh_images()
+		self.ext = self.image.split(".")[-1]
 
 		temp_title = self.driver.find_element_by_class_name("reader-header-title-2").text
 		self.chapter_name = re.search(r"(?:(Vol\.\d{2} )?Ch\.\d{3}(\.\d)?\s?((- )?(Vol.\d+ )?(Ch.\d+:? ))?)(.*)", temp_title).group(7)
@@ -66,6 +67,7 @@ class FanfoxMono:
 
 	def next_image(self):
 		self.image = self._img_list[self.npage]
+		self.ext = self.image.split(".")[-1]
 		self.npage += 1
 
 	def next_chapter(self):
