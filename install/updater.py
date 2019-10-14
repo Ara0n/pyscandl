@@ -1,24 +1,16 @@
 import os
 import sys
+import requests
 from git import Repo
+from git.exc import InvalidGitRepositoryError
 
 
 def update():
-	print("checking if update is needed")
-	rep = Repo(os.path.dirname(sys.modules['__main__'].__file__))
-
-	# checking if on the release tagged commit
-	if not rep.tags[-1].commit == rep.head.commit:
-		rep.git.checkout(rep.tags[-1])
-
-	# comparing the last tag in the local repo to the last tag on github
-	if rep.tags[-1].name == rep.git.ls_remote("--tags").split("/")[-1]:
-		print("updating.", end="")
+	try:
+		rep = Repo(os.path.dirname(sys.modules['__main__'].__file__))
 		rep.git.checkout("master")
-		print(".", end="")
 		rep.git.pull()
-		print(".", end=" ")
 		rep.git.checkout(rep.tags[-1])
-		print("updated")
-	else:
-		print("the program is already up to date")
+	except InvalidGitRepositoryError:
+		latest = requests.get("https://github.com/Ara0n/pyscandl/releases/latest").url.split("/")[-1]
+		print(f"you haven't installed it from the repo so you can't auto update with this command\nthe latest release is the v{latest}")
