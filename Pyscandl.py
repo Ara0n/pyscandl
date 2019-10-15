@@ -1,7 +1,9 @@
 from exceptions import DryNoSauceHere, TooManySauce
+from PIL import Image
 import img2pdf
 import requests
 import os
+import io
 
 
 class Pyscandl:
@@ -108,9 +110,23 @@ class Pyscandl:
 
 		if len(self._img_bin_list) > 0:
 			# creating the pdf
-			with open(self.pdf_path, "wb") as pdf:
-				pdf.write(img2pdf.convert(self._img_bin_list, title=self.name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
-			print("converted")
+			try:
+				with open(self.pdf_path, "wb") as pdf:
+					pdf.write(img2pdf.convert(self._img_bin_list, title=self.name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
+				print("converted")
+			except Exception as e:
+				# removing alpha from all the images of the chapter
+				if e.args[0] == "Refusing to work on images with alpha channel":
+					dealpha_list = []
+					for img in self._img_bin_list:
+						temp = Image.open(io.BytesIO(img)).convert("RGB")
+						with io.BytesIO() as dealpha_img:
+							temp.save(dealpha_img, format="JPEG")
+							dealpha_list.append(dealpha_img.getvalue())
+					with open(self.pdf_path, "wb") as pdf:
+						pdf.write(img2pdf.convert(dealpha_list, title=self.name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
+				else:
+					raise e
 		else:
 			# creating an empty file to aknowledge the presence of a downed chapter
 			with open(f"{self.pdf_path}.empty", "wb"):
