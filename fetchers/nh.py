@@ -33,7 +33,7 @@ class NHentai:
 		self.npage = 1
 		self._image_list = self._manga_json.get("images").get("pages")
 		self.ext = self._corresponding_table.get(self._image_list[0].get('t'))
-		self._image_root = f"https://i.nhentai.net/galleries/{self._manga_json.get('media_id')}/"  # https://i.nhentai.net/galleries/849121/1.jpg
+		self._image_root = f"https://i.nhentai.net/galleries/{self._manga_json.get('media_id')}/"
 		self.image = f"{self._image_root}{self.npage}.{self.ext}"
 		self.manga_name = "NSFW"
 		self.chapter_number = 1
