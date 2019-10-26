@@ -19,6 +19,7 @@ class NHentai:
 			raise exceptions.MangaNotFound(manga)
 
 		self._corresponding_table = { 'j': "jpg", 'p': "png", 'g': "gif"}
+		self.domain = ".nhentai.net"
 
 		# getting the author
 		found = False

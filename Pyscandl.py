@@ -20,6 +20,8 @@ class Pyscandl:
 		if not os.path.exists(self.output):
 			os.makedirs(self.output)
 
+		self.header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
+					   "Set-Cookie": f"domain={self.fetcher.domain}"}
 		self.skip = skip
 		self.quiet = quiet
 		self.keepimage = keepimage
@@ -56,7 +58,7 @@ class Pyscandl:
 			os.makedirs(self.path)
 
 		with open(f"{self.path}{self.fetcher.npage}.{self.fetcher.ext}", "wb") as img:
-			img.write(requests.get(self.fetcher.image).content)
+			img.write(requests.get(self.fetcher.image, headers=self.header).content)
 			if not self.quiet:
 				print(".", end="", flush=True)
 
@@ -68,11 +70,11 @@ class Pyscandl:
 			else:
 				print(f"fetching: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
 		while not self.fetcher.is_last_image():
-			self._img_bin_list.append(requests.get(self.fetcher.image).content)
+			self._img_bin_list.append(requests.get(self.fetcher.image, headers=self.header).content)
 			if not self.quiet:
 				print(".", end="", flush=True)
 			self.fetcher.next_image()
-		self._img_bin_list.append(requests.get(self.fetcher.image).content)
+		self._img_bin_list.append(requests.get(self.fetcher.image, headers=self.header).content)
 		if not self.quiet:
 			print(".", end="", flush=True)
 

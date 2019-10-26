@@ -80,6 +80,7 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `.chapter_name` is a `string` containing the title of the chapter of the current `.image` (the `string` is empty if no name is detected) 
 - `.npage` is an `int` giving the current page of the fetcher
 - `.standalone` is a `bool` signaling if true that it doesn't support multiple chapters (the verbose and save paths/names wont have mentions of chapters)
+- `.domain` a `string` with the website domain, format is: `.domname.ext`
 - `quit()` to close properly the fetcher
 - needs to raise the `MangaNotFound` exception from `exceptions` if the manga is not found
 

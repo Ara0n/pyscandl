@@ -18,6 +18,8 @@ class Mangadex:
 			#TODO: implement a search function for non id requests
 			raise exceptions.MangaNotFound(manga)
 
+		self.domain = ".mangadex.org"
+
 		manga_json = self.scrapper.get(f"https://mangadex.org/api/manga/{manga_id}").json()
 		if manga_json.get("status") == "Manga ID does not exist.":
 			raise exceptions.MangaNotFound(manga_id)

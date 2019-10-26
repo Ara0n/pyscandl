@@ -22,6 +22,7 @@ class FanfoxMono:
 		option = webdriver.FirefoxOptions()
 		option.headless = True
 		self.driver = webdriver.Firefox(options=option)
+		self.domain = ".fanfox.net"
 
 		temp_num = str(chapstart).split(".")[0].zfill(3)
 		if "." in str(chapstart):
