@@ -105,12 +105,15 @@ class Pyscandl:
 		if self.keepimage:
 			for loop in range(1, self.fetcher.npage+1):
 				try:
-					with open(f"{self.path}{loop}.{self.fetcher.ext}", "rb") as img:
+					with open(f"{self.path}{loop}.jpg", "rb") as img:
 						self._img_bin_list.append(img.read())
 				except FileNotFoundError:
-					ext = self.fetcher.ext=="png" and "jpg" or "png"
-					with open(f"{self.path}{loop}.{ext}", "rb") as img:
-						self._img_bin_list.append(img.read())
+					try:
+						with open(f"{self.path}{loop}.png", "rb") as img:
+							self._img_bin_list.append(img.read())
+					except FileNotFoundError:
+						with open(f"{self.path}{loop}.gif", "rb") as img:
+							self._img_bin_list.append(img.read())
 
 		# removing the images found in the banlist
 		self._img_bin_list = [img for img in self._img_bin_list if img not in self._banlist]
