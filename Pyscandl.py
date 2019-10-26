@@ -2,6 +2,7 @@ from exceptions import DryNoSauceHere, TooManySauce
 from PIL import Image
 import img2pdf
 import requests
+import logging
 import os
 import io
 
@@ -52,6 +53,9 @@ class Pyscandl:
 			with open(f"{ban_path}/{img}", "rb") as img_bin:
 				self._banlist.append(img_bin.read())
 
+		# disabling logging for alpha-channels for img2pdf
+		logging.disable()
+
 	def _dl_image(self):
 		# single image download
 		if not os.path.exists(self.path):
@@ -95,7 +99,8 @@ class Pyscandl:
 			self.fetcher.next_image()
 
 	def _create_pdf(self):
-		print("\nconverting...", end=" ")
+		if not self.quiet:
+			print("\nconverting...", end=" ")
 		# loading the downloaded images if keep mode
 		if self.keepimage:
 			for loop in range(1, self.fetcher.npage+1):
@@ -115,9 +120,10 @@ class Pyscandl:
 			try:
 				with open(self.pdf_path, "wb") as pdf:
 					pdf.write(img2pdf.convert(self._img_bin_list, title=self.name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
-				print("converted")
 			except Exception as e:
 				# removing alpha from all the images of the chapter
+				if not self.quiet:
+					print("removing alpha...", end=" ")
 				if e.args[0] == "Refusing to work on images with alpha channel":
 					dealpha_list = []
 					for img in self._img_bin_list:
@@ -129,11 +135,14 @@ class Pyscandl:
 						pdf.write(img2pdf.convert(dealpha_list, title=self.name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
 				else:
 					raise e
+			if not self.quiet:
+				print("converted")
 		else:
 			# creating an empty file to aknowledge the presence of a downed chapter
 			with open(f"{self.pdf_path}.empty", "wb"):
 				pass
-			print("empty")
+			if not self.quiet:
+				print("empty")
 
 	def _next_chapter(self):
 		# changes to the next chapter and prepare the next image folder
@@ -176,7 +185,9 @@ class Pyscandl:
 				self._create_pdf()
 				counter += 1
 		except KeyboardInterrupt:
-			print("\nmanual interruption")
+			if not self.quiet:
+				print("\nmanual interruption")
 		finally:
 			self.fetcher.quit()
-			print("end of the download")
+			if not self.quiet:
+				print("end of the download")
