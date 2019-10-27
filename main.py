@@ -1,7 +1,7 @@
 import arg_parser
 import Pyscandl
 from fetchers import fetcher_enum
-from exceptions import NoFetcherGiven
+from excepts import NoFetcherGiven
 from install import updater
 
 if __name__ == "__main__":

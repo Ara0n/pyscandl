@@ -1,4 +1,4 @@
-import exceptions
+import excepts
 from selenium import webdriver
 from selenium.common import exceptions
 import re
@@ -28,7 +28,7 @@ class FanfoxMono:
 		self.driver.get(self._link)
 		if self.driver.current_url != self._link:
 			self.quit()
-			raise exceptions.MangaNotFound(self.manga_name)
+			raise excepts.MangaNotFound(self.manga_name)
 		self.author = self.driver.find_element_by_class_name("detail-info-right-say").find_element_by_css_selector("a").text
 
 		temp_num = str(chapstart).split(".")[0].zfill(3)
@@ -39,7 +39,7 @@ class FanfoxMono:
 		# checking if chapter exists
 		if self.driver.current_url.split("#")[0] != self.urlpage:
 			self.quit()
-			raise exceptions.MangaNotFound(f"{self.manga_name}, chapter {temp_num}")
+			raise excepts.MangaNotFound(f"{self.manga_name}, chapter {temp_num}")
 
 		# do the adult check if needed
 		try:

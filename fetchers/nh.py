@@ -1,4 +1,4 @@
-import exceptions
+import excepts
 import requests
 
 
@@ -16,7 +16,7 @@ class NHentai:
 			self._manga_json = requests.get(f"https://nhentai.net/api/gallery/{manga}").json()
 		# checking if manga exists
 		if self._manga_json.get("error"):
-			raise exceptions.MangaNotFound(manga)
+			raise excepts.MangaNotFound(manga)
 
 		self._corresponding_table = { 'j': "jpg", 'p': "png", 'g': "gif"}
 		self.domain = ".nhentai.net"

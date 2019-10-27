@@ -1,4 +1,4 @@
-from exceptions import DryNoSauceHere, TooManySauce
+from excepts import DryNoSauceHere, TooManySauce
 from PIL import Image
 import img2pdf
 import requests

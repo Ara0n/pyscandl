@@ -1,4 +1,4 @@
-import exceptions
+import excepts
 import cfscrape
 
 
@@ -16,13 +16,13 @@ class Mangadex:
 			manga_id = manga
 		else:
 			#TODO: implement a search function for non id requests
-			raise exceptions.MangaNotFound(manga)
+			raise excepts.MangaNotFound(manga)
 
 		self.domain = ".mangadex.org"
 
 		manga_json = self.scrapper.get(f"https://mangadex.org/api/manga/{manga_id}").json()
 		if manga_json.get("status") == "Manga ID does not exist.":
-			raise exceptions.MangaNotFound(manga_id)
+			raise excepts.MangaNotFound(manga_id)
 
 		self._chapters_json = manga_json.get("chapter")
 
@@ -38,7 +38,7 @@ class Mangadex:
 		while self._chap_id_pos < len(self._ordered_chaps_json) and self._ordered_chaps_json[self._chap_id_pos][1].get("chapter") != str(chapstart):
 			self._chap_id_pos += 1
 		if self._chap_id_pos >= len(self._ordered_chaps_json):
-			raise exceptions.MangaNotFound(f"{self.manga_name}, chapter {chapstart}")
+			raise excepts.MangaNotFound(f"{self.manga_name}, chapter {chapstart}")
 
 		self._set_current_chap_info(self._ordered_chaps_json[self._chap_id_pos][0])
 
