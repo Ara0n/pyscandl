@@ -24,15 +24,23 @@ class Fanfox:
 		self.driver = webdriver.Firefox(options=option)
 		self.domain = ".fanfox.net"
 
+		# getting the author and checking if manga exists
+		self.driver.get(self._link)
+		if self.driver.current_url != self._link:
+			self.quit()
+			raise exceptions.MangaNotFound(self.manga_name)
+		self.author = self.driver.find_element_by_class_name("detail-info-right-say").find_element_by_css_selector("a").text
+
 		temp_num = str(chapstart).split(".")[0].zfill(3)
 		if "." in str(chapstart):
 			temp_num += "." + str(chapstart).split(".")[1]
 		self.urlpage = f"{self._link}c{temp_num}/1.html"
 		self.driver.get(self.urlpage)
 
-		if self.driver.current_url.split("#")[0] != self.urlpage:
+		# checking if chapter exists
+		if self.driver.title == "404":
 			self.quit()
-			raise exceptions.MangaNotFound(self.manga_name)
+			raise exceptions.MangaNotFound(f"{self.manga_name}, chapter {temp_num}")
 
 		# do the adult check if needed
 		try:
@@ -40,8 +48,6 @@ class Fanfox:
 		except exceptions.NoSuchElementException:
 			pass
 
-		#TODO: add self.author
-		self.author = "TBD"
 		self.npage = 1
 		self.chapter_number = temp_num
 		self._re_chapnum = re.compile(r"(?:Vol\.\d+ )?Ch.(\d+(\.\d+)?)")
