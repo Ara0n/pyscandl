@@ -50,8 +50,7 @@ class Fanfox:
 
 		self.npage = 1
 		self.chapter_number = temp_num
-		self._re_chapnum = re.compile(r"(?:Vol\.\d+ )?Ch.(\d+(\.\d+)?)")
-		self._re_chapname = re.compile(r"(?:(Vol.\d+ )?(Ch.\d+:? ))?(.*)")
+		self._re_chapnum = re.compile(r"^(?:Vol\.(?:\d+|TBD) )?Ch\.(\d+(\.\d+)?)")
 
 		self._last_page = self.driver.find_element_by_css_selector(".pager-list-left span a:last-child").text
 		if self._last_page == ">":
@@ -76,7 +75,7 @@ class Fanfox:
 
 	def next_chapter(self):
 		chap_name = self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child")
-		self.chapter_name = self._re_chapname.match(chap_name.get_attribute("title")).group(3)
+		self.chapter_name = chap_name.get_attribute("title")
 		self.npage = 1
 		chap_name.click()
 		self.image = self.driver.find_element_by_class_name("reader-main-img").get_attribute("src").split("?")[0]

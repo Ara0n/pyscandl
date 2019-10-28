@@ -49,8 +49,7 @@ class FanfoxMono:
 
 		self.npage = 1
 		self.chapter_number = temp_num
-		self._re_chapnum = re.compile(r"(?:Vol\.\d+ )?Ch.(\d+(\.\d+)?)")
-		self._re_chapname = re.compile(r"(?:(Vol.\d+ )?(Ch.\d+:? ))?(.*)")
+		self._re_chapnum = re.compile(r"^(?:Vol\.(?:\d+|TBD) )?Ch\.(\d+(\.\d+)?)")
 
 		self._img_list = []
 		self._last_page = 0
@@ -78,7 +77,7 @@ class FanfoxMono:
 
 	def next_chapter(self):
 		chap_name = self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child")
-		self.chapter_name = self._re_chapname.match(chap_name.get_attribute("title")).group(3)
+		self.chapter_name = chap_name.get_attribute("title")
 		self.npage = 1
 		chap_name.click()
 		self._refresh_images()
