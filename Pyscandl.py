@@ -179,7 +179,7 @@ class Pyscandl:
 			else:
 				self._full_chapter()
 			self._create_pdf()
-			while not self.fetcher.is_last_chapter() and self.all or counter < self.download_number:
+			while not self.fetcher.is_last_chapter() and (self.all or counter < self.download_number):
 				self._next_chapter()
 				if self.keepimage:
 					self._keep_full_chapter()

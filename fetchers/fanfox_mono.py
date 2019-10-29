@@ -35,9 +35,10 @@ class FanfoxMono:
 		if "." in str(chapstart):
 			temp_num += "." + str(chapstart).split(".")[1]
 		self.urlpage = f"{self._link}c{temp_num}/1.html"
+		self.driver.get(self.urlpage)
 
 		# checking if chapter exists
-		if self.driver.current_url.split("#")[0] != self.urlpage:
+		if self.driver.title == "404":
 			self.quit()
 			raise excepts.MangaNotFound(f"{self.manga_name}, chapter {temp_num}")
 
