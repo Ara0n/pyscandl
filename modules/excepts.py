@@ -24,3 +24,8 @@ class NoFetcherFound(Exception):
 class NoFetcherGiven(Exception):
 	def __init__(self):
 		Exception.__init__(self, "no fetcher given, please give a fetcher")
+
+
+class IsStandalone(Exception):
+	def __init__(self, name):
+		Exception.__init__(self, f"{name} has a standalone type fetcher and thus can't be used with autodl")
