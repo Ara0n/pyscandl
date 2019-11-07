@@ -1,4 +1,4 @@
-from excepts import DryNoSauceHere, TooManySauce
+from .excepts import DryNoSauceHere, TooManySauce
 from PIL import Image
 import img2pdf
 import requests
@@ -48,7 +48,7 @@ class Pyscandl:
 				self.name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 		self._banlist = []
-		ban_path = f"{os.path.dirname(os.path.abspath(__file__))}/banlist"
+		ban_path = f"{os.path.dirname(os.path.abspath(__file__))}/../banlist"
 		for img in os.listdir(ban_path):
 			with open(f"{ban_path}/{img}", "rb") as img_bin:
 				self._banlist.append(img_bin.read())

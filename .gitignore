@@ -1,5 +1,6 @@
 # test files kept apart
 tests/
+test.*
 
 # removing pycharm files
 .idea/

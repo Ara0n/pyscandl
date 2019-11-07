@@ -1,8 +1,7 @@
-import arg_parser
-import Pyscandl
-from fetchers import fetcher_enum
-from excepts import NoFetcherGiven
-from install import updater
+from modules import Pyscandl, arg_parser
+from modules.fetchers import fetcher_enum
+from modules.excepts import NoFetcherGiven
+from modules.install import updater
 
 if __name__ == "__main__":
 	args = arg_parser.parse_arg()

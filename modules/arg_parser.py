@@ -1,5 +1,5 @@
 import argparse
-from fetchers.fetcher_enum import Fetcher
+from .fetchers.fetcher_enum import Fetcher
 
 
 def parse_arg():

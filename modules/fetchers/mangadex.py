@@ -1,4 +1,4 @@
-import excepts
+from .. import excepts
 import cfscrape
 
 

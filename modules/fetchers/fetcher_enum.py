@@ -1,6 +1,6 @@
 from enum import Enum
-from fetchers import nh, fanfox, fanfox_mono, mangadex
-import excepts
+from . import nh, fanfox, fanfox_mono, mangadex
+from .. import excepts
 
 
 class Fetcher(Enum):

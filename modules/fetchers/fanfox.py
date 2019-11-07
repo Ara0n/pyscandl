@@ -1,4 +1,4 @@
-import excepts
+from .. import excepts
 from selenium import webdriver
 from selenium.common import exceptions
 import re
