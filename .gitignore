@@ -2,6 +2,10 @@
 tests/
 test.*
 
+# database
+db.json
+
+# --------------------------------------
 # removing pycharm files
 .idea/
 
