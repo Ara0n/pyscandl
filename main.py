@@ -45,7 +45,7 @@ if __name__ == "__main__":
 			if infos is None:
 				print(f"manga '{args.name}' not in the list, you may consider adding it to it with -a")
 			else:
-				print(f"{infos.get('name')}:\n"
+				print(f"{args.name}:\n"
 					  f"\trss link: {infos.get('rss')}\n"
 					  f"\tmanga link: {infos.get('link')}\n"
 					  f"\tfetcher: {infos.get('fetcher').upper()}"

@@ -2,6 +2,7 @@ import os, sys
 import json
 import requests
 import cfscrape
+import re
 from xml.etree import ElementTree
 from ..excepts import IsStandalone, FetcherNotFound
 from ..Pyscandl import Pyscandl
@@ -18,6 +19,7 @@ class Controller:
 		self.output = output
 		self.quiet = quiet
 		self.tiny = tiny
+		self._re_mgdex_scan = re.compile(r"(?:Chapter \d+, )?(Chapter \d+)")
 		self.manga = {}
 		self.missing_chaps = []
 
@@ -52,6 +54,7 @@ class Controller:
 
 	# each website/fetcher can have differently made xml from their rss so we need to treat them separately if need be
 	def scan(self, name:str):
+		self.missing_chaps.clear()
 		manga = self.db.get(name)
 		if manga.get("fetcher").lower() in ["fanfox", "fanfox_mono"]:
 			xml = ElementTree.fromstring(requests.get(manga.get("rss")).content)
@@ -67,16 +70,18 @@ class Controller:
 			xml = ElementTree.fromstring(cfscrape.create_scraper().get(manga.get("rss")).content)
 			for chapter in xml.iter("item"):
 				if chapter.find("description").text.split(" - ")[-1] == "Language: English":
-					nb = chapter.find("title").text.split()[-1]
-					if "." in nb:
-						nb = float(nb)
-					else:
-						nb = int(nb)
-					if nb not in manga.get("chapters"):
-						self.missing_chaps.append(nb)
+					# check if it's a chapter
+					if self._re_mgdex_scan.search(chapter.find("title").text):
+						nb = chapter.find("title").text.split()[-1]
+						if "." in nb:
+							nb = float(nb)
+						else:
+							nb = int(nb)
+						if nb not in manga.get("chapters"):
+							self.missing_chaps.append(nb)
+		self.missing_chaps.sort()
 		if not self.quiet:
 			if self.missing_chaps:
-				self.missing_chaps.sort()
 				print(f"new chapter(s) for {name}: {', '.join(map(str, self.missing_chaps))}")
 			else:
 				print(f"no new chapter for {name}")
