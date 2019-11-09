@@ -76,6 +76,7 @@ class Controller:
 						self.missing_chaps.append(nb)
 		if not self.quiet:
 			if self.missing_chaps:
+				self.missing_chaps.sort()
 				print(f"new chapter(s) for {name}: {', '.join(map(str, self.missing_chaps))}")
 			else:
 				print(f"no new chapter for {name}")
