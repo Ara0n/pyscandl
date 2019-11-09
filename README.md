@@ -29,41 +29,73 @@ pip3 install -r requirements.txt #might be pip instead of pip3 and need to be do
 4) install the dependencies for the program
 ```
 cd path/to/project/root
-pip3 install -r requirements.txt #might be pip instead of pip3 and need to be done as admin/sudo or in a venv
+pip3 install -r requirements.txt
 ```
 5) install the [geckodriver](https://github.com/mozilla/geckodriver/releases/latest) for firefox
 6) you can now use the program  
 **you'll need to download each release from the [release page](https://github.com/Ara0n/pyscandl/release), but it'll be lighter in comparison**
 
-## dependence
+## requirements
 This is a python3 program that uses:
-- `argparse` for the main
-- [`selenium`](https://selenium-python.readthedocs.io/installation.html) for some of the default parsers
-- `requests` for some other parsers
-- `img2pdf` to create the pdfs of the scans
-- `os`, `re`, `GitPython` and `enum` are also needed
-
-**for the full dependence list, check `requirments.txt`**
+- the dependencies in `requirements.txt`
+- the [geckodriver](https://github.com/mozilla/geckodriver/releases/latest)
+- `nodejs` for `cfscrape`
+- [Firefox](https://www.mozilla.org/firefox/download/) for `selenium`
 
 It is developed on a Debian 10 Buster computer so it is verified for Debian 10 and should work at least for the older debians and the debian-likes, provided that you have the dependencies listed up above.  
 As for other linux distribution, windows and MacOSX I haven't tested the compatibility (windows will be tested later down the run) but it may work if you have all the dependencies.
 
 ## command line interface
-`python3 main.py [--keep-images|-k] [--quiet|-q] <--fetcher|-f fname> <--link|-l link | --manga|-m mname> [--chapter-start|-c chapnumber] [--all|-a | --download-number|-n number] [--output|-o path] [--start|-s number] [-t|--tiny] [-U|--update]`
 *might be only `python` for windows*
+### default
+`python3 main.py [-h] [-U] [-ml]`
 
-- `--output` or `-o` **required**: the path (absolute or relative) to the folder where to save the data, the images will be stored in a subfolder `images` with inside one folder per chapter and the pdfs will be stored in a `pdf` subfolder 
-- `--fetcher` or `-f` **required**: the name of the image links fetcher that will be used for the download
+- `--help` or `-h`: shows the help for this mode
+- `--update` or `-U`: updates the program to the latest release on github, **you must have cloned the repo to use it**
+- `--manga-list` or `-ml`: lists all the mangas in the auto-downloader
+
+### manual
+`python3 main.py manual [-h] (-l LINK | -m MANGA) -f FETCHER [-o OUTPUT] [-c CHAPTER_START] [-a | -n DOWNLOAD_NUMBER] [-t] [-k] [-q] [-s SKIP]`
+
+- `--help` or `-h`: shows the help for this mode
 - `--link` or `-l` **required if not using `--manga` or `-m`**: gives the link to the page with all the chapter listed
 - `--manga` or `-m` **required if not using `--link` or `-l`**: gives the manga name, the image fetcher will find the corresponding manga
+- `--fetcher` or `-f` **required**: the name of the image links fetcher that will be used for the download
+- `--output` or `-o` **required**: the path (absolute or relative) to the folder where to save the data, the images will be stored in a subfolder `images` with inside one folder per chapter and the pdfs will be stored in a `pdf` subfolder 
 - `--chapter-start` or `-c`: gives the chapter to start the download on (defaults at 1)
-- `--download-number` or `-n`: gives the number of chapters to download (defaults at 1)
 - `--all` or `-a`: downloads all the chapters from the starting point to the end
+- `--download-number` or `-n`: gives the number of chapters to download (defaults at 1)
 - `--keep-images` or `-k`: the images used for the pdf will be kept in their corresponding folder
+- `--tiny` or `-t`: don't write the manga name in the title (useful if using ebook libraries)
 - `--quiet` or `-q`: removes the verbose of the downloads
 - `--skip` or `-s`: skips `n` images before starting to download the first chapter
-- `--tiny` or `-t`: don't write the manga name in the title (useful if using collections)
-- `--update` or `-U`: updates the program to the latest release on github, **you must have cloned the repo to use it**
+
+## manga
+`python3 main.py manga [-h] NAME (-a | -e | -i | -cl | -d) [-r RSS] [-l LINK] [-f FETCHER] [-c [CHAPTERS [CHAPTERS ...]]]`
+
+- `--help` or `-h`: shows the help for this mode
+- `NAME`: name of the manga in the autodl json that will be used
+- `--add` or `-a`: add the `NAME` manga to the autodl json
+- `--edit` or `-e`: edit the `NAME` manga in the autodl json
+- `--info` or `-i`: shows the infos of the `NAME` manga
+- `--chapter-list` or `-cl`: list all the downloaded chapters of the `NAME` manga
+- `--delete` or `-d`: delete the `NAME` manga from the autodl json
+
+The following options are required for `-a` and optional for `-e`:
+- `-rss` or `--rss`: rss link of the `NAME` manga
+- `--link` or `-l`: link of the `NAME` manga
+- `--fetcher` or `-f`: fetcher name for the `NAME` manga
+
+This option is optional for both `-a` and `-e`:
+- `--chapters` or `-c`: list already downloaded chapters for the `NAME` manga separated by a space *(example: 2 5.5 3 7 50.1)*
+
+### autodl
+`python3 main.py autodl [-h] [-o OUTPUT] [-t] [-q]`
+
+- `--help` or `-h`: shows the help for this mode
+- `--output` or `-o`: the path (absolute or relative) to the folder where to save the data
+- `--tiny` or `-t`: don't write the manga name in the title (useful if using ebook libraries)
+- `--quiet` or `-q`: removes the verbose of the autodl
 
 ## image fetcher API
 - `.image` is a `string` with link to the image  
