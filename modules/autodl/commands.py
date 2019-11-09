@@ -77,7 +77,7 @@ class Controller:
 			if self.missing_chaps:
 				print(f"new chapter(s) for {name}: {', '.join(map(str, self.missing_chaps))}")
 			else:
-				print(f"no new chapter fo {name}")
+				print(f"no new chapter for {name}")
 
 	def download(self, name:str):
 		manga = self.db.get(name)

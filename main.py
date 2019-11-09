@@ -1,6 +1,6 @@
 from modules import Pyscandl, arg_parser
 from modules.fetchers import fetcher_enum
-from modules.excepts import NoFetcherGiven
+from modules.excepts import NoFetcherGiven, DryNoSauceHere
 from modules.install import updater
 from modules.autodl import commands
 
@@ -14,17 +14,21 @@ if __name__ == "__main__":
 		print(f"current mangas in the autodl db are: {', '.join(commands.Controller().list_mangas())}")
 
 	elif args.subparser == "manual":
-		if args.fetcher is None:
-			raise NoFetcherGiven
-
 		fetcher = fetcher_enum.Fetcher.get(args.fetcher)
-		pyscandl = Pyscandl.Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, keepimage=args.keep_images, all=args.all, link=args.link, manga=args.manga, download_number=args.download_number, quiet=args.quiet, skip=args.start, tiny=args.tiny)
+		pyscandl = Pyscandl.Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, keepimage=args.keep_images, all=args.all, link=args.link, manga=args.manga, download_number=args.download_number, quiet=args.quiet, skip=args.skip, tiny=args.tiny)
 		pyscandl.full_download()
 
 	elif args.subparser == "manga":
 		json = commands.Controller()
 
 		if args.add:
+			if args.rss is None:
+				raise DryNoSauceHere(manual=False, rss=True)
+			if args.link is None:
+				raise DryNoSauceHere(manual=False)
+			if args.fetcher is None:
+				raise NoFetcherGiven
+
 			json = commands.Controller()
 			chaps = [float(chap) if "." in chap else int(chap) for chap in args.chapters]
 			json.add(args.name, args.rss, args.link, args.fetcher, chaps)
