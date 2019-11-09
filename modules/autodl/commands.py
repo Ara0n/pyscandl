@@ -3,7 +3,7 @@ import json
 import requests
 import cfscrape
 from xml.etree import ElementTree
-from ..excepts import IsStandalone
+from ..excepts import IsStandalone, FetcherNotFound
 from ..Pyscandl import Pyscandl
 from ..fetchers.fetcher_enum import Fetcher
 
@@ -26,13 +26,14 @@ class Controller:
 			json.dump(self.db, data, indent=4)
 
 	def add(self, name:str, rss:str, link:str, fetcher:str, chapters:list=[]):
-		standalone_check = Fetcher.get(fetcher)
-		if standalone_check(link=link).standalone:
+		if fetcher.upper() not in [i.name for i in Fetcher]:
+			raise FetcherNotFound(fetcher)
+		if fetcher.lower() in ["nhentai"]:
 			raise IsStandalone(name)
 		self.db[name] = {
 			"rss": rss,
 			"link": link,
-			"fetcher": fetcher,
+			"fetcher": fetcher.upper(),
 			"chapters": sorted(chapters, reverse=True)
 		}
 
