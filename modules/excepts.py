@@ -7,8 +7,13 @@ class TooManySauce(Exception):
 
 
 class DryNoSauceHere(Exception):
-	def __init__(self):
-		Exception.__init__(self, "you need to give either a link to the manga or its name")
+	def __init__(self, manual=True, rss=False):
+		if manual:
+			Exception.__init__(self, "you need to give either a link to the manga or its name")
+		elif rss:
+			Exception.__init__(self, "you need to give a link to rss of the manga")
+		else:
+			Exception.__init__(self, "you need to give a link to the manga")
 
 
 class MangaNotFound(Exception):
