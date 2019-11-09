@@ -66,7 +66,7 @@ class Pyscandl:
 			if not self.quiet:
 				print(".", end="", flush=True)
 
-	def _full_chapter(self):
+	def full_chapter(self):
 		# fetching binary data an entire chapter
 		if not self.quiet:
 			if self.fetcher.standalone:
@@ -98,7 +98,7 @@ class Pyscandl:
 		for loop in range(self.skip):
 			self.fetcher.next_image()
 
-	def _create_pdf(self):
+	def create_pdf(self):
 		if not self.quiet:
 			print("\nconverting...", end=" ")
 		# loading the downloaded images if keep mode
@@ -147,7 +147,7 @@ class Pyscandl:
 			if not self.quiet:
 				print("empty")
 
-	def _next_chapter(self):
+	def next_chapter(self):
 		# changes to the next chapter and prepare the next image folder
 		self.fetcher.next_chapter()
 		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
@@ -177,15 +177,15 @@ class Pyscandl:
 			if self.keepimage:
 				self._keep_full_chapter()
 			else:
-				self._full_chapter()
-			self._create_pdf()
+				self.full_chapter()
+			self.create_pdf()
 			while not self.fetcher.is_last_chapter() and (self.all or counter < self.download_number):
-				self._next_chapter()
+				self.next_chapter()
 				if self.keepimage:
 					self._keep_full_chapter()
 				else:
-					self._full_chapter()
-				self._create_pdf()
+					self.full_chapter()
+				self.create_pdf()
 				counter += 1
 		except KeyboardInterrupt:
 			if not self.quiet:
