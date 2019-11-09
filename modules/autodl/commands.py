@@ -84,10 +84,24 @@ class Controller:
 	def download(self, name:str):
 		manga = self.db.get(name)
 		fetcher = Fetcher.get(manga.get("fetcher"))
-		for chapter in self.missing_chaps:
-			Pyscandl(fetcher, chapter, self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny).full_download()
-			self.db.get(name).get("chapters").append(chapter)
-		self.db.get(name).get("chapters").sort(reverse=True)
+		if self.missing_chaps:
+			downloader = Pyscandl(fetcher, self.missing_chaps[0], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
+			for chapter in self.missing_chaps:
+				if "." in downloader.fetcher.chapter_number:
+					fetch_chap = float(downloader.fetcher.chapter_number)
+				else:
+					fetch_chap = int(downloader.fetcher.chapter_number)
+				while fetch_chap < chapter:
+					downloader.next_chapter()
+					if "." in downloader.fetcher.chapter_number:
+						fetch_chap = float(downloader.fetcher.chapter_number)
+					else:
+						fetch_chap = int(downloader.fetcher.chapter_number)
+				downloader.full_chapter()
+				downloader.create_pdf()
+				self.db.get(name).get("chapters").append(chapter)
+			downloader.fetcher.quit()
+			self.db.get(name).get("chapters").sort(reverse=True)
 
 	def list_mangas(self):
 		return self.db.keys()
