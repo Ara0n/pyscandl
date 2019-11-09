@@ -14,7 +14,7 @@ class Fetcher(Enum):
 		for i in cls:
 			if i.name == fetcher_name_request.upper():
 				return i.value
-		raise excepts.NoFetcherFound(fetcher_name_request)
+		raise excepts.FetcherNotFound(fetcher_name_request)
 
 	@classmethod
 	def list(cls):

@@ -21,7 +21,7 @@ class MangaNotFound(Exception):
 		Exception.__init__(self, f"the manga {name} was not found")
 
 
-class NoFetcherFound(Exception):
+class FetcherNotFound(Exception):
 	def __init__(self, fetcher):
 		Exception.__init__(self, f"{fetcher.upper()} is not a supported fetcher the list of supported fetchers is: " + ", ".join(fetcher_enum.Fetcher.list()))
 
