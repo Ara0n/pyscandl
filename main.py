@@ -45,6 +45,10 @@ if __name__ == "__main__":
 				  f"\tnumber of chapters already downloaded: {len(infos.get('chapters'))}\n"
 				  f"\tlast chapter downloaded: {infos.get('chapters')[0]}")
 
+		elif args.chapter_list:
+			chaps = commands.Controller().manga_info(args.name).get("chapters")
+			print(f"the already downloaded chapters for {args.name} are: {', '.join([str(chap) for chap in chaps])}")
+
 		elif args.delete:
 			json = commands.Controller()
 			if json.delete_manga(args.name):

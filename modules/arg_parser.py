@@ -37,6 +37,7 @@ def parse_arg():
 	option.add_argument("-a", "--add", action="store_true", help="add a new manga to the auto downloader")
 	option.add_argument("-e", "--edit", action="store_true", help="modify infos for one of the already existing manga in the auo downloader")
 	option.add_argument("-i", "--info", action="store_true", help="prints the info for the named manga in the auto updater")
+	option.add_argument("-cl", "--chapter-list", action="store_true", help="lists all the dowloaded chapters (warning: can be huge)")
 	option.add_argument("-d", "--delete", action="store_true", help="deletes the corresponding manga from the auto downloader")
 
 	manga.add_argument("-r", "--rss", type=str, help="rss link with the update notification of the manga")
