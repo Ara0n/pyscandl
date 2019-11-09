@@ -13,7 +13,7 @@ class Fetcher(Enum):
 	def get(cls, fetcher_name_request: str):
 		for i in cls:
 			if i.name == fetcher_name_request.upper():
-				return i
+				return i.value
 		raise excepts.NoFetcherFound(fetcher_name_request)
 
 	@classmethod

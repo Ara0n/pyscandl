@@ -26,8 +26,8 @@ class Controller:
 			json.dump(self.db, data, indent=4)
 
 	def add(self, name:str, rss:str, link:str, fetcher:str, chapters:list=[]):
-		fetcher = Fetcher.get(fetcher)
-		if fetcher.standalone:
+		standalone_check = Fetcher.get(fetcher)
+		if standalone_check(link=link).standalone:
 			raise IsStandalone(name)
 		self.db[name] = {
 			"rss": rss,
@@ -36,14 +36,14 @@ class Controller:
 			"chapters": sorted(chapters, reverse=True)
 		}
 
-	def modify(self, name:str, rss:str=None, link:str=None, fetcher=None, chapters:list=None):
+	def edit(self, name:str, rss:str=None, link:str=None, fetcher=None, chapters:list=None):
 		if rss is not None:
 			self.db.get(name)["rss"] = rss
 		if link is not None:
 			self.db.get(name)["link"] = link
 		if fetcher is not None:
-			standtest = Fetcher.get(fetcher)
-			if standtest.standalone:
+			standalone_check = Fetcher.get(fetcher)
+			if standalone_check.standalone:
 				raise IsStandalone(name)
 			self.db.get(name)["fetcher"] = fetcher
 		if chapters is not None:
@@ -83,7 +83,7 @@ class Controller:
 		manga = self.db.get(name)
 		fetcher = Fetcher.get(manga.get("fetcher"))
 		for chapter in self.missing_chaps:
-			Pyscandl(fetcher, chapter, self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
+			Pyscandl(fetcher, chapter, self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny).full_download()
 			self.db.get(name).get("chapters").append(chapter)
 		self.db.get(name).get("chapters").sort(reverse=True)
 
@@ -94,7 +94,7 @@ class Controller:
 		return self.db.get(name)
 
 	def delete_manga(self, name):
-		if name is self.db:
+		if name in self.db:
 			del self.db[name]
 			return True
 		else:
