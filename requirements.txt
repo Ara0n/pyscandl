@@ -2,10 +2,10 @@ certifi==2019.9.11
 cfscrape==2.0.8
 chardet==3.0.4
 gitdb2==2.0.6
-GitPython==3.0.3
+GitPython==3.0.4
 idna==2.8
 img2pdf==0.3.3
-Pillow==6.2.0
+Pillow==6.2.1
 requests==2.22.0
 selenium==3.141.0
 smmap2==2.0.5
