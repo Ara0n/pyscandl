@@ -93,7 +93,7 @@ class Controller:
 			downloader = Pyscandl(fetcher, 1, self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
 			for chapter in self.missing_chaps:
 				try:
-					downloader.fetcher.go_to_chapter(chapter)
+					downloader.go_to_chapter(chapter)
 					downloader.full_chapter()
 					downloader.create_pdf()
 					self.db.get(name).get("chapters").append(chapter)

@@ -1,4 +1,4 @@
-from .excepts import DryNoSauceHere, TooManySauce
+from .excepts import DryNoSauceHere, TooManySauce, EmptyChapter
 from PIL import Image
 import img2pdf
 import requests
@@ -142,10 +142,27 @@ class Pyscandl:
 				print("converted")
 		else:
 			# creating an empty file to aknowledge the presence of a downed chapter
-			with open(f"{self.pdf_path}.empty", "wb"):
-				pass
-			if not self.quiet:
-				print("empty")
+			raise EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number)
+
+	def go_to_chapter(self, chap_num):
+		self.fetcher.go_to_chapter(chap_num)
+		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
+		self._img_bin_list = []
+		# prepares the next pdf path and name
+		if self.tiny:
+			if self.fetcher.standalone:
+				self.pdf_path = f"{self.output}{self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"{self.fetcher.chapter_name}"
+			else:
+				self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+		else:
+			if self.fetcher.standalone:
+				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
+			else:
+				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self.name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 	def next_chapter(self):
 		# changes to the next chapter and prepare the next image folder
@@ -178,14 +195,24 @@ class Pyscandl:
 				self._keep_full_chapter()
 			else:
 				self.full_chapter()
-			self.create_pdf()
+
+			try:
+				self.create_pdf()
+			except EmptyChapter(self.fetcher.manga_namek, self.fetcher.chapter_number):
+				if not self.quiet:
+					print("empty")
 			while not self.fetcher.is_last_chapter() and (self.all or counter < self.download_number):
 				self.next_chapter()
 				if self.keepimage:
 					self._keep_full_chapter()
 				else:
 					self.full_chapter()
-				self.create_pdf()
+
+				try:
+					self.create_pdf()
+				except EmptyChapter(self.fetcher.manga_namek, self.fetcher.chapter_number):
+					if not self.quiet:
+						print("empty")
 				counter += 1
 		except KeyboardInterrupt:
 			if not self.quiet:
