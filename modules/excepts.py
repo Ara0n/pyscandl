@@ -34,3 +34,8 @@ class NoFetcherGiven(Exception):
 class IsStandalone(Exception):
 	def __init__(self, name):
 		Exception.__init__(self, f"{name} has a standalone type fetcher and thus can't be used with autodl")
+
+
+class EmptyChapter(Exception):
+	def __init__(self, manga, chap_num):
+		Exception.__init__(self, f"chapter {chap_num} of {manga} is empty")

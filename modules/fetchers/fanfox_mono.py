@@ -48,6 +48,13 @@ class FanfoxMono:
 		except exceptions.NoSuchElementException:
 			pass
 
+		# check if the chapter is empty
+		try:
+			if self.driver.find_element_by_class_name("detail-block-content").text.lower() == "no images":
+				raise excepts.EmptyChapter(self.manga_name, temp_num)
+		except exceptions.NoSuchElementException:
+			pass
+
 		self.npage = 1
 		self.chapter_number = temp_num
 		self._re_chapnum = re.compile(r"^(?:Vol\.(?:\d+|TBD) )?Ch\.(\d+(\.\d+)?)")
@@ -85,6 +92,13 @@ class FanfoxMono:
 		self.urlpage = f"{self._link}c{self.chapter_number}/1.html"
 		self.npage = 1
 		self.driver.get(self.urlpage)
+
+		# check if the chapter is empty
+		try:
+			if self.driver.find_element_by_class_name("detail-block-content").text.lower() == "no images":
+				raise excepts.EmptyChapter(self.manga_name, chap_num)
+		except exceptions.NoSuchElementException:
+			pass
 		self._refresh_images()
 
 		temp_title = self.driver.find_element_by_class_name("reader-header-title-2").text

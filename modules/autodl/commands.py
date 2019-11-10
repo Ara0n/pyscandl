@@ -4,7 +4,7 @@ import requests
 import cfscrape
 import re
 from xml.etree import ElementTree
-from ..excepts import IsStandalone, FetcherNotFound
+from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter
 from ..Pyscandl import Pyscandl
 from ..fetchers.fetcher_enum import Fetcher
 
@@ -90,12 +90,16 @@ class Controller:
 		manga = self.db.get(name)
 		fetcher = Fetcher.get(manga.get("fetcher"))
 		if self.missing_chaps:
-			downloader = Pyscandl(fetcher, self.missing_chaps[0], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
+			downloader = Pyscandl(fetcher, 1, self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
 			for chapter in self.missing_chaps:
-				downloader.fetcher.go_to_chapter(chapter)
-				downloader.full_chapter()
-				downloader.create_pdf()
-				self.db.get(name).get("chapters").append(chapter)
+				try:
+					downloader.fetcher.go_to_chapter(chapter)
+					downloader.full_chapter()
+					downloader.create_pdf()
+					self.db.get(name).get("chapters").append(chapter)
+				except EmptyChapter:
+					if not self.quiet:
+						print(f"skipping {name} chapter {chapter}: empty, wont be added in the downloaded list")
 			downloader.fetcher.quit()
 			self.db.get(name).get("chapters").sort(reverse=True)
 
