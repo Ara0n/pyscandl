@@ -38,7 +38,7 @@ class NHentai:
 		self.image = f"{self._image_root}{self.npage}.{self.ext}"
 		self.manga_name = "NSFW"
 		self.chapter_number = 1
-		self.chapter_name = self._manga_json.get("title").get("pretty")
+		self.chapter_name = self._manga_json.get("title").get("pretty").replace("/", "-")
 
 	def next_image(self):
 		self.ext = self._corresponding_table.get(self._image_list[self.npage].get('t'))

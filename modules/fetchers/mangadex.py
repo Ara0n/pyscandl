@@ -45,7 +45,7 @@ class Mangadex:
 	def _set_current_chap_info(self, chap_id):
 		self.npage = 1
 		self._current_chapter_json = self.scrapper.get(f"https://mangadex.org/api/chapter/{chap_id}").json()
-		self.chapter_name = self._current_chapter_json.get("title")
+		self.chapter_name = self._current_chapter_json.get("title").replace("/", "-")
 
 		self.chapter_number = str(self._current_chapter_json.get("chapter")).split(".")[0].zfill(3)
 		if "." in str(self._current_chapter_json.get("chapter")):
