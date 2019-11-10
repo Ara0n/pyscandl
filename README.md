@@ -100,6 +100,7 @@ This option is optional for both `-a` and `-e`:
 ## image fetcher API
 - `.image` is a `string` with link to the image  
 - `.next_image()` changes `.image` to the next in the chapter  
+- `.go_to_chapter()` goes to the asked chapter if it exists
 - `.next_chapter()` changes `.image` to the first in the next chapter
 - `.is_last_image()` which returns `True` if it's the last page of the chapter
 - `.is_last_chapter()` which returns `True` if it's the last chapter available 

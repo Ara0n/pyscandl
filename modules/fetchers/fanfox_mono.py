@@ -76,6 +76,22 @@ class FanfoxMono:
 		self.ext = self.image.split(".")[-1]
 		self.npage += 1
 
+	def go_to_chapter(self, chap_num):
+		chap_num = str(chap_num)
+		if "." in chap_num:
+			self.chapter_number = chap_num.split(".")[0].zfill(3) + chap_num.split(".")[1]
+		else:
+			self.chapter_number = chap_num.zfill(3)
+		self.urlpage = f"{self._link}c{self.chapter_number}/1.html"
+		self.npage = 1
+		self.driver.get(self.urlpage)
+		self._refresh_images()
+
+		temp_title = self.driver.find_element_by_class_name("reader-header-title-2").text
+		self.chapter_name = re.search(r"(?:(Vol\.\d{2} )?Ch\.\d{3}(\.\d)?\s?((- )?(Vol.\d+ )?(Ch.\d+:? ))?)(.*)", temp_title).group(7)
+		if self.chapter_name is None:
+			self.chapter_name = ""
+
 	def next_chapter(self):
 		chap_name = self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child")
 		self.chapter_name = chap_name.get_attribute("title")

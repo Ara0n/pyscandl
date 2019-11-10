@@ -64,6 +64,15 @@ class Mangadex:
 	def is_last_image(self):
 		return self.npage == len(self._img_ids)
 
+	def go_to_chapter(self, chap_num):
+		self._chap_id_pos = 0
+		while self._chap_id_pos < len(self._ordered_chaps_json) and self._ordered_chaps_json[self._chap_id_pos][1].get("chapter") != str(chap_num):
+			self._chap_id_pos += 1
+		if self._chap_id_pos >= len(self._ordered_chaps_json):
+			raise excepts.MangaNotFound(f"{self.manga_name}, chapter {chap_num}")
+
+		self._set_current_chap_info(self._ordered_chaps_json[self._chap_id_pos][0])
+
 	def next_chapter(self):
 		self._chap_id_pos += 1
 		self._set_current_chap_info(self._ordered_chaps_json[self._chap_id_pos][0])

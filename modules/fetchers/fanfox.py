@@ -5,6 +5,7 @@ import re
 import os
 
 
+# FIXME: https://fanfox.net/manga/boku_no_hero_academia/vTBD/c200/1.html
 class Fanfox:
 	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
 		self.standalone = False
@@ -72,6 +73,25 @@ class Fanfox:
 			pass
 		self.image = self.driver.find_element_by_class_name("reader-main-img").get_attribute("src").split("?")[0]
 		self.ext = self.image.split(".")[-1]
+
+	def go_to_chapter(self, chap_num):
+		chap_num = str(chap_num)
+		if "." in chap_num:
+			self.chapter_number = chap_num.split(".")[0].zfill(3) + chap_num.split(".")[1]
+		else:
+			self.chapter_number = chap_num.zfill(3)
+		self.urlpage = f"{self._link}c{self.chapter_number}/1.html"
+		self.npage = 1
+		self.driver.get(self.urlpage)
+
+		temp_title = self.driver.find_element_by_class_name("reader-header-title-2").text
+		self.chapter_name = re.search(r"(?:(Vol\.\d{2} )?Ch\.\d{3}(\.\d)?\s?((- )?(Vol.\d+ )?(Ch.\d+:? ))?)(.*)", temp_title).group(7)
+		if self.chapter_name is None:
+			self.chapter_name = ""
+		self._last_page = self.driver.find_element_by_css_selector(".pager-list-left span a:last-child").text
+		if self._last_page == ">":
+			self._last_page = self.driver.find_element_by_css_selector(".pager-list-left span a:nth-last-child(2)").text
+		self._last_page = int(self._last_page)
 
 	def next_chapter(self):
 		chap_name = self.driver.find_element_by_css_selector(".pager-list-left .chapter:last-child")

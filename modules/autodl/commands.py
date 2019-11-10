@@ -92,16 +92,7 @@ class Controller:
 		if self.missing_chaps:
 			downloader = Pyscandl(fetcher, self.missing_chaps[0], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
 			for chapter in self.missing_chaps:
-				if "." in downloader.fetcher.chapter_number:
-					fetch_chap = float(downloader.fetcher.chapter_number)
-				else:
-					fetch_chap = int(downloader.fetcher.chapter_number)
-				while fetch_chap < chapter:
-					downloader.next_chapter()
-					if "." in downloader.fetcher.chapter_number:
-						fetch_chap = float(downloader.fetcher.chapter_number)
-					else:
-						fetch_chap = int(downloader.fetcher.chapter_number)
+				downloader.fetcher.go_to_chapter(chapter)
 				downloader.full_chapter()
 				downloader.create_pdf()
 				self.db.get(name).get("chapters").append(chapter)
