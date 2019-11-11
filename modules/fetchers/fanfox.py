@@ -5,6 +5,7 @@ import re
 import os
 
 
+# TODO: merge in one mega fetcher fanfox and fanfox_mono
 class Fanfox:
 	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
 		self.standalone = False
@@ -98,6 +99,7 @@ class Fanfox:
 			pass
 
 		self.image = self.driver.find_element_by_class_name("reader-main-img").get_attribute("src").split("?")[0]
+		self.ext = self.image.split(".")[-1]
 		temp_title = self.driver.find_element_by_class_name("reader-header-title-2").text
 		self.chapter_name = re.search(r"(?:(Vol\.\d{2} )?Ch\.\d{3}(\.\d)?\s?((- )?(Vol.\d+ )?(Ch.\d+:? ))?)(.*)", temp_title).group(7).replace("/", "-")
 		if self.chapter_name is None:
