@@ -25,7 +25,7 @@ class Fanfox:
 
 		# regex used
 		self._c_eval_args = re.compile(r"eval\(function\(p,a,c,k,e,d\).*?p;}\('(?P<arg1>.*?;)',(?P<arg2>\d+),(?P<arg3>\d+),'(?P<arg4>.*?)'.split")
-		self._c_chap_name = re.compile(r"<p class=\"reader-header-title-2\">(?:Vol\.(?:\d+|TBD) )?Ch\.\d+ ?(?P<chap_name>.*?)</p>")
+		self._c_chap_name = re.compile(r"<p class=\"reader-header-title-2\">(?:Vol\.(?:\d+|TBD) )?Ch\.\d+(?:\.\d+)? ?(?P<chap_name>.*?)</p>")
 		self._c_multi_max_page = re.compile(r"(?:data-page=\")(?P<page_num>\d+)")
 		self._c_multi_cid = re.compile(r"(?:var chapterid =)(?P<cid>\d+)(?:;)")
 		self._c_multi_page_list = re.compile(r"(?:var pix=\")(?P<link>.*?)\".*?\[(?P<chaps>\".*?\")\]")
