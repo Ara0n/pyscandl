@@ -30,7 +30,10 @@ if __name__ == "__main__":
 				raise NoFetcherGiven
 
 			json = commands.Controller()
-			chaps = [float(chap) if "." in chap else int(chap) for chap in args.chapters]
+			if args.chapters:
+				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chapters]
+			else:
+				chaps = []
 			json.add(args.name, args.rss, args.link, args.fetcher, chaps)
 			json.save()
 
