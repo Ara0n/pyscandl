@@ -23,7 +23,7 @@ class Pyscandl:
 
 		self._header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
 					   "Set-Cookie": f"domain={self.fetcher.domain}"}
-		self._skip = skip
+		self._nskip = skip
 		self._quiet = quiet
 		self._keepimage = keepimage
 		self._all = all
@@ -95,7 +95,7 @@ class Pyscandl:
 		self._dl_image()
 
 	def _skip(self):
-		for loop in range(self._skip):
+		for loop in range(self._nskip):
 			self.fetcher.next_image()
 
 	def create_pdf(self):
