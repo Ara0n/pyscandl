@@ -143,3 +143,6 @@ This option is optional for both `-a` and `-e`:
 - `.keep_full_chapter()` download the images of the chapter (like with the `-k` option)
 - `.next_chapter()` goes to the next available chapter
 - `.fetcher` where the corresponding fetcher is stored, usefull if conversing with it directly
+
+## credits
+- Roméo for the help with the rework of fanfox, especially for the reverse engineering of fanfox.net
