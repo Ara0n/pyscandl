@@ -24,15 +24,15 @@ class Pyscandl:
 		self._header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
 					   "Set-Cookie": f"domain={self.fetcher.domain}"}
 		self._skip = skip
-		self.quiet = quiet
-		self.keepimage = keepimage
-		self.all = all
+		self._quiet = quiet
+		self._keepimage = keepimage
+		self._all = all
 		self._download_number = download_number
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"  # save path for images
 		self._img_bin_list = []
-		self.tiny = tiny
+		self._tiny = tiny
 
-		if self.tiny:
+		if self._tiny:
 			if self.fetcher.standalone:
 				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
@@ -63,28 +63,28 @@ class Pyscandl:
 
 		with open(f"{self._path}{self.fetcher.npage}.{self.fetcher.ext}", "wb") as img:
 			img.write(requests.get(self.fetcher.image, headers=self._header).content)
-			if not self.quiet:
+			if not self._quiet:
 				print(".", end="", flush=True)
 
 	def full_chapter(self):
 		# fetching binary data an entire chapter
-		if not self.quiet:
+		if not self._quiet:
 			if self.fetcher.standalone:
 				print(f"fetching: {self.fetcher.chapter_name}")
 			else:
 				print(f"fetching: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
 		while not self.fetcher.is_last_image():
 			self._img_bin_list.append(requests.get(self.fetcher.image, headers=self._header).content)
-			if not self.quiet:
+			if not self._quiet:
 				print(".", end="", flush=True)
 			self.fetcher.next_image()
 		self._img_bin_list.append(requests.get(self.fetcher.image, headers=self._header).content)
-		if not self.quiet:
+		if not self._quiet:
 			print(".", end="", flush=True)
 
 	def keep_full_chapter(self):
 		# download a full chapter
-		if not self.quiet:
+		if not self._quiet:
 			if self.fetcher.standalone:
 				print(f"downloading: {self.fetcher.chapter_name}")
 			else:
@@ -99,10 +99,10 @@ class Pyscandl:
 			self.fetcher.next_image()
 
 	def create_pdf(self):
-		if not self.quiet:
+		if not self._quiet:
 			print("\nconverting...", end=" ")
 		# loading the downloaded images if keep mode
-		if self.keepimage:
+		if self._keepimage:
 			for loop in range(1, self.fetcher.npage + 1):
 				try:
 					with open(f"{self._path}{loop}.jpg", "rb") as img:
@@ -125,7 +125,7 @@ class Pyscandl:
 					pdf.write(img2pdf.convert(self._img_bin_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
 			except Exception as e:
 				# removing alpha from all the images of the chapter
-				if not self.quiet:
+				if not self._quiet:
 					print("removing alpha...", end=" ")
 				if e.args[0] == "Refusing to work on images with alpha channel":
 					dealpha_list = []
@@ -138,7 +138,7 @@ class Pyscandl:
 						pdf.write(img2pdf.convert(dealpha_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
 				else:
 					raise e
-			if not self.quiet:
+			if not self._quiet:
 				print("converted")
 		else:
 			# creating an empty file to aknowledge the presence of a downed chapter
@@ -149,7 +149,7 @@ class Pyscandl:
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
 		self._img_bin_list = []
 		# prepares the next pdf path and name
-		if self.tiny:
+		if self._tiny:
 			if self.fetcher.standalone:
 				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
@@ -170,7 +170,7 @@ class Pyscandl:
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
 		self._img_bin_list = []
 		# prepares the next pdf path and name
-		if self.tiny:
+		if self._tiny:
 			if self.fetcher.standalone:
 				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
@@ -191,7 +191,7 @@ class Pyscandl:
 			# emulating a do while
 			self._skip()
 			counter = 1
-			if self.keepimage:
+			if self._keepimage:
 				self.keep_full_chapter()
 			else:
 				self.full_chapter()
@@ -199,11 +199,11 @@ class Pyscandl:
 			try:
 				self.create_pdf()
 			except EmptyChapter(self.fetcher.manga_namek, self.fetcher.chapter_number):
-				if not self.quiet:
+				if not self._quiet:
 					print("empty")
-			while not self.fetcher.is_last_chapter() and (self.all or counter < self._download_number):
+			while not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number):
 				self.next_chapter()
-				if self.keepimage:
+				if self._keepimage:
 					self.keep_full_chapter()
 				else:
 					self.full_chapter()
@@ -211,13 +211,13 @@ class Pyscandl:
 				try:
 					self.create_pdf()
 				except EmptyChapter(self.fetcher.manga_namek, self.fetcher.chapter_number):
-					if not self.quiet:
+					if not self._quiet:
 						print("empty")
 				counter += 1
 		except KeyboardInterrupt:
-			if not self.quiet:
+			if not self._quiet:
 				print("\nmanual interruption")
 		finally:
 			self.fetcher.quit()
-			if not self.quiet:
+			if not self._quiet:
 				print("end of the download")
