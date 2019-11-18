@@ -50,6 +50,9 @@ class Fanfox:
 		self._req = requests.get(url, cookies={"isAdult": "1"})
 		if "<title>404</title>" in self._req.text:
 			raise excepts.MangaNotFound(f"{self.manga_name}, chapter {self.chapter_number}")
+		if '<p class="detail-block-content">No Images</p>' in self._req.text:
+			raise excepts.EmptyChapter(self.manga_name, self.chapter_number)
+
 		self._mono = self._req.text.count("dm5_key") == 1
 		self.chapter_name = self._c_chap_name.search(self._req.text).group("chap_name")
 
