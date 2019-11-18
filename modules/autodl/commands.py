@@ -90,7 +90,10 @@ class Controller:
 		manga = self.db.get(name)
 		fetcher = Fetcher.get(manga.get("fetcher"))
 		if self.missing_chaps:
-			downloader = Pyscandl(fetcher, manga.get("chapters")[-1], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
+			if manga.get("chapters"):
+				downloader = Pyscandl(fetcher, manga.get("chapters")[-1], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
+			else:
+				downloader = Pyscandl(fetcher, self.missing_chaps[0], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
 			for chapter in self.missing_chaps:
 				try:
 					downloader.go_to_chapter(chapter)
