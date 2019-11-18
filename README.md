@@ -14,9 +14,9 @@ There is a `banlist/` folder where you can place the images you don't want to ap
 4) install the dependencies for the program
 ```
 cd path/to/project/root
-pip3 install -r requirements.txt #might be pip instead of pip3 and need to be done as admin/sudo or in a venv
+pip3 install -r requirements.txt
 ```
-5) install the [geckodriver](https://github.com/mozilla/geckodriver/releases/latest) for firefox
+5) install `nodejs`
 6) you can now use the program
 
 **you can update it by running `python3 main.py -U`**
@@ -31,16 +31,14 @@ pip3 install -r requirements.txt #might be pip instead of pip3 and need to be do
 cd path/to/project/root
 pip3 install -r requirements.txt
 ```
-5) install the [geckodriver](https://github.com/mozilla/geckodriver/releases/latest) for firefox
+5) install `nodejs`
 6) you can now use the program  
 **you'll need to download each release from the [release page](https://github.com/Ara0n/pyscandl/release), but it'll be lighter in comparison**
 
 ## requirements
 This is a python3 program that uses:
 - the dependencies in `requirements.txt`
-- the [geckodriver](https://github.com/mozilla/geckodriver/releases/latest)
-- `nodejs` for `cfscrape`
-- [Firefox](https://www.mozilla.org/firefox/download/) for `selenium`
+- `nodejs` for `fanfox` and `cfscrape`
 
 It is developed on a Debian 10 Buster computer so it is verified for Debian 10 and should work at least for the older debians and the debian-likes, provided that you have the dependencies listed up above.  
 As for other linux distribution, windows and MacOSX I haven't tested the compatibility (windows will be tested later down the run) but it may work if you have all the dependencies.
@@ -98,23 +96,29 @@ This option is optional for both `-a` and `-e`:
 - `--quiet` or `-q`: removes the verbose of the autodl
 
 ## image fetcher API
-- `.image` is a `string` with link to the image  
+`fetcher(self, link:str=None, manga:str=None, chapstart:int=1):`
+### args
+- `link=`: link to the manga you initialize the fetcher to
+- `manga=`: manga name used to initialize to
+- `chapstart=`: chapter on which the fetcher is initialized on
+**you MUST give either a `link` or `manga` when initializing**
+
+### API usage
 - `.next_image()` changes `.image` to the next in the chapter  
-- `.go_to_chapter()` goes to the asked chapter if it exists
+- `.go_to_chapter(chap)` goes to the chapter `chap`
 - `.next_chapter()` changes `.image` to the first in the next chapter
 - `.is_last_image()` which returns `True` if it's the last page of the chapter
 - `.is_last_chapter()` which returns `True` if it's the last chapter available 
+- `quit()` to close properly the fetcher
 - `.author` string with the name of the author, defaults to `"TBD"` if nothing is found
-- `.ext` string with the image extention name
-- `.manga_name` is a `string` with the complete name of the manga or the webtoon of the current `.image`
-- `.author` string containing the name of the author (not the artist) if nothing is found it has a value of `"TBD"`
-- `.ext` is a string containing the extension type of the image
 - `.chapter_number` is an `int` (or a `float` if the chapter is an extra) containing the number of the chapter or the current `.image`
 - `.chapter_name` is a `string` containing the title of the chapter of the current `.image` (the `string` is empty if no name is detected) 
+- `.domain` a `string` with the website domain, format is: `.domname.ext`
+- `.ext` string with the image extension name
+- `.image` is a `string` with link to the image  
+- `.manga_name` is a `string` with the complete name of the manga or the webtoon of the current `.image`
 - `.npage` is an `int` giving the current page of the fetcher
 - `.standalone` is a `bool` signaling if true that it doesn't support multiple chapters (the verbose and save paths/names wont have mentions of chapters)
-- `.domain` a `string` with the website domain, format is: `.domname.ext`
-- `quit()` to close properly the fetcher
 - needs to raise the `MangaNotFound` exception from `exceptions` if the manga is not found
 
 ## Pyscandl()
@@ -131,3 +135,11 @@ This option is optional for both `-a` and `-e`:
 - `download_number=` **required if `all=False`**, is an `int` containing the number of chapters we need to download
 - `quiet=` deactivates the verbose while downloading
 
+### API usage
+- `.create_pdf()` creates the pdf of the last chapter where `.full_chapter()` or `.keep_full_chapter()` was used
+- `.full_download()` does the full download with the specified parameters when initialising
+- `.full_chapter()` fetches the complete chapter
+- `.go_to_chapter(chap)` goes to the chapter `chap`
+- `.keep_full_chapter()` download the images of the chapter (like with the `-k` option)
+- `.next_chapter()` goes to the next available chapter
+- `.fetcher` where the corresponding fetcher is stored, usefull if conversing with it directly
