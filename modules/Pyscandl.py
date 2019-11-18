@@ -17,35 +17,35 @@ class Pyscandl:
 		else:
 			raise TooManySauce
 		# creating output folder
-		self.output = (output[-1]=="/" and output or output+"/") + self.fetcher.manga_name + "/"
-		if not os.path.exists(self.output):
-			os.makedirs(self.output)
+		self._output = (output[-1] == "/" and output or output + "/") + self.fetcher.manga_name + "/"
+		if not os.path.exists(self._output):
+			os.makedirs(self._output)
 
-		self.header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
+		self._header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
 					   "Set-Cookie": f"domain={self.fetcher.domain}"}
-		self.skip = skip
+		self._skip = skip
 		self.quiet = quiet
 		self.keepimage = keepimage
 		self.all = all
-		self.download_number = download_number
-		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"  # save path for images
+		self._download_number = download_number
+		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"  # save path for images
 		self._img_bin_list = []
 		self.tiny = tiny
 
 		if self.tiny:
 			if self.fetcher.standalone:
-				self.pdf_path = f"{self.output}{self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"{self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
-				self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
 			if self.fetcher.standalone:
-				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
-				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 		self._banlist = []
 		ban_path = f"{os.path.dirname(os.path.abspath(__file__))}/../banlist"
@@ -58,11 +58,11 @@ class Pyscandl:
 
 	def _dl_image(self):
 		# single image download
-		if not os.path.exists(self.path):
-			os.makedirs(self.path)
+		if not os.path.exists(self._path):
+			os.makedirs(self._path)
 
-		with open(f"{self.path}{self.fetcher.npage}.{self.fetcher.ext}", "wb") as img:
-			img.write(requests.get(self.fetcher.image, headers=self.header).content)
+		with open(f"{self._path}{self.fetcher.npage}.{self.fetcher.ext}", "wb") as img:
+			img.write(requests.get(self.fetcher.image, headers=self._header).content)
 			if not self.quiet:
 				print(".", end="", flush=True)
 
@@ -74,15 +74,15 @@ class Pyscandl:
 			else:
 				print(f"fetching: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
 		while not self.fetcher.is_last_image():
-			self._img_bin_list.append(requests.get(self.fetcher.image, headers=self.header).content)
+			self._img_bin_list.append(requests.get(self.fetcher.image, headers=self._header).content)
 			if not self.quiet:
 				print(".", end="", flush=True)
 			self.fetcher.next_image()
-		self._img_bin_list.append(requests.get(self.fetcher.image, headers=self.header).content)
+		self._img_bin_list.append(requests.get(self.fetcher.image, headers=self._header).content)
 		if not self.quiet:
 			print(".", end="", flush=True)
 
-	def _keep_full_chapter(self):
+	def keep_full_chapter(self):
 		# download a full chapter
 		if not self.quiet:
 			if self.fetcher.standalone:
@@ -95,7 +95,7 @@ class Pyscandl:
 		self._dl_image()
 
 	def _skip(self):
-		for loop in range(self.skip):
+		for loop in range(self._skip):
 			self.fetcher.next_image()
 
 	def create_pdf(self):
@@ -103,16 +103,16 @@ class Pyscandl:
 			print("\nconverting...", end=" ")
 		# loading the downloaded images if keep mode
 		if self.keepimage:
-			for loop in range(1, self.fetcher.npage+1):
+			for loop in range(1, self.fetcher.npage + 1):
 				try:
-					with open(f"{self.path}{loop}.jpg", "rb") as img:
+					with open(f"{self._path}{loop}.jpg", "rb") as img:
 						self._img_bin_list.append(img.read())
 				except FileNotFoundError:
 					try:
-						with open(f"{self.path}{loop}.png", "rb") as img:
+						with open(f"{self._path}{loop}.png", "rb") as img:
 							self._img_bin_list.append(img.read())
 					except FileNotFoundError:
-						with open(f"{self.path}{loop}.gif", "rb") as img:
+						with open(f"{self._path}{loop}.gif", "rb") as img:
 							self._img_bin_list.append(img.read())
 
 		# removing the images found in the banlist
@@ -121,8 +121,8 @@ class Pyscandl:
 		if len(self._img_bin_list) > 0:
 			# creating the pdf
 			try:
-				with open(self.pdf_path, "wb") as pdf:
-					pdf.write(img2pdf.convert(self._img_bin_list, title=self.name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
+				with open(self._pdf_path, "wb") as pdf:
+					pdf.write(img2pdf.convert(self._img_bin_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
 			except Exception as e:
 				# removing alpha from all the images of the chapter
 				if not self.quiet:
@@ -134,8 +134,8 @@ class Pyscandl:
 						with io.BytesIO() as dealpha_img:
 							temp.save(dealpha_img, format="JPEG")
 							dealpha_list.append(dealpha_img.getvalue())
-					with open(self.pdf_path, "wb") as pdf:
-						pdf.write(img2pdf.convert(dealpha_list, title=self.name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
+					with open(self._pdf_path, "wb") as pdf:
+						pdf.write(img2pdf.convert(dealpha_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
 				else:
 					raise e
 			if not self.quiet:
@@ -146,44 +146,44 @@ class Pyscandl:
 
 	def go_to_chapter(self, chap_num):
 		self.fetcher.go_to_chapter(chap_num)
-		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
+		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
 		self._img_bin_list = []
 		# prepares the next pdf path and name
 		if self.tiny:
 			if self.fetcher.standalone:
-				self.pdf_path = f"{self.output}{self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"{self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
-				self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
 			if self.fetcher.standalone:
-				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
-				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 	def next_chapter(self):
 		# changes to the next chapter and prepare the next image folder
 		self.fetcher.next_chapter()
-		self.path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
+		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
 		self._img_bin_list = []
 		# prepares the next pdf path and name
 		if self.tiny:
 			if self.fetcher.standalone:
-				self.pdf_path = f"{self.output}{self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"{self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
-				self.pdf_path = f"{self.output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
 			if self.fetcher.standalone:
-				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
-				self.pdf_path = f"{self.output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
-				self.name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 	def full_download(self):
 		try:
@@ -192,7 +192,7 @@ class Pyscandl:
 			self._skip()
 			counter = 1
 			if self.keepimage:
-				self._keep_full_chapter()
+				self.keep_full_chapter()
 			else:
 				self.full_chapter()
 
@@ -201,10 +201,10 @@ class Pyscandl:
 			except EmptyChapter(self.fetcher.manga_namek, self.fetcher.chapter_number):
 				if not self.quiet:
 					print("empty")
-			while not self.fetcher.is_last_chapter() and (self.all or counter < self.download_number):
+			while not self.fetcher.is_last_chapter() and (self.all or counter < self._download_number):
 				self.next_chapter()
 				if self.keepimage:
-					self._keep_full_chapter()
+					self.keep_full_chapter()
 				else:
 					self.full_chapter()
 
