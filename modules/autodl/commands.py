@@ -108,6 +108,9 @@ class Controller:
 				except EmptyChapter:
 					if not self.quiet:
 						print(f"skipping {name} chapter {chapter}: empty, wont be added in the downloaded list")
+			# remove the directory if there is no chapter
+			if not os.listdir(f"{self.output}/{downloader.fetcher.manga_name}"):
+				os.rmdir(f"{self.output}/{downloader.fetcher.manga_name}")
 			downloader.fetcher.quit()
 			self.db.get(name).get("chapters").sort(reverse=True)
 
