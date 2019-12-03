@@ -22,6 +22,7 @@ class Controller:
 		self._re_mgdex_scan = re.compile(r"(?:Chapter \d+, )?(Chapter \d+)")
 		self.scrapper = cfscrape.create_scraper()
 		self.missing_chaps = []
+		self.downloads = 0
 
 	def save(self):
 		with open(f"{os.path.dirname(sys.modules['modules.autodl'].__file__)}/db.json", "w") as data:
@@ -50,7 +51,7 @@ class Controller:
 				raise IsStandalone(name)
 			self.db.get(name)["fetcher"] = fetcher
 		if chapters is not None:
-			self.db.get(name)["chapters"] = sorted(chapters, reverse=True)
+			self.db.get(name)["chapters"] = sorted(self.db.get(name)["chapters"] + chapters, reverse=True)
 
 	# each website/fetcher can have differently made xml from their rss so we need to treat them separately if need be
 	def scan(self, name:str):
@@ -105,6 +106,7 @@ class Controller:
 					downloader.full_chapter()
 					downloader.create_pdf()
 					self.db.get(name).get("chapters").append(chapter)
+					self.downloads += 1
 				except EmptyChapter:
 					if not self.quiet:
 						print(f"skipping {name} chapter {chapter}: empty, wont be added in the downloaded list")
@@ -123,6 +125,13 @@ class Controller:
 	def delete_manga(self, name):
 		if name in self.db:
 			del self.db[name]
+			return True
+		else:
+			return False
+
+	def rm_chaps(self, name, *rm_chaps):
+		if name in self.db:
+			self.db.get(name)["chapters"] = [chap for chap in self.db.get(name)["chapters"] if not chap not in rm_chaps]
 			return True
 		else:
 			return False

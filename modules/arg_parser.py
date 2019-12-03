@@ -40,6 +40,7 @@ def parse_arg():
 	option.add_argument("-i", "--info", action="store_true", help="prints the info for the named manga in the auto updater")
 	option.add_argument("-cl", "--chapter-list", action="store_true", help="lists all the dowloaded chapters (warning: can be huge)")
 	option.add_argument("-d", "--delete", action="store_true", help="deletes the corresponding manga from the auto downloader")
+	option.add_argument("-rmc", "--remove-chapters", type=str, nargs="*", help="remove the listed chapters for this manga from the database")
 
 	manga.add_argument("-r", "--rss", type=str, help="rss link with the update notification of the manga")
 	manga.add_argument("-l", "--link", type=str, help="link of the manga")

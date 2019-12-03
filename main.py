@@ -69,6 +69,17 @@ if __name__ == "__main__":
 				if not args.quiet:
 					print(f"manga {args.name} not found")
 
+		elif args.remove_chapters is not None:
+			json = commands.Controller()
+			if json.rm_chaps(args.name, args.remove_chapters):
+				json.save()
+				if not args.quiet:
+					print(f"deletion of the chapters {', '.split(args.remove_chapters)} from {args.name} sucessfull")
+			else:
+				if not args.quiet:
+					print(f"no chapters removed for {args.name}")
+
+
 	elif args.subparser == "autodl":
 		autodl = commands.Controller(args.output, args.quiet, args.tiny)
 		# to be sure to save progress done in case of interruption
