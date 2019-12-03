@@ -11,6 +11,7 @@ def parse_arg():
 
 	parser.add_argument("-U", "--update", action="store_true", help="updates the program")
 	parser.add_argument("-ml", "--manga-list", action="store_true", help="list all the current mangas in the auto downloader")
+	parser.add_argument("-q", "--quiet", action="store_true", help="removes the verbose")
 
 
 	# manual downloading subparser
@@ -28,7 +29,6 @@ def parse_arg():
 
 	manual_pars.add_argument("-t", "--tiny", action="store_true", help="don't write the manga name in the title (useful if using ebook libraries)")
 	manual_pars.add_argument("-k", "--keep-images", action="store_true", help="the images used for the pdf will be kept in their corresponding folder")
-	manual_pars.add_argument("-q", "--quiet", action="store_true", help="removes the verbose of the downloads")
 	manual_pars.add_argument("-s", "--skip", default=0, type=int, help="skips n images before starting to download the first chapter")
 
 
@@ -50,7 +50,6 @@ def parse_arg():
 	# autodl subparser
 	autodl.add_argument("-o", "--output", type=str, default=".", help="the path (absolute or relative) to the folder where to save the data")
 	autodl.add_argument("-t", "--tiny", action="store_true", help="don't write the manga name in the title (useful if using ebook libraries)")
-	autodl.add_argument("-q", "--quiet", action="store_true", help="removes the verbose of the autodl")
 
 
 	manual_pars.epilog = "The current list of image fetcher is: " + ", ".join(Fetcher.list())

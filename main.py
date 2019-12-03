@@ -63,9 +63,11 @@ if __name__ == "__main__":
 			json = commands.Controller()
 			if json.delete_manga(args.name):
 				json.save()
-				print(f"deletion of {args.name} successful")
+				if not args.quiet:
+					print(f"deletion of {args.name} successful")
 			else:
-				print(f"manga {args.name} not found")
+				if not args.quiet:
+					print(f"manga {args.name} not found")
 
 	elif args.subparser == "autodl":
 		autodl = commands.Controller(args.output, args.quiet, args.tiny)
@@ -76,3 +78,5 @@ if __name__ == "__main__":
 				autodl.download(name)
 		finally:
 			autodl.save()
+			if not args.quiet:
+				print(f"{autodl.downloads} chapters downloaded")
