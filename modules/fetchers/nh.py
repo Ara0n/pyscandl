@@ -20,11 +20,12 @@ class NHentai:
 
 		self._corresponding_table = { 'j': "jpg", 'p': "png", 'g': "gif"}
 		self.domain = ".nhentai.net"
+		self.author = "unknown"
 
 		# getting the author
 		found = False
 		i = 0
-		while not found:
+		while not found and i < len(self._manga_json.get("tags")):
 			if self._manga_json.get("tags")[i].get("type") == "artist":
 				found = True
 				self.author = self._manga_json.get("tags")[i].get("name").title()
