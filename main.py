@@ -74,7 +74,7 @@ if __name__ == "__main__":
 			if json.rm_chaps(args.name, args.remove_chapters):
 				json.save()
 				if not args.quiet:
-					print(f"deletion of the chapters {', '.split(args.remove_chapters)} from {args.name} sucessfull")
+					print(f"deletion of the chapters {', '.join(args.remove_chapters)} from {args.name} sucessfull")
 			else:
 				if not args.quiet:
 					print(f"no chapters removed for {args.name}")
