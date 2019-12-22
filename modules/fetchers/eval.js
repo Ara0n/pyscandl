@@ -28,6 +28,6 @@ stream.on("readable", function(){
 	while (data = this.read()){
 		let test = data.toString().replace("\r\n").split("£");
 
-		console.log(f(test[0], test[1], test[2], test[3].split('|'), 0, {}));
+		console.log(f(test[0], test[1], test[2], test[3].split('|'), 0, {}), "\r\nEOF");
 	}
 });
