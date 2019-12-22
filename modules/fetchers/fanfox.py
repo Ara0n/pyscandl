@@ -21,7 +21,7 @@ class Fanfox:
 			self.manga_name = self._link.split("/")[-2].replace("_", " ").title()
 		else:
 			self._link = f"https://fanfox.net/manga/{manga.replace(' ', '_').lower()}/"
-			self.manga_name = manga.replace("_", " ").title()
+			self.manga_name = manga.replace("_", " ").title().replace("/", "_")
 
 		# regex used
 		self._c_eval_args = re.compile(r"eval\(function\(p,a,c,k,e,d\).*?p;}\('(?P<arg1>.*?;)',(?P<arg2>\d+),(?P<arg3>\d+),'(?P<arg4>.*?)'.split")
@@ -54,7 +54,7 @@ class Fanfox:
 			raise excepts.EmptyChapter(self.manga_name, self.chapter_number)
 
 		self._mono = self._req.text.count("dm5_key") == 1
-		self.chapter_name = self._c_chap_name.search(self._req.text).group("chap_name")
+		self.chapter_name = self._c_chap_name.search(self._req.text).group("chap_name").replace("/", "_")
 
 		if self._mono:
 			self._mono_go_to_chap()
