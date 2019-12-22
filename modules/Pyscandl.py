@@ -197,9 +197,10 @@ class Pyscandl:
 
 			try:
 				self.create_pdf()
-			except EmptyChapter(self.fetcher.manga_namek, self.fetcher.chapter_number):
+			except EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number):
 				if not self._quiet:
 					print("empty")
+
 			while not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number):
 				self.next_chapter()
 				if self._keepimage:
