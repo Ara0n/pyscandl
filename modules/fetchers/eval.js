@@ -1,6 +1,9 @@
 const process = require('process');
 
-console.log(function(p, a, c, k, e, d) {
+const stream = process.stdin;
+
+
+f = function(p, a, c, k, e, d) {
     e = function(c) {
         return (c < a ? "" : e(parseInt(c / a))) + ((c = c % a) > 35 ? String.fromCharCode(c + 29) : c.toString(36))
     };
@@ -17,4 +20,14 @@ console.log(function(p, a, c, k, e, d) {
     while (c--)
         if (k[c]) p = p.replace(new RegExp('\\b' + e(c) + '\\b', 'g'), k[c]);
     return p;
-}(process.argv[2], process.argv[3], process.argv[4], process.argv[5].split('|'), 0, {}))
+}
+
+
+stream.on("readable", function(){
+	let data;
+	while (data = this.read()){
+		let test = data.toString().replace("\r\n").split("£");
+
+		console.log(f(test[0], test[1], test[2], test[3].split('|'), 0, {}));
+	}
+});
