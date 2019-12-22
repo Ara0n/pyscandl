@@ -210,7 +210,7 @@ class Pyscandl:
 
 				try:
 					self.create_pdf()
-				except EmptyChapter(self.fetcher.manga_namek, self.fetcher.chapter_number):
+				except EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number):
 					if not self._quiet:
 						print("empty")
 				counter += 1

@@ -108,6 +108,7 @@ class Fanfox:
 		self.ext = self.image.split(".")[-1]
 
 	def is_last_image(self):
+		# automatically ignoring the last page of add
 		return self.npage == len(self._image_list)-1
 
 	def next_chapter(self):
