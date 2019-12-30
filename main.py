@@ -47,13 +47,20 @@ if __name__ == "__main__":
 			infos = commands.Controller().manga_info(args.name)
 			if infos is None:
 				print(f"manga '{args.name}' not in the list, you may consider adding it to it with -a")
-			else:
-				print(f"{args.name}:\n"
+			elif infos.get("chapters"):
+				print(f"{args.name}:\n",
 					  f"\trss link: {infos.get('rss')}\n"
 					  f"\tmanga link: {infos.get('link')}\n"
 					  f"\tfetcher: {infos.get('fetcher').upper()}"
 					  f"\tnumber of chapters already downloaded: {len(infos.get('chapters'))}\n"
 					  f"\tlast chapter downloaded: {infos.get('chapters')[0]}")
+			else:
+				print(f"{args.name}:\n",
+					  f"\trss link: {infos.get('rss')}\n"
+					  f"\tmanga link: {infos.get('link')}\n"
+					  f"\tfetcher: {infos.get('fetcher').upper()}"
+					  f"\tnumber of chapters already downloaded: {len(infos.get('chapters'))}\n"
+					  f"\tno chapter downloaded yet")
 
 		elif args.chapter_list:
 			chaps = commands.Controller().manga_info(args.name).get("chapters")
