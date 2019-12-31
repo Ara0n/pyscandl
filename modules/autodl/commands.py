@@ -26,7 +26,7 @@ class Controller:
 
 	def save(self):
 		with open(f"{os.path.dirname(sys.modules['modules.autodl'].__file__)}/db.json", "w") as data:
-			json.dump(self.db, data, indent=4)
+			json.dump(self.db, data, indent=4, sort_keys=True)
 
 	def add(self, name:str, rss:str, link:str, fetcher:str, chapters:list=[]):
 		if fetcher.upper() not in [i.name for i in Fetcher]:
