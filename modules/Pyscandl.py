@@ -123,7 +123,7 @@ class Pyscandl:
 			try:
 				with open(self._pdf_path, "wb") as pdf:
 					pdf.write(img2pdf.convert(self._img_bin_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
-			except Exception as e:
+			except img2pdf.ImageOpenError as e:
 				# removing alpha from all the images of the chapter
 				if not self._quiet:
 					print("removing alpha...", end=" ")
@@ -136,8 +136,7 @@ class Pyscandl:
 							dealpha_list.append(dealpha_img.getvalue())
 					with open(self._pdf_path, "wb") as pdf:
 						pdf.write(img2pdf.convert(dealpha_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
-				else:
-					raise e
+
 			if not self._quiet:
 				print("converted")
 		else:
@@ -198,9 +197,10 @@ class Pyscandl:
 
 			try:
 				self.create_pdf()
-			except EmptyChapter(self.fetcher.manga_namek, self.fetcher.chapter_number):
+			except EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number):
 				if not self._quiet:
 					print("empty")
+
 			while not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number):
 				self.next_chapter()
 				if self._keepimage:
@@ -210,7 +210,7 @@ class Pyscandl:
 
 				try:
 					self.create_pdf()
-				except EmptyChapter(self.fetcher.manga_namek, self.fetcher.chapter_number):
+				except EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number):
 					if not self._quiet:
 						print("empty")
 				counter += 1

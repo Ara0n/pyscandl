@@ -1,10 +1,9 @@
 from .. import excepts
 import os, sys
 import re
-import cfscrape
+import pexpect
 import requests
 import secrets
-import subprocess
 
 class Fanfox:
 	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
@@ -12,6 +11,7 @@ class Fanfox:
 						"Referer": "test"}
 		self.standalone = False
 		self.domain = ".fanfox.net"
+		self._node = pexpect.spawn(f"node {os.path.dirname(sys.modules['modules.fetchers'].__file__)}/eval.js")
 		# creating the chapter link
 		if link is not None:
 			if link[-1] == "/":
@@ -21,7 +21,7 @@ class Fanfox:
 			self.manga_name = self._link.split("/")[-2].replace("_", " ").title()
 		else:
 			self._link = f"https://fanfox.net/manga/{manga.replace(' ', '_').lower()}/"
-			self.manga_name = manga.replace("_", " ").title()
+			self.manga_name = manga.replace("_", " ").title().replace("/", "_")
 
 		# regex used
 		self._c_eval_args = re.compile(r"eval\(function\(p,a,c,k,e,d\).*?p;}\('(?P<arg1>.*?;)',(?P<arg2>\d+),(?P<arg3>\d+),'(?P<arg4>.*?)'.split")
@@ -54,7 +54,7 @@ class Fanfox:
 			raise excepts.EmptyChapter(self.manga_name, self.chapter_number)
 
 		self._mono = self._req.text.count("dm5_key") == 1
-		self.chapter_name = self._c_chap_name.search(self._req.text).group("chap_name")
+		self.chapter_name = self._c_chap_name.search(self._req.text).group("chap_name").replace("/", "_")
 
 		if self._mono:
 			self._mono_go_to_chap()
@@ -65,10 +65,7 @@ class Fanfox:
 		self.ext = self.image.split(".")[-1]
 
 	def _mono_go_to_chap(self):
-		args = list(self._c_eval_args.search(self._req.text).groups())
-		args[0] = args[0].replace("\\", "")
-
-		out = subprocess.run(["node", f"{os.path.dirname(sys.modules['modules.fetchers'].__file__)}/eval.js"] + args, capture_output=True, text=True).stdout
+		out = self._decode(self._req.text)
 		self._image_list = [f"https:{page.split('?')[0]}" for page in self._c_mono_page_list.search(out).group("chaps").replace("'", "").split(",")]
 		self._last_page = len(self._image_list)
 
@@ -79,10 +76,7 @@ class Fanfox:
 		for page in range(1, self._last_page+1):
 			if page > len(self._image_list):
 				req2 = requests.get(f"https://fanfox.net/chapterfun.ashx?cid={cid}&page={page}&key={secrets.token_hex(8)}", headers=self._header)
-				args = list(self._c_eval_args.search(req2.text).groups())
-				subprocess.run(["node", "test.js"] + args, capture_output=True, text=True)
-
-				out = subprocess.run(["node", f"{os.path.dirname(sys.modules['modules.fetchers'].__file__)}/eval.js"] + args, capture_output=True, text=True).stdout
+				out = self._decode(req2.text)
 				root = self._c_multi_page_list.search(out).group("link")
 				chaps = [i.split("?")[0] for i in self._c_multi_page_list.search(out).group("chaps").split('"') if i != "" and i != ","]
 
@@ -91,13 +85,30 @@ class Fanfox:
 						i = "/" + i
 					self._image_list.append(f"https:{root + i}")
 
+	def _decode(self, ofuscated:str):
+		args = list(self._c_eval_args.search(ofuscated).groups())
+		args[0] = args[0].replace("\\", "")
+		args = args[0] + "£" + args[1] + "£" + args[2] + "£" + args[3]
+		self._node.sendline(args)
+
+		decoded = b""
+		self._node.readline()
+		temp = self._node.readline()
+		while temp != b"EOF\r\n":
+			decoded += temp
+			temp = self._node.readline()
+		decoded = decoded.replace(b"\r\n", b"").decode()
+
+		return decoded
+
 	def next_image(self):
 		self.image = self._image_list[self.npage]
 		self.npage += 1
 		self.ext = self.image.split(".")[-1]
 
 	def is_last_image(self):
-		return self.npage == len(self._image_list)
+		# automatically ignoring the last page of add
+		return self.npage == len(self._image_list)-1
 
 	def next_chapter(self):
 		next = self._c_next_chap_num.search(self._req.text).group("next_chap")
@@ -107,4 +118,4 @@ class Fanfox:
 		return not bool(self._c_next_chap_num.search(self._req.text))
 
 	def quit(self):
-		pass
+		self._node.terminate(force=True)
