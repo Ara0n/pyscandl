@@ -101,7 +101,6 @@ class Fanfox:
 
 		return decoded
 
-
 	def next_image(self):
 		self.image = self._image_list[self.npage]
 		self.npage += 1
