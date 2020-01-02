@@ -123,11 +123,12 @@ class Pyscandl:
 			try:
 				with open(self._pdf_path, "wb") as pdf:
 					pdf.write(img2pdf.convert(self._img_bin_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
-			except img2pdf.ImageOpenError as e:
+			except Exception as e:
 				# removing alpha from all the images of the chapter
-				if not self._quiet:
-					print("removing alpha...", end=" ")
 				if e.args[0] == "Refusing to work on images with alpha channel":
+					if not self._quiet:
+						print("removing alpha...", end=" ")
+
 					dealpha_list = []
 					for img in self._img_bin_list:
 						temp = Image.open(io.BytesIO(img)).convert("RGB")
@@ -136,6 +137,8 @@ class Pyscandl:
 							dealpha_list.append(dealpha_img.getvalue())
 					with open(self._pdf_path, "wb") as pdf:
 						pdf.write(img2pdf.convert(dealpha_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
+				else:
+					raise e
 
 			if not self._quiet:
 				print("converted")
