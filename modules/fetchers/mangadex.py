@@ -1,7 +1,6 @@
 from .. import excepts
 import cfscrape
 
-# TODO: revert to .org in the db.json also
 class Mangadex:
 	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
 		self.scrapper = cfscrape.create_scraper()
@@ -15,14 +14,12 @@ class Mangadex:
 		elif manga.isdecimal():
 			manga_id = manga
 		else:
-			#TODO: implement a search function for non id requests
+			# TODO: implement a search function for non id requests
 			raise excepts.MangaNotFound(manga)
 
-		# TODO: revert to .org when mangadex is fully up again
-		self.domain = ".mangadex.cc"
+		self.domain = ".mangadex.org"
 
-		# TODO: revert to .org when mangadex is fully up again
-		manga_json = self.scrapper.get(f"https://mangadex.cc/api/manga/{manga_id}").json()
+		manga_json = self.scrapper.get(f"https://mangadex.org/api/manga/{manga_id}").json()
 		if manga_json.get("status") == "Manga ID does not exist.":
 			raise excepts.MangaNotFound(manga_id)
 
@@ -46,8 +43,7 @@ class Mangadex:
 
 	def _set_current_chap_info(self, chap_id):
 		self.npage = 1
-		# TODO: revert to .org when mangadex is fully up again
-		self._current_chapter_json = self.scrapper.get(f"https://mangadex.cc/api/chapter/{chap_id}").json()
+		self._current_chapter_json = self.scrapper.get(f"https://mangadex.org/api/chapter/{chap_id}").json()
 		self.chapter_name = self._current_chapter_json.get("title").replace("/", "-")
 
 		self.chapter_number = str(self._current_chapter_json.get("chapter")).split(".")[0].zfill(3)
