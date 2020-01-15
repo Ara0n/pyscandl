@@ -72,19 +72,19 @@ class Controller:
 			if "The Database server is under heavy load and can't serve your request. Please wait a bit and try refreshing the page." in raw:
 				if not self.quiet:
 					print(f"The Database server of mangadex is under heavy load and can't check the chapters of \"{name}\" at the moment.")
-				else:
-					xml = ElementTree.fromstring(raw)
-					for chapter in xml.iter("item"):
-						if chapter.find("description").text.split(" - ")[-1] == "Language: English":
-							# check if it's a chapter
-							if self._re_mgdex_scan.search(chapter.find("title").text):
-								nb = chapter.find("title").text.split()[-1]
-								if "." in nb:
-									nb = float(nb)
-								else:
-									nb = int(nb)
-								if nb not in manga.get("chapters"):
-									self.missing_chaps.append(nb)
+			else:
+				xml = ElementTree.fromstring(raw)
+				for chapter in xml.iter("item"):
+					if chapter.find("description").text.split(" - ")[-1] == "Language: English":
+						# check if it's a chapter
+						if self._re_mgdex_scan.search(chapter.find("title").text):
+							nb = chapter.find("title").text.split()[-1]
+							if "." in nb:
+								nb = float(nb)
+							else:
+								nb = int(nb)
+							if nb not in manga.get("chapters"):
+								self.missing_chaps.append(nb)
 		self.missing_chaps.sort()
 		if not self.quiet:
 			if self.missing_chaps:
