@@ -14,12 +14,13 @@ There is a `banlist/` folder where you can place the images you don't want to ap
 4) install the dependencies for the program
 ```
 cd path/to/project/root
-pip3 install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 5) install `nodejs`
 6) you can now use the program
 
-**you can update it by running `python3 main.py -U`**
+**you can update it by running `python3 main.py -U` if you want to be on releases  
+if you want to be on the latest commit just `git pull` from the root of the program folder**
 
 ### from release
 1) check if you have `python3.7` installed
@@ -29,7 +30,7 @@ pip3 install -r requirements.txt
 4) install the dependencies for the program
 ```
 cd path/to/project/root
-pip3 install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 5) install `nodejs`
 6) you can now use the program  
@@ -40,8 +41,8 @@ This is a python3 program that uses:
 - the dependencies in `requirements.txt`
 - `nodejs` for `fanfox` and `cfscrape`
 
-It is developed on a Debian 10 Buster computer so it is verified for Debian 10 and should work at least for the older debians and the debian-likes, provided that you have the dependencies listed up above.  
-As for other linux distribution, windows and MacOSX I haven't tested the compatibility (windows will be tested later down the run) but it may work if you have all the dependencies.
+It is developed on a Debian testing (currently Bullseye) computer so it is verified for Debian and should work at least for the older debians and the debian-likes, provided that you have the dependencies listed up above.  
+As for other linux distribution, windows and MacOSX I haven't tested the compatibility *(windows may be tested later down the run)* but it should work if you have all the dependencies.
 
 ## command line interface
 *might be only `python` for windows*
