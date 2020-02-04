@@ -52,6 +52,11 @@ class Mangadex:
 
 		self._img_root = f"{self._current_chapter_json.get('server')}{self._current_chapter_json.get('hash')}/"
 		self._img_ids = self._current_chapter_json.get("page_array")
+
+		# checking if chapter is accessible
+		if not self._img_ids:
+			raise excepts.EmptyChapter(self.manga_name, self.chapter_number)
+
 		self.image = f"{self._img_root}{self._img_ids[0]}"
 		self.ext = self._img_ids[0].split(".")[1]
 
