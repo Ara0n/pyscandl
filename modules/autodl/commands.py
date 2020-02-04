@@ -95,26 +95,45 @@ class Controller:
 	def download(self, name:str):
 		manga = self.db.get(name)
 		fetcher = Fetcher.get(manga.get("fetcher"))
-		if self.missing_chaps:
-			if manga.get("chapters"):
-				downloader = Pyscandl(fetcher, manga.get("chapters")[-1], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
-			else:
-				downloader = Pyscandl(fetcher, self.missing_chaps[0], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
-			for chapter in self.missing_chaps:
+
+		# initialize to the first downloadable chapter and download it
+		ok = False
+		for chapter_id in range(len(self.missing_chaps)):
+			try:
+				downloader = Pyscandl(fetcher, self.missing_chaps[chapter_id], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
+				downloader.full_chapter()
+				downloader.create_pdf()
+				self.db.get(name).get("chapters").append(self.missing_chaps[chapter_id])
+				self.downloads += 1
+
+				self.missing_chaps = self.missing_chaps[chapter_id+1:]
+				ok = True
+				break
+			except EmptyChapter:
+				if not self.quiet:
+					print(f"skipping {name} chapter {self.missing_chaps[chapter_id]}: empty, wont be added in the downloaded list")
+
+		# if chapters are left to doawnload proceeds with it
+		if ok:
+			for chapter_id in range(len(self.missing_chaps)):
 				try:
-					downloader.go_to_chapter(chapter)
+					downloader.go_to_chapter(self.missing_chaps[chapter_id])
 					downloader.full_chapter()
 					downloader.create_pdf()
-					self.db.get(name).get("chapters").append(chapter)
+					self.db.get(name).get("chapters").append(self.missing_chaps[chapter_id])
 					self.downloads += 1
 				except EmptyChapter:
 					if not self.quiet:
-						print(f"skipping {name} chapter {chapter}: empty, wont be added in the downloaded list")
-			# remove the directory if there is no chapter
-			if not os.listdir(f"{self.output}/{downloader.fetcher.manga_name}"):
-				os.rmdir(f"{self.output}/{downloader.fetcher.manga_name}")
+						print(f"skipping {name} chapter {self.missing_chaps[chapter_id]}: empty, wont be added in the downloaded list")
+
 			downloader.fetcher.quit()
 			self.db.get(name).get("chapters").sort(reverse=True)
+
+		# remove the directory if there is no chapter
+		folders = list(os.walk(self.output))[1:]
+		for folder in folders:
+			if not folder[2]:
+				os.rmdir(folder[0])
 
 	def list_mangas(self):
 		return self.db.keys()
