@@ -54,7 +54,7 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `--manga-list` or `-ml`: lists all the mangas in the auto-downloader
 
 ### manual
-`python3 main.py manual [-h] (-l LINK | -m MANGA) -f FETCHER [-o OUTPUT] [-c CHAPTER_START] [-a | -n DOWNLOAD_NUMBER] [-t] [-k] [-q] [-s SKIP]`
+`python3 main.py manual [-h] (-l LINK | -m MANGA) -f FETCHER [-o OUTPUT] [-c CHAPTER_START] [-a | -n DOWNLOAD_NUMBER] [-t] [-q] [-s SKIP] (-p | -k | -i)`
 
 - `--help` or `-h`: shows the help for this mode
 - `--link` or `-l` **required if not using `--manga` or `-m`**: gives the link to the page with all the chapter listed
@@ -64,10 +64,12 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `--chapter-start` or `-c`: gives the chapter to start the download on (defaults at 1)
 - `--all` or `-a`: downloads all the chapters from the starting point to the end
 - `--download-number` or `-n`: gives the number of chapters to download (defaults at 1)
-- `--keep-images` or `-k`: the images used for the pdf will be kept in their corresponding folder
 - `--tiny` or `-t`: don't write the manga name in the title (useful if using ebook libraries)
 - `--quiet` or `-q`: removes the verbose of the downloads
 - `--skip` or `-s`: skips `n` images before starting to download the first chapter
+- `--pdf` or `-p`: downloads only the pdf
+- `--keep` or `-k`: downloads the pdf but also keep the images in a chapter subfolder
+- `--image` or `-i`: downloads only the images in a chapter subfolder and don't create the pdf
 
 ### manga
 `python3 main.py manga [-h] {add,edit,info,chaplist,delete,rmchaps}`
@@ -108,12 +110,15 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `name`: name of the manga in the autodl json that will be used
 
 ### autodl
-`python3 main.py autodl [-h] [-o OUTPUT] [-t] [-q]`
+`python3 main.py autodl [-h] [-o OUTPUT] [-t] [-q] (-p | -k | -i)`
 
 - `--help` or `-h`: shows the help for this mode
 - `--output` or `-o`: the path (absolute or relative) to the folder where to save the data
 - `--tiny` or `-t`: don't write the manga name in the title (useful if using ebook libraries)
 - `--quiet` or `-q`: removes the verbose of the autodl
+- `--pdf` or `-p`: downloads only the pdf
+- `--keep` or `-k`: downloads the pdf but also keep the images in a chapter subfolder
+- `--image` or `-i`: downloads only the images in a chapter subfolder and don't create the pdf
 
 ## image fetcher API
 `fetcher(self, link:str=None, manga:str=None, chapstart:int=1):`
