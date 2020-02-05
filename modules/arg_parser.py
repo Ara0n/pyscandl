@@ -41,7 +41,7 @@ def parse_arg():
 	add.add_argument("-r", "--rss", type=str, help="rss link with the update notification of the manga", required=True)
 	add.add_argument("-l", "--link", type=str, help="link of the manga", required=True)
 	add.add_argument("-f", "--fetcher", type=str, help="name of the fetcher needed for the manga", required=True)
-	add.add_argument("-c", "--chapters", type=str, nargs="*", help="list of all the chapters already downloaded to be added to the list for the auto-updater")
+	add.add_argument("-c", "--chap", type=str, nargs="*", help="list of all the chapters already downloaded to be added to the list for the auto-updater")
 
 	## edit subparser
 	edit = manga_subparser.add_parser("edit", help="modify infos for one of the already existing manga in the auo downloader")
@@ -49,7 +49,7 @@ def parse_arg():
 	edit.add_argument("-r", "--rss", type=str, help="rss link with the update notification of the manga")
 	edit.add_argument("-l", "--link", type=str, help="link of the manga")
 	edit.add_argument("-f", "--fetcher", type=str, help="name of the fetcher needed for the manga")
-	edit.add_argument("-c", "--chapters", type=str, nargs="*", help="list of all the chapters already downloaded to be added to the list for the auto-updater")
+	edit.add_argument("-c", "--chap", type=str, nargs="*", help="list of all the chapters already downloaded to be added to the list for the auto-updater")
 
 	## info subparser
 	info = manga_subparser.add_parser("info", help="prints the info for the named manga in the auto updater")

@@ -42,8 +42,8 @@ if __name__ == "__main__":
 
 		elif args.manga_subparser == "add":
 			json = commands.Controller()
-			if args.chapters:
-				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chapters]
+			if args.chap:
+				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
 			else:
 				chaps = []
 			json.add(args.name, args.rss, args.link, args.fetcher, chaps)
@@ -51,13 +51,13 @@ if __name__ == "__main__":
 
 		elif args.manga_subparser == "edit":
 			json = commands.Controller()
-			chaps = [float(chap) if "." in chap else int(chap) for chap in args.chapters]
+			chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
 			json.edit(args.name, args.rss, args.link, args.fetcher, chaps)
 			json.save()
 
 		elif args.manga_subparser == "chaplist":
 			chaps = commands.Controller().manga_info(args.name).get("chapters")
-			print(f"the already downloaded chapters for {args.name} are: {', '.join([str(chap) for chap in chaps])}")
+			print(f"the already downloaded chapters for {args.name} are: {' '.join([str(chap) for chap in chaps])}")
 
 		elif args.manga_subparser == "rmchaps":
 			json = commands.Controller()
