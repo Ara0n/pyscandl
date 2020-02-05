@@ -21,32 +21,10 @@ if __name__ == "__main__":
 	elif args.subparser == "manga":
 		json = commands.Controller()
 
-		if args.add:
-			if args.rss is None:
-				raise DryNoSauceHere(manual=False, rss=True)
-			if args.link is None:
-				raise DryNoSauceHere(manual=False)
-			if args.fetcher is None:
-				raise NoFetcherGiven
-
-			json = commands.Controller()
-			if args.chapters:
-				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chapters]
-			else:
-				chaps = []
-			json.add(args.name, args.rss, args.link, args.fetcher, chaps)
-			json.save()
-
-		elif args.edit:
-			json = commands.Controller()
-			chaps = [float(chap) if "." in chap else int(chap) for chap in args.chapters]
-			json.edit(args.name, args.rss, args.link, args.fetcher, chaps)
-			json.save()
-
-		elif args.info:
+		if args.manga_subparser == "info":
 			infos = commands.Controller().manga_info(args.name)
 			if infos is None:
-				print(f"manga '{args.name}' not in the list, you may consider adding it to it with -a")
+				print(f"manga '{args.name}' not in the list, you may consider adding it to it with manga add")
 			elif infos.get("chapters"):
 				print(f"{args.name}:\n",
 					  f"\trss link: {infos.get('rss')}\n"
@@ -62,11 +40,36 @@ if __name__ == "__main__":
 					  f"\tnumber of chapters already downloaded: {len(infos.get('chapters'))}\n"
 					  f"\tno chapter downloaded yet")
 
-		elif args.chapter_list:
+		elif args.manga_subparser == "add":
+			json = commands.Controller()
+			if args.chapters:
+				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chapters]
+			else:
+				chaps = []
+			json.add(args.name, args.rss, args.link, args.fetcher, chaps)
+			json.save()
+
+		elif args.manga_subparser == "edit":
+			json = commands.Controller()
+			chaps = [float(chap) if "." in chap else int(chap) for chap in args.chapters]
+			json.edit(args.name, args.rss, args.link, args.fetcher, chaps)
+			json.save()
+
+		elif args.manga_subparser == "chaplist":
 			chaps = commands.Controller().manga_info(args.name).get("chapters")
 			print(f"the already downloaded chapters for {args.name} are: {', '.join([str(chap) for chap in chaps])}")
 
-		elif args.delete:
+		elif args.manga_subparser == "rmchaps":
+			json = commands.Controller()
+			if json.rm_chaps(args.name, args.chap):
+				json.save()
+				if not args.quiet:
+					print(f"deletion of the chapters {', '.join(args.chap)} from {args.name} sucessfull")
+			else:
+				if not args.quiet:
+					print(f"no chapters removed for {args.name}")
+
+		elif args.manga_subparser == "delete":
 			json = commands.Controller()
 			if json.delete_manga(args.name):
 				json.save()
@@ -75,16 +78,6 @@ if __name__ == "__main__":
 			else:
 				if not args.quiet:
 					print(f"manga {args.name} not found")
-
-		elif args.remove_chapters is not None:
-			json = commands.Controller()
-			if json.rm_chaps(args.name, args.remove_chapters):
-				json.save()
-				if not args.quiet:
-					print(f"deletion of the chapters {', '.join(args.remove_chapters)} from {args.name} sucessfull")
-			else:
-				if not args.quiet:
-					print(f"no chapters removed for {args.name}")
 
 
 	elif args.subparser == "autodl":
