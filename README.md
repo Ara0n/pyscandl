@@ -47,7 +47,7 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 ## command line interface
 *might be only `python` for windows*
 ### default
-`python3 main.py [-h] [-U] [-ml]`
+`python3 main.py [-h] [-U] [-ml] [-q] {autodl,manga,manual}`
 
 - `--help` or `-h`: shows the help for this mode
 - `--update` or `-U`: updates the program to the latest release on github, **you must have cloned the repo to use it**
@@ -69,24 +69,43 @@ As for other linux distribution, windows and MacOSX I haven't tested the compati
 - `--quiet` or `-q`: removes the verbose of the downloads
 - `--skip` or `-s`: skips `n` images before starting to download the first chapter
 
-## manga
-`python3 main.py manga [-h] NAME (-a | -e | -i | -cl | -d) [-r RSS] [-l LINK] [-f FETCHER] [-c [CHAPTERS [CHAPTERS ...]]]`
-
+### manga
+`python3 main.py manga [-h] {add,edit,info,chaplist,delete,rmchaps}`
 - `--help` or `-h`: shows the help for this mode
-- `NAME`: name of the manga in the autodl json that will be used
-- `--add` or `-a`: add the `NAME` manga to the autodl json
-- `--edit` or `-e`: edit the `NAME` manga in the autodl json
-- `--info` or `-i`: shows the infos of the `NAME` manga
-- `--chapter-list` or `-cl`: list all the downloaded chapters of the `NAME` manga
-- `--delete` or `-d`: delete the `NAME` manga from the autodl json
 
-The following options are required for `-a` and optional for `-e`:
-- `-rss` or `--rss`: rss link of the `NAME` manga
-- `--link` or `-l`: link of the `NAME` manga
-- `--fetcher` or `-f`: fetcher name for the `NAME` manga
+#### add
+`python3 main.py manga add [-h] -r RSS -l LINK -f FETCHER [-c[CHAP[CHAP...]]] name`
+- `name`: name of the manga in the autodl json that will be used
+- `--rss` or `-r`: rss link of the `name` manga
+- `--rss` or `-r`: rss link of the `name` manga
+- `--link` or `-l`: link of the `name` manga
+- `--fetcher` or `-f`: fetcher name for the `name` manga
+- `--chap` or `-c`: list already downloaded chapters for the `NAME` manga separated by a space *(example: 2 5.5 3 7 50.1)*
 
-This option is optional for both `-a` and `-e`:
-- `--chapters` or `-c`: list already downloaded chapters for the `NAME` manga separated by a space *(example: 2 5.5 3 7 50.1)*
+#### edit
+`python3 main.py manga edit [-h] [-r RSS] [-l LINK] [-f FETCHER] [-c[CHAP[CHAP...]]] name`
+- `name`: name of the manga in the autodl json that will be used
+- `--rss` or `-r`: rss link of the `name` manga
+- `--rss` or `-r`: rss link of the `name` manga
+- `--link` or `-l`: link of the `name` manga
+- `--fetcher` or `-f`: fetcher name for the `name` manga
+- `--chap` or `-c`: list already downloaded chapters for the `NAME` manga separated by a space *(example: 2 5.5 3 7 50.1)*
+
+#### info
+`python3 main.py manga info [-h] name`
+- `name`: name of the manga in the autodl json that will be used
+
+#### chaplist
+`python3 main.py manga chaplist [-h] name`
+- `name`: name of the manga in the autodl json that will be used
+
+#### delete
+`python3 main.py manga delete [-h] name`
+- `name`: name of the manga in the autodl json that will be used
+
+#### rmchaps
+`python3 main.py manga rmchaps [-h] name [chap [chap ...]]`
+- `name`: name of the manga in the autodl json that will be used
 
 ### autodl
 `python3 main.py autodl [-h] [-o OUTPUT] [-t] [-q]`
@@ -119,7 +138,7 @@ This option is optional for both `-a` and `-e`:
 - `.image` is a `string` with link to the image  
 - `.manga_name` is a `string` with the complete name of the manga or the webtoon of the current `.image`
 - `.npage` is an `int` giving the current page of the fetcher
-- `.standalone` is a `bool` signaling if true that it doesn't support multiple chapters (the verbose and save paths/names wont have mentions of chapters)
+- `standalone` is a `bool` signaling if true that it doesn't support multiple chapters (the verbose and save paths/names wont have mentions of chapters) **/!\\ it's a class attribute /!\\**
 - needs to raise the `MangaNotFound` exception from `exceptions` if the manga is not found
 
 ## Pyscandl()
