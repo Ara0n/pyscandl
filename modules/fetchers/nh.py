@@ -3,8 +3,9 @@ import requests
 
 
 class NHentai:
+	standalone = True
+
 	def __init__(self, link:str=None, manga:int=None, chapstart=None):
-		self.standalone = True
 		# chapstart is not used here but needs to be in the definition to respect the fetcher api
 		if link is None:
 			self._manga_json = requests.get(f"https://nhentai.net/api/gallery/{manga}").json()

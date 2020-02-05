@@ -2,9 +2,10 @@ from .. import excepts
 import cfscrape
 
 class Mangadex:
+	standalone = False
+
 	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
 		self.scrapper = cfscrape.create_scraper()
-		self.standalone = False
 
 		# getting the manga id
 		if link is not None:

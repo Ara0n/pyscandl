@@ -6,10 +6,12 @@ import requests
 import secrets
 
 class Fanfox:
+	standalone = False
+
 	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
 		self._header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
 						"Referer": "test"}
-		self.standalone = False
+
 		self.domain = ".fanfox.net"
 		self._node = pexpect.spawn(f"node {os.path.dirname(sys.modules['modules.fetchers'].__file__)}/eval.js")
 		# creating the chapter link
