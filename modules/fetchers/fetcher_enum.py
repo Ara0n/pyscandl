@@ -1,12 +1,11 @@
 from enum import Enum
-from . import nh, fanfox, fanfox_mono, mangadex
+from . import nh, fanfox, mangadex
 from .. import excepts
 
 
 class Fetcher(Enum):
 	NHENTAI = nh.NHentai
 	FANFOX = fanfox.Fanfox
-	FANFOX_MONO = fanfox_mono.FanfoxMono
 	MANGADEX = mangadex.Mangadex
 
 	@classmethod
