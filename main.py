@@ -1,6 +1,5 @@
 from modules import Pyscandl, arg_parser
 from modules.fetchers import fetcher_enum
-from modules.excepts import NoFetcherGiven, DryNoSauceHere
 from modules.install import updater
 from modules.autodl import commands
 
@@ -15,7 +14,7 @@ if __name__ == "__main__":
 
 	elif args.subparser == "manual":
 		fetcher = fetcher_enum.Fetcher.get(args.fetcher)
-		pyscandl = Pyscandl.Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, keepimage=args.keep_images, all=args.all, link=args.link, manga=args.manga, download_number=args.download_number, quiet=args.quiet, skip=args.skip, tiny=args.tiny)
+		pyscandl = Pyscandl.Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf, keep=args.keep, image=args.image, all=args.all, link=args.link, manga=args.manga, download_number=args.download_number, quiet=args.quiet, skip=args.skip, tiny=args.tiny)
 		pyscandl.full_download()
 
 	elif args.subparser == "manga":
@@ -86,7 +85,7 @@ if __name__ == "__main__":
 		try:
 			for name in autodl.db:
 				autodl.scan(name)
-				autodl.download(name)
+				autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
 		finally:
 			autodl.save()
 			if not args.quiet:

@@ -92,7 +92,7 @@ class Controller:
 			else:
 				print(f"no new chapter for {name}")
 
-	def download(self, name:str):
+	def download(self, name:str, pdf:bool=True, keep:bool=False, image:bool=False):
 		manga = self.db.get(name)
 		fetcher = Fetcher.get(manga.get("fetcher"))
 
@@ -101,8 +101,13 @@ class Controller:
 		for chapter_id in range(len(self.missing_chaps)):
 			try:
 				downloader = Pyscandl(fetcher, self.missing_chaps[chapter_id], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
-				downloader.full_chapter()
-				downloader.create_pdf()
+
+				if keep or image:
+					downloader.keep_full_chapter()
+				elif pdf:
+					downloader.full_chapter()
+				if not image:
+					downloader.create_pdf()
 				self.db.get(name).get("chapters").append(self.missing_chaps[chapter_id])
 				self.downloads += 1
 
@@ -118,8 +123,14 @@ class Controller:
 			for chapter_id in range(len(self.missing_chaps)):
 				try:
 					downloader.go_to_chapter(self.missing_chaps[chapter_id])
-					downloader.full_chapter()
-					downloader.create_pdf()
+
+					if keep or image:
+						downloader.keep_full_chapter()
+					else:
+						downloader.full_chapter()
+					if not image:
+						downloader.create_pdf()
+
 					self.db.get(name).get("chapters").append(self.missing_chaps[chapter_id])
 					self.downloads += 1
 				except EmptyChapter:
@@ -130,10 +141,13 @@ class Controller:
 			self.db.get(name).get("chapters").sort(reverse=True)
 
 		# remove the directory if there is no chapter
-		folders = list(os.walk(self.output))[1:]
-		for folder in folders:
-			if not folder[2]:
-				os.rmdir(folder[0])
+		try:
+			folders = list(os.walk(self.output))[1:]
+			for folder in folders:
+				if not folder[2]:
+					os.rmdir(folder[0])
+		except OSError:
+			pass
 
 	def list_mangas(self):
 		return self.db.keys()

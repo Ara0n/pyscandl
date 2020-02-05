@@ -8,7 +8,7 @@ import io
 
 
 class Pyscandl:
-	def __init__(self, fetcher, chapstart:int=1, output:str=".", keepimage:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, skip:int=0, tiny:bool=False):
+	def __init__(self, fetcher, chapstart:int=1, output:str=".", pdf:bool=True, keep:bool=False, image:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, skip:int=0, tiny:bool=False):
 		# must have either a link or a manga
 		if link is not None and manga is None or link is None and manga is not None:
 			self.fetcher = fetcher(link=link, manga=manga, chapstart=chapstart)
@@ -25,7 +25,12 @@ class Pyscandl:
 					   "Set-Cookie": f"domain={self.fetcher.domain}"}
 		self._nskip = skip
 		self._quiet = quiet
-		self._keepimage = keepimage
+
+		# select download mode
+		self._pdf = pdf
+		self._keep = keep
+		self._image = image
+
 		self._all = all
 		self._download_number = download_number
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"  # save path for images
@@ -93,6 +98,8 @@ class Pyscandl:
 			self._dl_image()
 			self.fetcher.next_image()
 		self._dl_image()
+		if not self._quiet and self._image:
+			print("")
 
 	def _skip(self):
 		for loop in range(self._nskip):
@@ -102,7 +109,7 @@ class Pyscandl:
 		if not self._quiet:
 			print("\nconverting...", end=" ")
 		# loading the downloaded images if keep mode
-		if self._keepimage:
+		if self._keep:
 			for loop in range(1, self.fetcher.npage + 1):
 				try:
 					with open(f"{self._path}{loop}.jpg", "rb") as img:
@@ -193,29 +200,31 @@ class Pyscandl:
 			# emulating a do while
 			self._skip()
 			counter = 1
-			if self._keepimage:
+			if self._keep or self._image:
 				self.keep_full_chapter()
 			else:
 				self.full_chapter()
 
-			try:
-				self.create_pdf()
-			except EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number):
-				if not self._quiet:
-					print("empty")
-
-			while not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number):
-				self.next_chapter()
-				if self._keepimage:
-					self.keep_full_chapter()
-				else:
-					self.full_chapter()
-
+			if not self._image:
 				try:
 					self.create_pdf()
 				except EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number):
 					if not self._quiet:
 						print("empty")
+
+			while not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number):
+				self.next_chapter()
+				if self._keep or self._image:
+					self.keep_full_chapter()
+				else:
+					self.full_chapter()
+
+				if not self._image:
+					try:
+						self.create_pdf()
+					except EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number):
+						if not self._quiet:
+							print("empty")
 				counter += 1
 		except KeyboardInterrupt:
 			if not self._quiet:

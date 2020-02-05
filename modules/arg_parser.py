@@ -28,8 +28,12 @@ def parse_arg():
 	amount.add_argument("-n", "--download-number", default=1, type=int, help="gives the number of chapters to download (defaults at 1)")
 
 	manual_pars.add_argument("-t", "--tiny", action="store_true", help="don't write the manga name in the title (useful if using ebook libraries)")
-	manual_pars.add_argument("-k", "--keep-images", action="store_true", help="the images used for the pdf will be kept in their corresponding folder")
 	manual_pars.add_argument("-s", "--skip", default=0, type=int, help="skips n images before starting to download the first chapter")
+
+	content = manual_pars.add_mutually_exclusive_group(required=True)
+	content.add_argument("-p", "--pdf", action="store_true", help="downloads only the pdf of the manga")
+	content.add_argument("-k", "--keep", action="store_true", help="downloads the pdf but also keep the images in a chapter subfolder")
+	content.add_argument("-i", "--image", action="store_true", help="downloads only the images in a chapter subfolder and don't create the pdf")
 
 
 	# json interaction subparser
@@ -72,6 +76,10 @@ def parse_arg():
 	# autodl subparser
 	autodl.add_argument("-o", "--output", type=str, default=".", help="the path (absolute or relative) to the folder where to save the data")
 	autodl.add_argument("-t", "--tiny", action="store_true", help="don't write the manga name in the title (useful if using ebook libraries)")
+	content = autodl.add_mutually_exclusive_group(required=True)
+	content.add_argument("-p", "--pdf", action="store_true", help="downloads only the pdf of the manga")
+	content.add_argument("-k", "--keep", action="store_true", help="downloads the pdf but also keep the images in a chapter subfolder")
+	content.add_argument("-i", "--image", action="store_true", help="downloads only the images in a chapter subfolder and don't create the pdf")
 
 
 	manual_pars.epilog = "The current list of image fetcher is: " + ", ".join(Fetcher.list())
