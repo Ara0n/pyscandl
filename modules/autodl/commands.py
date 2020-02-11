@@ -19,7 +19,7 @@ class Controller:
 		self.output = output
 		self.quiet = quiet
 		self.tiny = tiny
-		self._re_mgdex_scan = re.compile(r"(?:Chapter \d+, )?(Chapter \d+)")
+		self._re_mgdex_scan = re.compile(r"(?:Chapter \d+, )?Chapter (?P<chap>\d+(\.\d+)?)")
 		self.scrapper = cfscrape.create_scraper()
 		self.missing_chaps = []
 		self.downloads = 0
@@ -78,7 +78,7 @@ class Controller:
 					if chapter.find("description").text.split(" - ")[-1] == "Language: English":
 						# check if it's a chapter
 						if self._re_mgdex_scan.search(chapter.find("title").text):
-							nb = chapter.find("title").text.split()[-1]
+							nb = self._re_mgdex_scan.search(chapter.find("title").text).group("chap")
 							if "." in nb:
 								nb = float(nb)
 							else:
