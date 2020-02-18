@@ -10,7 +10,8 @@ if __name__ == "__main__":
 		updater.update()
 
 	elif args.manga_list:
-		print(f"current mangas in the autodl db are: {', '.join(commands.Controller().list_mangas())}")
+		list ="\n- ".join(commands.Controller().list_mangas())
+		print(f"current mangas in the autodl db are:{list}")
 
 	elif args.subparser == "manual":
 		fetcher = fetcher_enum.Fetcher.get(args.fetcher)
