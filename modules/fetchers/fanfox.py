@@ -37,7 +37,10 @@ class Fanfox:
 		req = requests.get(self._link)
 		if req.url != self._link:
 			raise excepts.MangaNotFound(self.manga_name)
-		self.author = re.search(r"Author: <a href=.*? title=\"(.*?)\">", req.text).group(1)
+		try:
+			self.author = re.search(r"Author: <a href=.*? title=\"(.*?)\">", req.text).group(1)
+		except AttributeError:
+			self.author = "unknown"
 
 		self.go_to_chapter(chapstart)
 
