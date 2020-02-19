@@ -102,12 +102,20 @@ class Controller:
 			try:
 				downloader = Pyscandl(fetcher, self.missing_chaps[chapter_id], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
 
-				if keep or image:
-					downloader.keep_full_chapter()
-				elif pdf:
-					downloader.full_chapter()
-				if not image:
-					downloader.create_pdf()
+				bad_image = True
+				while bad_image:  # protect against bad downloads
+					try:
+						if keep or image:
+							downloader.keep_full_chapter()
+						elif pdf:
+							downloader.full_chapter()
+						if not image:
+							downloader.create_pdf()
+						bad_image = False
+					except IOError:
+						print(f"problem during download, retrying {name} chapter {self.missing_chaps[chapter_id]}")
+						downloader.go_to_chapter(self.missing_chaps[chapter_id])
+
 				self.db.get(name).get("chapters").append(self.missing_chaps[chapter_id])
 				self.downloads += 1
 
@@ -122,14 +130,20 @@ class Controller:
 		if ok:
 			for chapter_id in range(len(self.missing_chaps)):
 				try:
-					downloader.go_to_chapter(self.missing_chaps[chapter_id])
+					bad_image = True
+					while bad_image:  # protect against bad downloads
+						try:
+							downloader.go_to_chapter(self.missing_chaps[chapter_id])
 
-					if keep or image:
-						downloader.keep_full_chapter()
-					else:
-						downloader.full_chapter()
-					if not image:
-						downloader.create_pdf()
+							if keep or image:
+								downloader.keep_full_chapter()
+							else:
+								downloader.full_chapter()
+							if not image:
+								downloader.create_pdf()
+							bad_image = False
+						except IOError:
+							print(f"problem during download, retrying {name} chapter {self.missing_chaps[chapter_id]}")
 
 					self.db.get(name).get("chapters").append(self.missing_chaps[chapter_id])
 					self.downloads += 1
