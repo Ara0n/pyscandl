@@ -51,7 +51,10 @@ if __name__ == "__main__":
 
 		elif args.manga_subparser == "edit":
 			json = commands.Controller()
-			chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
+			if args.chap:
+				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
+			else:
+				chaps = None
 			json.edit(args.name, args.rss, args.link, args.fetcher, chaps)
 			json.save()
 
