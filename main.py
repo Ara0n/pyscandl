@@ -2,6 +2,7 @@ from modules import Pyscandl, arg_parser
 from modules.fetchers import fetcher_enum
 from modules.install import updater
 from modules.autodl import commands
+import xml.etree.ElementTree
 
 if __name__ == "__main__":
 	args = arg_parser.parse_arg()
@@ -88,8 +89,22 @@ if __name__ == "__main__":
 		# to be sure to save progress done in case of interruption
 		try:
 			for name in autodl.db:
-				autodl.scan(name)
-				autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
+				# currently having problems with the xml tree fetching sometimes so giving a retry possibility to happen
+				tries_left = 3
+				while tries_left > 0:
+					try:
+						autodl.scan(name)
+						success = True
+						tries_left = 0
+					except xml.etree.ElementTree.ParseError:
+						if not args.quiet:
+							print(f"problem with the xml fetching for {name}, retrying...")
+						success = False
+						tries_left -= 1
+				if success:
+					autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
+				elif not args.quiet:
+					print(f"can't access the xml for {name}, please retry it later")
 		finally:
 			autodl.save()
 			if not args.quiet:
