@@ -1,16 +1,12 @@
 from modules import Pyscandl, arg_parser
 from modules.fetchers import fetcher_enum
-from modules.install import updater
 from modules.autodl import commands
 import xml.etree.ElementTree
 
 if __name__ == "__main__":
 	args = arg_parser.parse_arg()
 
-	if args.update:
-		updater.update()
-
-	elif args.manga_list:
+	if args.manga_list:
 		list ="\n- ".join(commands.Controller().list_mangas())
 		print(f"current mangas in the autodl db are:{list}")
 

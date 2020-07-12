@@ -9,7 +9,6 @@ def parse_arg():
 	manga = subparsers.add_parser("manga", help="tool to modify, add and remove mangas from the automatic rss downloader mode list")
 	manual_pars = subparsers.add_parser("manual", help="manually download scans, it will not update the downloaded scans json, if you plan on setting up a manga with the automatic rss mode don't mix both commands")
 
-	parser.add_argument("-U", "--update", action="store_true", help="updates the program")
 	parser.add_argument("-ml", "--manga-list", action="store_true", help="list all the current mangas in the auto downloader")
 	parser.add_argument("-q", "--quiet", action="store_true", help="removes the verbose")
 
