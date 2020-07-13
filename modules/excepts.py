@@ -1,6 +1,3 @@
-from .fetchers import fetcher_enum
-
-
 class TooManySauce(Exception):
 	def __init__(self):
 		Exception.__init__(self, "too many sauce, you can't give a manga and a link at the same time")
@@ -23,7 +20,8 @@ class MangaNotFound(Exception):
 
 class FetcherNotFound(Exception):
 	def __init__(self, fetcher):
-		Exception.__init__(self, f"{fetcher.upper()} is not a supported fetcher the list of supported fetchers is: " + ", ".join(fetcher_enum.Fetcher.list()))
+		from .fetchers import fetcher_enum  # future proofed for circular imports
+		Exception.__init__(self, f"{fetcher.upper()} is not a supported fetcher the list of supported fetchers is: " + ", ".join(fetcher_enum.Fetchers.list()))
 
 
 class NoFetcherGiven(Exception):
