@@ -8,7 +8,7 @@ import io
 
 
 class Pyscandl:
-	def __init__(self, fetcher, chapstart:int=1, output:str=".", pdf:bool=True, keep:bool=False, image:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, quiet:bool=False, skip:int=0, tiny:bool=False):
+	def __init__(self, fetcher, chapstart:int=1, output:str=".", pdf:bool=True, keep:bool=False, image:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, chapend:int=0, quiet:bool=False, skip:int=0, tiny:bool=False):
 		# must have either a link or a manga
 		if link is not None and manga is None or link is None and manga is not None:
 			self.fetcher = fetcher(link=link, manga=manga, chapstart=chapstart)
@@ -33,6 +33,7 @@ class Pyscandl:
 
 		self._all = all
 		self._download_number = download_number
+		self._chapend = chapend
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"  # save path for images
 		self._img_bin_list = []
 		self._tiny = tiny
@@ -212,7 +213,7 @@ class Pyscandl:
 					if not self._quiet:
 						print("empty")
 
-			while not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number):
+			while not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number or float(self.fetcher.chapter_number) < self._chapend):
 				self.next_chapter()
 				if self._keep or self._image:
 					self.keep_full_chapter()

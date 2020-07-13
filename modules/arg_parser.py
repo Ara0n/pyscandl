@@ -25,6 +25,7 @@ def parse_arg():
 	amount = manual_pars.add_mutually_exclusive_group()
 	amount.add_argument("-a", "--all", action="store_true", help="downloads all the chapters from the starting point to the end")
 	amount.add_argument("-n", "--download-number", default=1, type=int, help="gives the number of chapters to download (defaults at 1)")
+	amount.add_argument("-e", "--chapter-end", default=0, type=int, help="gives the ending chapter number, if the chapter doesn't exists the program will stop once it's surpassed")
 
 	manual_pars.add_argument("-t", "--tiny", action="store_true", help="don't write the manga name in the title (useful if using ebook libraries)")
 	manual_pars.add_argument("-s", "--skip", default=0, type=int, help="skips n images before starting to download the first chapter")
