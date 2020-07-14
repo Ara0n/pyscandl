@@ -8,8 +8,47 @@ import io
 
 
 class Pyscandl:
-	def __init__(self, fetcher, chapstart:int=1, output:str=".", pdf:bool=True, keep:bool=False, image:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, chapend:int=0, quiet:bool=False, skip:int=0, tiny:bool=False):
-		# must have either a link or a manga
+	"""
+	The main object of the program. It is responsible of the downloads and controls the fetchers for you.
+	"""
+	def __init__(self, fetcher, chapstart=1, output:str=".", pdf:bool=True, keep:bool=False, image:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, chapend=0, quiet:bool=False, skip:int=0, tiny:bool=False):
+		"""
+		Initialize this instance of the pyscandl downloader, it needs either :param manga: or :param link: to work.
+
+		:param fetcher: fetcher object related to the download
+		:param chapstart: first chapter to be downloaded
+		:type chapstart: int/float/str
+		:param output: output folder
+		:type output: str
+		:param name: name of the manga
+		:type name: str
+		:param pdf: tell if the result should be kept as a pdf
+		:type pdf: bool
+		:param keep: tell if the result should be kept as a pdf and as a collection of images
+		:type keep: bool
+		:param image: tell if the result should be kept as a collection of images
+		:type image: bool
+		:param all: download all the chapters that are available after chapstart
+		:type all: bool
+		:param link: link of the manga to download
+		:type link: str
+		:param manga: identification tag of the manga *(see every fetcher for their different variations)*
+		:type manga: str
+		:param download_number: number of chapters to download
+		:type download_number: int
+		:param chapend: chapter to end the download on, if non exstant the download will stop once the next to download chapter number is greater than it
+		:type chapend: int/float/str
+		:param quiet: should the program not output any information about what it is doing in the console
+		:type quiet: bool
+		:param skip: number of images to skip on the first chapter being downloaded *(useful if running in image mode)*
+		:type skip: int
+		:param tiny: should the name of every downloaded scan be minified and only include the chapter number and the chapter title
+		:type tiny: bool
+
+		:raises DryNoSauceHere: neither link or manga was specified
+		:raises TooManySauce: both link and manga were specified
+		"""
+
 		if link is not None and manga is None or link is None and manga is not None:
 			self.fetcher = fetcher(link=link, manga=manga, chapstart=chapstart)
 		elif link is None and manga is None:
@@ -63,7 +102,10 @@ class Pyscandl:
 		logging.disable()
 
 	def _dl_image(self):
-		# single image download
+		"""
+		Downloads the currently selected image.
+		"""
+
 		if not os.path.exists(self._path):
 			os.makedirs(self._path)
 
@@ -73,7 +115,10 @@ class Pyscandl:
 				print(".", end="", flush=True)
 
 	def full_chapter(self):
-		# fetching binary data an entire chapter
+		"""
+		Fetching all the images of the chapter and storing them in RAM.
+		"""
+
 		if not self._quiet:
 			if self.fetcher.standalone:
 				print(f"fetching: {self.fetcher.chapter_name}")
@@ -89,7 +134,10 @@ class Pyscandl:
 			print(".", end="", flush=True)
 
 	def keep_full_chapter(self):
-		# download a full chapter
+		"""
+		Downloading all the images of the chapters and storing them where the output was specified.
+		"""
+
 		if not self._quiet:
 			if self.fetcher.standalone:
 				print(f"downloading: {self.fetcher.chapter_name}")
@@ -103,10 +151,19 @@ class Pyscandl:
 			print("")
 
 	def _skip(self):
+		"""
+		Skips the images as asked with the skip parameter.
+		"""
+
 		for loop in range(self._nskip):
 			self.fetcher.next_image()
 
 	def create_pdf(self):
+		"""
+		Creates the pdf at the output location with the fetched or the downloaded images of the current chapter.
+
+		:raises EmptyChapter: the images of the current chapter were all blacklisted images and the pdf was empty
+		"""
 		if not self._quiet:
 			print("\nconverting...", end=" ")
 		# loading the downloaded images if keep mode
@@ -151,10 +208,15 @@ class Pyscandl:
 			if not self._quiet:
 				print("converted")
 		else:
-			# creating an empty file to aknowledge the presence of a downed chapter
 			raise EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number)
 
 	def go_to_chapter(self, chap_num):
+		"""
+		Make Pyscandl go to the asked chapter.
+
+		:param chap_num: chapter number that was asked for
+		:type chap_num: int/str/float
+		"""
 		self.fetcher.go_to_chapter(chap_num)
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
 		self._img_bin_list = []
@@ -175,7 +237,10 @@ class Pyscandl:
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 	def next_chapter(self):
-		# changes to the next chapter and prepare the next image folder
+		"""
+		Goes to the next chapter
+		"""
+
 		self.fetcher.next_chapter()
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
 		self._img_bin_list = []
@@ -196,8 +261,11 @@ class Pyscandl:
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 	def full_download(self):
+		"""
+		Does the full download process with what is specified when initializing the Pyscandl object
+		"""
+
 		try:
-			# download the full request
 			# emulating a do while
 			self._skip()
 			counter = 1

@@ -1,8 +1,14 @@
 import argparse
-from .fetchers.fetcher_enum import Fetcher
+from .fetchers.fetcher_enum import Fetchers
 
 
 def parse_arg():
+	"""
+	Function used to parse the arguments in the command line interface
+
+	:return: object containing the parse results
+	"""
+
 	parser = argparse.ArgumentParser()
 	subparsers = parser.add_subparsers(dest="subparser")
 	autodl = subparsers.add_parser("autodl", help="auto downloader using the mangas in the json")
@@ -82,7 +88,7 @@ def parse_arg():
 	content.add_argument("-i", "--image", action="store_true", help="downloads only the images in a chapter subfolder and don't create the pdf")
 
 
-	manual_pars.epilog = "The current list of image fetcher is: " + ", ".join(Fetcher.list())
+	manual_pars.epilog = "The current list of image fetcher is: " + ", ".join(Fetchers.list())
 	manga.epilog = manual_pars.epilog
 
 	return parser.parse_args()

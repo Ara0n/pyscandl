@@ -11,7 +11,7 @@ if __name__ == "__main__":
 		print(f"current mangas in the autodl db are:{list}")
 
 	elif args.subparser == "manual":
-		fetcher = fetcher_enum.Fetcher.get(args.fetcher)
+		fetcher = fetcher_enum.Fetchers.get(args.fetcher)
 		pyscandl = Pyscandl.Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf, keep=args.keep, image=args.image, all=args.all, link=args.link, manga=args.manga, download_number=args.download_number, chapend=args.chapter_end, quiet=args.quiet, skip=args.skip, tiny=args.tiny)
 		pyscandl.full_download()
 

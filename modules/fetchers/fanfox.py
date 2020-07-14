@@ -1,14 +1,32 @@
-from .. import excepts
+from ..excepts import MangaNotFound, EmptyChapter
 import os, sys
 import re
 import pexpect
 import requests
 import secrets
 
+
 class Fanfox:
+	__doc__ = """
+	This is the fetcher in charge of https://fanfox.net/ 
+	"""
+
 	standalone = False
 
-	def __init__(self, link:str=None, manga:str=None, chapstart:int=1):
+	def __init__(self, link:str=None, manga:str=None, chapstart=1):
+		"""
+		Initializes the instance of the nhentai fetcher, it needs either manga or link to work.
+
+		:param link: link of the scan wanted
+		:type link: str
+		:param manga: manga name with all the non alpha numeric characters with "_", ex: fullmetal_alchemist
+		:type manga: str
+		:param chapstart: number of the chapter that the download is supposed to start
+		:type chapstart: int/float/str
+
+		:raises MangaNotFound: the scan asked for can't be found
+		"""
+
 		self._header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
 						"Referer": "test"}
 
@@ -36,7 +54,7 @@ class Fanfox:
 
 		req = requests.get(self._link)
 		if req.url != self._link:
-			raise excepts.MangaNotFound(self.manga_name)
+			raise MangaNotFound(self.manga_name)
 		try:
 			self.author = re.search(r"Author: <a href=.*? title=\"(.*?)\">", req.text).group(1)
 		except AttributeError:
@@ -45,6 +63,16 @@ class Fanfox:
 		self.go_to_chapter(chapstart)
 
 	def go_to_chapter(self, chap_num):
+		"""
+		Make the fetcher go to the asked chapter.
+
+		:param chap_num: chapter number that was asked for
+		:type chap_num: int/str/float
+
+		:raises MangaNotFound: the asked chapter doesn't exist
+		:raises EmptyChapter: the chapter exists but is void of images
+		"""
+
 		self._image_list = []
 		self.npage = 1
 		self.chapter_number = str(chap_num).split(".")[0].zfill(3)
@@ -54,9 +82,9 @@ class Fanfox:
 		url = f"{self._link}c{self.chapter_number}/1.html"
 		self._req = requests.get(url, cookies={"isAdult": "1"})
 		if "<title>404</title>" in self._req.text:
-			raise excepts.MangaNotFound(f"{self.manga_name}, chapter {self.chapter_number}")
+			raise MangaNotFound(f"{self.manga_name}, chapter {self.chapter_number}")
 		if '<p class="detail-block-content">No Images</p>' in self._req.text:
-			raise excepts.EmptyChapter(self.manga_name, self.chapter_number)
+			raise EmptyChapter(self.manga_name, self.chapter_number)
 
 		self._mono = self._req.text.count("dm5_key") == 1
 		self.chapter_name = self._c_chap_name.search(self._req.text).group("chap_name").replace("/", "_")
@@ -70,11 +98,21 @@ class Fanfox:
 		self.ext = self.image.split(".")[-1]
 
 	def _mono_go_to_chap(self):
+		"""
+		Method used to get the obfuscated image info in mono type scan chapters.
+		*mono type chapters are characterized by having all the images displayed one after another in a single page*
+		"""
+
 		out = self._decode(self._req.text)
 		self._image_list = [f"https:{page.split('?')[0]}" for page in self._c_mono_page_list.search(out).group("chaps").replace("'", "").split(",")]
 		self._last_page = len(self._image_list)
 
 	def _multi_go_to_chap(self):
+		"""
+		Method used to get obfuscated image info in multi type scan chapters.
+		*multi type chapters are characterized by having one image per page*
+		"""
+
 		cid = self._c_multi_cid.search(self._req.text).group("cid")
 		self._last_page = max([int(i) for i in self._c_multi_max_page.findall(self._req.text)])
 
@@ -90,8 +128,18 @@ class Fanfox:
 						i = "/" + i
 					self._image_list.append(f"https:{root + i}")
 
-	def _decode(self, ofuscated:str):
-		args = list(self._c_eval_args.search(ofuscated).groups())
+	def _decode(self, obfuscated:str):
+		"""
+		Method used to de-obfuscate the web-pages of the scan to get the image info
+
+		:param obfuscated: html code of the web-page of the scan
+		:type obfuscated: str
+
+		:return decoded: de-obfuscated image info that was contained in the page
+		:rtype decoded: str
+		"""
+
+		args = list(self._c_eval_args.search(obfuscated).groups())
 		args[0] = args[0].replace("\\", "")
 		args = args[0] + "£" + args[1] + "£" + args[2] + "£" + args[3]
 		self._node.sendline(args)
@@ -107,20 +155,43 @@ class Fanfox:
 		return decoded
 
 	def next_image(self):
+		"""
+		Goes to the next image in the scan being fetched.
+		"""
+
 		self.image = self._image_list[self.npage]
 		self.npage += 1
 		self.ext = self.image.split(".")[-1]
 
 	def is_last_image(self):
+		"""
+		Checks if it's the last image in the current chapter.
+		:rtype: bool
+		"""
+
 		# automatically ignoring the last page of add
 		return self.npage == len(self._image_list)-1
 
 	def next_chapter(self):
+		"""
+		Goes to the next chapter
+		"""
+
 		next = self._c_next_chap_num.search(self._req.text).group("next_chap")
 		self.go_to_chapter(next)
 
 	def is_last_chapter(self):
+		"""
+		Checks if the current chapter is the last available one
+
+		:rtype: bool
+		"""
+
 		return not bool(self._c_next_chap_num.search(self._req.text))
 
 	def quit(self):
+		"""
+		Method used to close everything that was used after finishing to use the fetcher
+		"""
+
 		self._node.terminate(force=True)

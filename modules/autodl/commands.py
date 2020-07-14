@@ -6,11 +6,27 @@ import re
 from xml.etree import ElementTree
 from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter
 from ..Pyscandl import Pyscandl
-from ..fetchers.fetcher_enum import Fetcher
+from ..fetchers.fetcher_enum import Fetchers
 
 
 class Controller:
+	__doc__ = """
+	Object responsible of the autodl part of the program, all the logic related to it passes here
+	"""
+
 	def __init__(self, output:str=".", quiet:bool=False, tiny:bool=False):
+		"""
+		Initializes this instance of the autodl controller.
+		If there is no json database for autodl currently in existence a new one is created at ``pyscandl/modules/autodl/db.json``.
+
+		:param output: location where the outputted scans should be stored
+		:type output: str
+		:param quiet: should the program not output any information about what it is doing in the console
+		:type quiet: bool
+		:param tiny: should the name of every downloaded scan be minified and only include the chapter number and the chapter title
+		:type tiny: bool
+		"""
+
 		try:
 			with open(f"{os.path.dirname(sys.modules['modules.autodl'].__file__)}/db.json", "r") as data:
 				self.db = json.load(data)
@@ -25,11 +41,33 @@ class Controller:
 		self.downloads = 0
 
 	def save(self):
+		"""
+		Saves the current state of the database in the ``db.json`` file.
+		"""
+
 		with open(f"{os.path.dirname(sys.modules['modules.autodl'].__file__)}/db.json", "w") as data:
 			json.dump(self.db, data, indent=4, sort_keys=True)
 
 	def add(self, name:str, rss:str, link:str, fetcher:str, chapters:list=[]):
-		if fetcher.upper() not in [i.name for i in Fetcher]:
+		"""
+		Adds a new scan entry to the ``db.json`` file.
+
+		:param name: name of the manga
+		:type name: str
+		:param rss: rss link of the manga
+		:type rss: str
+		:param link: link to the page of the manga *(same link that is used for the -l arg in other uses of pyscandl)*
+		:type link: str
+		:param fetcher: name of the associated fetcher
+		:type fetcher: str
+		:param chapters: list of the already possessed chapters that wont be downloaded again *(Optional)*
+		:type chapters: list[int/float/str]
+
+		:raises FetcherNotFound: the specified fetcher doesn't exist
+		:raises IsStandalone: the specified fetcher is a standalone fetcher
+		"""
+
+		if fetcher.upper() not in [i.name for i in Fetchers]:
 			raise FetcherNotFound(fetcher)
 		if fetcher.lower() in ["nhentai"]:
 			raise IsStandalone(name)
@@ -41,12 +79,30 @@ class Controller:
 		}
 
 	def edit(self, name:str, rss:str=None, link:str=None, fetcher=None, chapters:list=None):
+		"""
+		Edits an already existing entry in the ``db.json`` file.
+		The :param name: is mandatory to find the correct entry and every other parameter specified will overwrite the existing values.
+
+		:param name: name of the manga
+		:type name: str
+		:param rss: rss link of the manga
+		:type rss: str
+		:param link: link to the page of the manga *(same link that is used for the -l arg in other uses of pyscandl)*
+		:type link: str
+		:param fetcher: name of the associated fetcher
+		:type fetcher: str
+		:param chapters: list of the already possessed chapters that wont be downloaded again
+		:type chapters: list[int/float/str]
+
+		:raises IsStandalone: the specified fetcher is a standalone fetcher
+		"""
+
 		if rss is not None:
 			self.db.get(name)["rss"] = rss
 		if link is not None:
 			self.db.get(name)["link"] = link
 		if fetcher is not None:
-			standalone_check = Fetcher.get(fetcher)
+			standalone_check = Fetchers.get(fetcher)
 			if standalone_check.standalone:
 				raise IsStandalone(name)
 			self.db.get(name)["fetcher"] = fetcher
@@ -55,6 +111,13 @@ class Controller:
 
 	# each website/fetcher can have differently made xml from their rss so we need to treat them separately if need be
 	def scan(self, name:str):
+		"""
+		Scans the asked manga for new and non downloaded chapters and adds them to the controller queue.
+
+		:param name: name of the manga
+		:type name: str
+		"""
+
 		self.missing_chaps.clear()
 		manga = self.db.get(name)
 		if manga.get("fetcher").lower() in ["fanfox", "fanfox_mono"]:
@@ -93,8 +156,21 @@ class Controller:
 				print(f"no new chapter for {name}")
 
 	def download(self, name:str, pdf:bool=True, keep:bool=False, image:bool=False):
+		"""
+		Start the download of the chapters of the asked manga that have their number in the scan results.
+
+		:param name: name of the manga
+		:type name: str
+		:param pdf: tell if the result should be kept as a pdf
+		:type pdf: bool
+		:param keep: tell if the result should be kept as a pdf and as a collection of images
+		:type keep: bool
+		:param image: tell if the result should be kept as a collection of images
+		:type image: bool
+		"""
+
 		manga = self.db.get(name)
-		fetcher = Fetcher.get(manga.get("fetcher"))
+		fetcher = Fetchers.get(manga.get("fetcher"))
 
 		# initialize to the first downloadable chapter and download it
 		ok = False
@@ -164,12 +240,35 @@ class Controller:
 			pass
 
 	def list_mangas(self):
-		return self.db.keys()
+		"""
+		Gives the list of all the names of the mangas in the ``db.json`` file.
+
+		:rtype: dict_keys
+		"""
+
+		return list(self.db.keys())
 
 	def manga_info(self, name):
+		"""
+		Fet the infos about a specific manga.
+
+		:param name: name of the manga
+		:type name: str
+
+		:rtype: dict
+		"""
+
 		return self.db.get(name)
 
 	def delete_manga(self, name):
+		"""
+		Deletes a manga from the ``db.json`` file.
+
+		:param name: name of the manga
+
+		:return: confirms the deletion
+		:rtype: bool
+		"""
 		if name in self.db:
 			del self.db[name]
 			return True
@@ -177,6 +276,17 @@ class Controller:
 			return False
 
 	def rm_chaps(self, name, *rm_chaps):
+		"""
+		Remove the listed chapters from the asked manga
+
+		:param name: name of he manga
+		:type name: str
+		:param rm_chaps: list of all the chapters that have to be removed
+		:type rm_chaps: str
+
+		:return: confirms the deletion
+		:rtype: bool
+		"""
 		if name in self.db:
 			self.db.get(name)["chapters"] = [chap for chap in self.db.get(name)["chapters"] if not chap not in rm_chaps]
 			return True

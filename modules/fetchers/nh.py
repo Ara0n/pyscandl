@@ -1,12 +1,28 @@
-from .. import excepts
+from ..excepts import MangaNotFound
 import requests
 
 
 class NHentai:
+	__doc__ = """
+	This is the fetcher in charge of https://nhentai.net/
+	The fetcher is of standalone type, it considers every manga as a unique non chaptered scan.
+	"""
+
 	standalone = True
 
 	def __init__(self, link:str=None, manga:int=None, chapstart=None):
-		# chapstart is not used here but needs to be in the definition to respect the fetcher api
+		"""
+		Initializes the instance of the nhentai fetcher, it needs either :param manga: or :param link: to work.
+
+		:param link: link of the scan wanted
+		:type link: str
+		:param manga: numbered id corresponding to the manga on the website, ex: 177013
+		:type manga: str
+		:param chapstart: number of the chapter that the download is supposed to start, it's not used here but needs to be in the definition to respect the fetcher api
+
+		:raises MangaNotFound: the scan asked for can't be found
+		"""
+
 		if link is None:
 			self._manga_json = requests.get(f"https://nhentai.net/api/gallery/{manga}").json()
 		else:
@@ -17,7 +33,7 @@ class NHentai:
 			self._manga_json = requests.get(f"https://nhentai.net/api/gallery/{manga}").json()
 		# checking if manga exists
 		if self._manga_json.get("error"):
-			raise excepts.MangaNotFound(manga)
+			raise MangaNotFound(manga)
 
 		self._corresponding_table = { 'j': "jpg", 'p': "png", 'g': "gif"}
 		self.domain = ".nhentai.net"
@@ -43,21 +59,39 @@ class NHentai:
 		self.chapter_name = f'{self._manga_json.get("title").get("pretty").replace("/", "-")} - {manga}'
 
 	def next_image(self):
+		"""
+		Goes to the next image in the scan being fetched.
+		"""
+
 		self.ext = self._corresponding_table.get(self._image_list[self.npage].get('t'))
 		self.npage += 1
 		self.image = f"{self._image_root}{self.npage}.{self.ext}"
 
 	def next_chapter(self):
-		# there is only one chapter for nhentai
+		"""
+		Not used as there is only one chapter but needed to respect the api
+		"""
+
 		pass
 
 	def is_last_image(self):
+		"""
+		Checks if it's the last image in the current chapter
+		:rtype: bool
+		"""
+
 		return self.npage == self._manga_json.get("num_pages")
 
 	def is_last_chapter(self):
-		# there is only one chapter for nhentai
+		"""
+		Not used as there is only one chapter but needed to respect the api
+		"""
+
 		return True
 
 	def quit(self):
-		# nothing needs to be closed here
+		"""
+		Method used to close everything that was used after finishing to use the fetcher
+		"""
+
 		pass
