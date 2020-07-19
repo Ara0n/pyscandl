@@ -1,0 +1,7 @@
+usage: sphinx_runner.py manga chaplist [-h] name
+
+positional arguments:
+  name        name for the stored manga
+
+optional arguments:
+  -h, --help  show this help message and exit

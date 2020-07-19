@@ -1,0 +1,17 @@
+usage: sphinx_runner.py manga add [-h] -r RSS -l LINK -f FETCHER
+                                  [-c [CHAP [CHAP ...]]] [-a]
+                                  name
+
+positional arguments:
+  name                  name for the stored manga
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r RSS, --rss RSS     rss link with the update notification of the manga
+  -l LINK, --link LINK  link of the manga
+  -f FETCHER, --fetcher FETCHER
+                        name of the fetcher needed for the manga
+  -c [CHAP [CHAP ...]], --chap [CHAP [CHAP ...]]
+                        list of all the chapters already downloaded to be
+                        added to the list for the auto-updater
+  -a, --archived        create the manga as archived

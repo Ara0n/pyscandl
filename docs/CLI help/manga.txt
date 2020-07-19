@@ -1,0 +1,24 @@
+usage: sphinx_runner.py manga [-h] [-l | -la | -lo]
+                              {add,edit,info,chaplist,delete,rmchaps} ...
+
+positional arguments:
+  {add,edit,info,chaplist,delete,rmchaps}
+    add                 add a new manga to the auto downloader
+    edit                modify infos for one of the already existing manga in
+                        the auto downloader
+    info                prints the info for the named manga in the auto
+                        updater
+    chaplist            lists all the dowloaded chapters (warning: can be
+                        huge)
+    delete              deletes the corresponding manga from the auto
+                        downloader
+    rmchaps             remove the listed chapters for this manga from the
+                        database
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l, --list            list all the non-archived mangas for autodl
+  -la, --list-all       list all the mangas for autodl
+  -lo, --list-only      list only the archived mangas for autodl
+
+The current list of image fetcher is: NHENTAI, FANFOX, MANGADEX

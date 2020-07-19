@@ -1,0 +1,14 @@
+usage: sphinx_runner.py autodl [-h] [-o OUTPUT] [-t] (-p | -k | -i)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        the path (absolute or relative) to the folder where to
+                        save the data
+  -t, --tiny            don't write the manga name in the title (useful if
+                        using ebook libraries)
+  -p, --pdf             downloads only the pdf of the manga
+  -k, --keep            downloads the pdf but also keep the images in a
+                        chapter subfolder
+  -i, --image           downloads only the images in a chapter subfolder and
+                        don't create the pdf

@@ -1,0 +1,8 @@
+usage: sphinx_runner.py manga rmchaps [-h] name [chap [chap ...]]
+
+positional arguments:
+  name        name for the stored manga
+  chap        remove the listed chapters for this manga from the database
+
+optional arguments:
+  -h, --help  show this help message and exit
