@@ -4,7 +4,7 @@ from modules.autodl import commands
 import xml.etree.ElementTree
 
 if __name__ == "__main__":
-	args = arg_parser.parse_arg()
+	args = arg_parser.get_parser().parse_args()
 
 
 	if args.subparser == "manual":
@@ -28,18 +28,19 @@ if __name__ == "__main__":
 				print(f"manga '{args.name}' not in the list, you may consider adding it to it with manga add")
 			elif infos.get("chapters"):
 				print(f"{args.name}:\n",
-					  f"\trss link: {infos.get('rss')}\n"
-					  f"\tmanga link: {infos.get('link')}\n"
-					  f"\tfetcher: {infos.get('fetcher').upper()}"
-					  f"\tnumber of chapters already downloaded: {len(infos.get('chapters'))}\n"
-					  f"\tlast chapter downloaded: {infos.get('chapters')[0]}")
+					  f"\trss link: {infos.get('rss')}\n",
+					  f"\tmanga link: {infos.get('link')}\n",
+					  f"\tfetcher: {infos.get('fetcher').upper()}\n",
+					  f"\tnumber of chapters already downloaded: {len(infos.get('chapters'))}\n",
+					  f"\tlast chapter downloaded: {infos.get('chapters')[0]}\n",
+					  f"\tarchived: {infos.get('archived')}")
 			else:
 				print(f"{args.name}:\n",
-					  f"\trss link: {infos.get('rss')}\n"
-					  f"\tmanga link: {infos.get('link')}\n"
-					  f"\tfetcher: {infos.get('fetcher').upper()}"
-					  f"\tnumber of chapters already downloaded: {len(infos.get('chapters'))}\n"
-					  f"\tno chapter downloaded yet")
+					  f"\trss link: {infos.get('rss')}\n",
+					  f"\tmanga link: {infos.get('link')}\n",
+					  f"\tfetcher: {infos.get('fetcher').upper()}\n",
+					  f"\tno chapter downloaded yet\n",
+					  f"\tarchived: {infos.get('archived')}")
 
 		elif args.manga_subparser == "add":
 			json = commands.Controller()

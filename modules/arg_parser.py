@@ -2,7 +2,7 @@ import argparse
 from .fetchers.fetcher_enum import Fetchers
 
 
-def parse_arg():
+def get_parser():
 	"""
 	Function used to parse the arguments in the command line interface
 
@@ -100,4 +100,4 @@ def parse_arg():
 	manual_pars.epilog = "The current list of image fetcher is: " + ", ".join(Fetchers.list())
 	manga.epilog = manual_pars.epilog
 
-	return parser.parse_args()
+	return parser

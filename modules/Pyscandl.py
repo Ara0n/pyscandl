@@ -13,7 +13,7 @@ class Pyscandl:
 	"""
 	def __init__(self, fetcher, chapstart=1, output:str=".", pdf:bool=True, keep:bool=False, image:bool=False, all:bool=False, link:str=None, manga:str=None, download_number:int=1, chapend=0, quiet:bool=False, skip:int=0, tiny:bool=False):
 		"""
-		Initialize this instance of the pyscandl downloader, it needs either :param manga: or :param link: to work.
+		Initialize this instance of the pyscandl downloader, it needs either manga or link to work.
 
 		:param fetcher: fetcher object related to the download
 		:param chapstart: first chapter to be downloaded
