@@ -15,7 +15,6 @@ def parse_arg():
 	manga = subparsers.add_parser("manga", help="tool to modify, add and remove mangas from the automatic rss downloader mode list")
 	manual_pars = subparsers.add_parser("manual", help="manually download scans, it will not update the downloaded scans json, if you plan on setting up a manga with the automatic rss mode don't mix both commands")
 
-	parser.add_argument("-ml", "--manga-list", action="store_true", help="list all the current mangas in the auto downloader")
 	parser.add_argument("-q", "--quiet", action="store_true", help="removes the verbose")
 
 
@@ -43,6 +42,10 @@ def parse_arg():
 
 
 	# json interaction subparser
+	list_type = manga.add_mutually_exclusive_group()
+	list_type.add_argument("-l", "--list", action="store_true", help="list all the non-archived mangas for autodl")
+	list_type.add_argument("-la", "--list-all", action="store_true", help="list all the mangas for autodl")
+	list_type.add_argument("-lo", "--list-only", action="store_true", help="list only the archived mangas for autodl")
 	manga_subparser = manga.add_subparsers(dest="manga_subparser")
 
 	## add subparser
@@ -52,14 +55,20 @@ def parse_arg():
 	add.add_argument("-l", "--link", type=str, help="link of the manga", required=True)
 	add.add_argument("-f", "--fetcher", type=str, help="name of the fetcher needed for the manga", required=True)
 	add.add_argument("-c", "--chap", type=str, nargs="*", help="list of all the chapters already downloaded to be added to the list for the auto-updater")
+	add.add_argument("-a", "--archived", action="store_true", help="create the manga as archived")
 
 	## edit subparser
-	edit = manga_subparser.add_parser("edit", help="modify infos for one of the already existing manga in the auo downloader")
+	edit = manga_subparser.add_parser("edit", help="modify infos for one of the already existing manga in the auto downloader")
 	edit.add_argument("name", type=str, help="name for the stored manga")
 	edit.add_argument("-r", "--rss", type=str, help="rss link with the update notification of the manga")
 	edit.add_argument("-l", "--link", type=str, help="link of the manga")
 	edit.add_argument("-f", "--fetcher", type=str, help="name of the fetcher needed for the manga")
 	edit.add_argument("-c", "--chap", type=str, nargs="*", help="list of all the chapters already downloaded to be added to the list for the auto-updater")
+
+	archiving = edit.add_mutually_exclusive_group()
+	archiving.add_argument("-a", "--archive", action="store_true", help="makes the edited manga archived")
+	archiving.add_argument("-u", "--unarchive", action="store_true", help="unarchives the edited manga")
+
 
 	## info subparser
 	info = manga_subparser.add_parser("info", help="prints the info for the named manga in the auto updater")

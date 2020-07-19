@@ -6,19 +6,23 @@ import xml.etree.ElementTree
 if __name__ == "__main__":
 	args = arg_parser.parse_arg()
 
-	if args.manga_list:
-		list ="\n- ".join(commands.Controller().list_mangas())
-		print(f"current mangas in the autodl db are:{list}")
 
-	elif args.subparser == "manual":
+	if args.subparser == "manual":
 		fetcher = fetcher_enum.Fetchers.get(args.fetcher)
 		pyscandl = Pyscandl.Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf, keep=args.keep, image=args.image, all=args.all, link=args.link, manga=args.manga, download_number=args.download_number, chapend=args.chapter_end, quiet=args.quiet, skip=args.skip, tiny=args.tiny)
 		pyscandl.full_download()
 
 	elif args.subparser == "manga":
-		json = commands.Controller()
 
-		if args.manga_subparser == "info":
+		if args.list or args.list_all or args.list_only:
+			ml = commands.Controller().list_mangas(all=args.list_all, only=args.list_only)
+			if ml:
+				list = "\n- " + "\n- ".join(ml)
+				print(f"current mangas in the autodl db are:{list}")
+			else:
+				print("there are currently no mangas in autodl, you may consider adding some to it with manga add")
+
+		elif args.manga_subparser == "info":
 			infos = commands.Controller().manga_info(args.name)
 			if infos is None:
 				print(f"manga '{args.name}' not in the list, you may consider adding it to it with manga add")
@@ -43,7 +47,7 @@ if __name__ == "__main__":
 				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
 			else:
 				chaps = []
-			json.add(args.name, args.rss, args.link, args.fetcher, chaps)
+			json.add(args.name, args.rss, args.link, args.fetcher, chaps, args.archived)
 			json.save()
 
 		elif args.manga_subparser == "edit":
@@ -52,7 +56,15 @@ if __name__ == "__main__":
 				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
 			else:
 				chaps = None
-			json.edit(args.name, args.rss, args.link, args.fetcher, chaps)
+
+			if args.archive:
+				archive = True
+			elif args.unarchive:
+				archive = False
+			else:
+				archive = None
+
+			json.edit(args.name, args.rss, args.link, args.fetcher, chaps, archive)
 			json.save()
 
 		elif args.manga_subparser == "chaplist":
@@ -85,22 +97,24 @@ if __name__ == "__main__":
 		# to be sure to save progress done in case of interruption
 		try:
 			for name in autodl.db:
-				# currently having problems with the xml tree fetching sometimes so giving a retry possibility to happen
-				tries_left = 3
-				while tries_left > 0:
-					try:
-						autodl.scan(name)
-						success = True
-						tries_left = 0
-					except xml.etree.ElementTree.ParseError:
-						if not args.quiet:
-							print(f"problem with the xml fetching for {name}, retrying...")
-						success = False
-						tries_left -= 1
-				if success:
-					autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
-				elif not args.quiet:
-					print(f"can't access the xml for {name}, please retry it later")
+				# checking if the manga is archived
+				if not autodl.db[name]["archived"]:
+					# currently having problems with the xml tree fetching sometimes so giving a retry possibility to happen
+					tries_left = 3
+					while tries_left > 0:
+						try:
+							autodl.scan(name)
+							success = True
+							tries_left = 0
+						except xml.etree.ElementTree.ParseError:
+							if not args.quiet:
+								print(f"problem with the xml fetching for {name}, retrying...")
+							success = False
+							tries_left -= 1
+					if success:
+						autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
+					elif not args.quiet:
+						print(f"can't access the xml for {name}, please retry it later")
 		finally:
 			autodl.save()
 			if not args.quiet:

@@ -19,9 +19,6 @@ python3 -m pip install -r requirements.txt
 5) install `nodejs`
 6) you can now use the program
 
-**you can update it by running `python3 main.py -U` if you want to be on releases  
-if you want to be on the latest commit just `git pull` from the root of the program folder**
-
 ### from release
 1) check if you have `python3.7` installed
 
@@ -34,7 +31,7 @@ python3 -m pip install -r requirements.txt
 ```
 5) install `nodejs`
 6) you can now use the program  
-**you'll need to download each release from the [release page](https://github.com/Ara0n/pyscandl/release), but it'll be lighter in comparison**
+**you'll need to download each release from the [release page](https://github.com/Ara0n/pyscandl/release)**
 
 ## requirements
 This is a python3 program that uses:
@@ -45,6 +42,8 @@ It is developed on a Debian testing (currently Bullseye) computer so it is verif
 As for other linux distribution, windows and MacOSX I haven't tested the compatibility *(windows may be tested later down the run)* but it should work if you have all the dependencies.
 
 ## command line interface
+***The `README` info about the commands is currently outdated, please use the `-h` argument to find the uses of the commands if you have a doubt***
+
 *might be only `python` for windows*
 ### default
 `python3 main.py [-h] [-U] [-ml] [-q] {autodl,manga,manual}`

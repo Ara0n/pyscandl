@@ -48,7 +48,7 @@ class Controller:
 		with open(f"{os.path.dirname(sys.modules['modules.autodl'].__file__)}/db.json", "w") as data:
 			json.dump(self.db, data, indent=4, sort_keys=True)
 
-	def add(self, name:str, rss:str, link:str, fetcher:str, chapters:list=[]):
+	def add(self, name:str, rss:str, link:str, fetcher:str, chapters:list=None, archived=False):
 		"""
 		Adds a new scan entry to the ``db.json`` file.
 
@@ -62,10 +62,15 @@ class Controller:
 		:type fetcher: str
 		:param chapters: list of the already possessed chapters that wont be downloaded again *(Optional)*
 		:type chapters: list[int/float/str]
+		:param archived: tell if the chapter is considered archived and if it'll be downloaded with autodl
+		:type archived: bool
 
 		:raises FetcherNotFound: the specified fetcher doesn't exist
 		:raises IsStandalone: the specified fetcher is a standalone fetcher
 		"""
+
+		if chapters is None:
+			chapters = []
 
 		if fetcher.upper() not in [i.name for i in Fetchers]:
 			raise FetcherNotFound(fetcher)
@@ -75,10 +80,11 @@ class Controller:
 			"rss": rss,
 			"link": link,
 			"fetcher": fetcher.upper(),
-			"chapters": sorted(chapters, reverse=True)
+			"chapters": sorted(chapters, reverse=True),
+			"archived": archived
 		}
 
-	def edit(self, name:str, rss:str=None, link:str=None, fetcher=None, chapters:list=None):
+	def edit(self, name:str, rss:str=None, link:str=None, fetcher=None, chapters:list=None, archived=None):
 		"""
 		Edits an already existing entry in the ``db.json`` file.
 		The :param name: is mandatory to find the correct entry and every other parameter specified will overwrite the existing values.
@@ -93,6 +99,8 @@ class Controller:
 		:type fetcher: str
 		:param chapters: list of the already possessed chapters that wont be downloaded again
 		:type chapters: list[int/float/str]
+		:param archived: tell if the chapter is considered archived and if it'll be downloaded with autodl
+		:type archived: bool
 
 		:raises IsStandalone: the specified fetcher is a standalone fetcher
 		"""
@@ -108,6 +116,11 @@ class Controller:
 			self.db.get(name)["fetcher"] = fetcher
 		if chapters is not None:
 			self.db.get(name)["chapters"] = sorted(self.db.get(name)["chapters"] + chapters, reverse=True)
+		if archived is not None:
+			try:
+				self.db.get(name)["archived"] = archived
+			except TypeError:
+				print(f"\"{name}\" isn't a manga in the database, you may consider adding it with manga add")
 
 	# each website/fetcher can have differently made xml from their rss so we need to treat them separately if need be
 	def scan(self, name:str):
@@ -239,14 +252,26 @@ class Controller:
 		except OSError:
 			pass
 
-	def list_mangas(self):
+	def list_mangas(self, all=False, only=False):
 		"""
 		Gives the list of all the names of the mangas in the ``db.json`` file.
 
-		:rtype: dict_keys
+		:param all: get also the archived mangas
+		:type all: bool
+		:param only: get only the archived mangas
+		:type only: bool
+
+		:rtype: list
 		"""
 
-		return list(self.db.keys())
+		titles = []
+		max_len = len(max(self.db.keys(), key=lambda x: len(x)))
+		for title in self.db.keys():
+			if self.db[title]["archived"] and (all or only):
+				titles.append("{title:<{size}}|{}".format("    Archived", title=title, size=max_len + 4))
+			elif not self.db[title]["archived"] and not only:
+				titles.append("{title:<{size}}|".format(title=title, size=max_len + 4))
+		return titles
 
 	def manga_info(self, name):
 		"""
