@@ -62,39 +62,39 @@ html_static_path = ['_static']
 
 
 # generate the help the help toggle it on when you changed stuff in the docstrings
-def generate():
-    import argparse
-
-    from modules.arg_parser import get_parser
-
-    parser = get_parser()
-    parser.prog = "main.py"
-
-    subparsers = [
-        subparser
-        for action in parser._actions
-        if isinstance(action, argparse._SubParsersAction)
-        for _, subparser in action.choices.items()
-    ]
-    subsubparsers = []
-    for subparser in subparsers:
-        subsubparsers += [
-            subsubparser
-            for action in subparser._actions
-            if isinstance(action, argparse._SubParsersAction)
-            for _, subsubparser in action.choices.items()
-        ]
-
-    with open("CLI help/main.txt", "w") as file:
-        parser.print_help(file)
-
-    for subparser in subparsers:
-        with open(f"CLI help/{subparser.prog.split()[1]}.txt", "w") as file:
-            subparser.print_help(file)
-
-    for subsubparser in subsubparsers:
-        with open(f"CLI help/{' '.join(subsubparser.prog.split()[1:])}.txt", "w") as file:
-            subsubparser.print_help(file)
-
-
-generate()
+# def generate():
+#     import argparse
+#
+#     from modules.arg_parser import get_parser
+#
+#     parser = get_parser()
+#     parser.prog = "main.py"
+#
+#     subparsers = [
+#         subparser
+#         for action in parser._actions
+#         if isinstance(action, argparse._SubParsersAction)
+#         for _, subparser in action.choices.items()
+#     ]
+#     subsubparsers = []
+#     for subparser in subparsers:
+#         subsubparsers += [
+#             subsubparser
+#             for action in subparser._actions
+#             if isinstance(action, argparse._SubParsersAction)
+#             for _, subsubparser in action.choices.items()
+#         ]
+#
+#     with open("CLI help/main.txt", "w") as file:
+#         parser.print_help(file)
+#
+#     for subparser in subparsers:
+#         with open(f"CLI help/{subparser.prog.split()[1]}.txt", "w") as file:
+#             subparser.print_help(file)
+#
+#     for subsubparser in subsubparsers:
+#         with open(f"CLI help/{' '.join(subsubparser.prog.split()[1:])}.txt", "w") as file:
+#             subsubparser.print_help(file)
+#
+#
+# generate()
