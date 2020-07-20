@@ -3,6 +3,8 @@
 Fetchers
 ===========================
 
+.. todo::
+	Add documentation for the fetcher API so people can more easily hook their own fetchers.
 
 .. toctree::
 	:maxdepth: 2
