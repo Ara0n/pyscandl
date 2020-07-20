@@ -15,9 +15,7 @@ Welcome to Pyscandl
 
 Pyscandl is a tool to download Mangas and Webtoons from various Manga and Webtoon sites easily.
 
-.. warning::
-
-    Don't overuse this tool. Support the developers of those websites by disabling your adblock on their site. Advertisments pay for the website servers.
+    *Don't overuse this tool. Support the developers of those websites by disabling your adblock on their site. Advertisments pay for the website servers.*
 
 It is also built to be lightweight and to not require external tools like selenium, to be used you only need python 3.7 or higher and nodejs installed.
 
