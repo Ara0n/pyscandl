@@ -9,7 +9,7 @@ From source
 2. check if you have the corresponding ``pip`` installed
 3. clone the repository
 
-.. code-block::
+.. code-block:: none
 
     git clone https://github.com/Ara0n/pyscandl.git
 

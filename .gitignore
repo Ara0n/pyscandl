@@ -8,6 +8,9 @@ test.*
 # database
 db.json
 
+# builds done for teh documentation
+docs/build/
+
 # --------------------------------------
 # removing pycharm files
 .idea/

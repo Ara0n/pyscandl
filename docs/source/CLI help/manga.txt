@@ -1,4 +1,4 @@
-usage: sphinx_runner.py manga [-h] [-l | -la | -lo]
+usage: main.py manga [-h] [-l | -la | -lo]
                               {add,edit,info,chaplist,delete,rmchaps} ...
 
 positional arguments:

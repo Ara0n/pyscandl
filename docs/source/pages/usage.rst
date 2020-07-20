@@ -24,6 +24,15 @@ This command allows you to manually download on or a set of chapters for a speci
 .. literalinclude:: ../CLI help/manual.txt
     :language: none
 
+Example
+"""""""
+
+The following command downloads to the ``books/`` folder the chapters from 10 to 20 for the manga fullmetal alchemist on https://mangadex.org in a pdf format:
+
+.. code-block:: none
+
+    python3 main.py -l https://mangadex.org/title/286/fullmetal-alchemist -f mangadex -o books/ -c 10 -e 20 -p
+
 
 autodl command
 --------------
@@ -33,11 +42,24 @@ This command allow you to automatically search for new scans that are out for a 
 .. literalinclude:: ../CLI help/autodl.txt
     :language: none
 
+Example
+"""""""
+
+The following command will launch the auto download in a tiny mode to the folder ``book/autodl/`` in pdf format:
+
+.. code-block:: none
+
+    python3 main.py -o books/autodl/ -t -p
+
 
 manga command
 -------------
 
-The manga command is the part that controls the database used by the `autodl command`_. it is itself composed of a subset of commands allowing different actions in the database such as adding, removing or editing the infos of an entry.
+The manga command is the part that controls the database used by the `autodl command`_. It is itself composed of a subset of commands allowing different actions in the database such as adding, removing or editing the infos of an entry.
+
+.. note:: An archived manga wont be checked when using ``-l`` or with the ``autodl`` subcommand.
+
+You can also use this command to list all the current manga in the database.
 
 Each entry in the database consists of:
 
@@ -51,27 +73,54 @@ Each entry in the database consists of:
 .. literalinclude:: ../CLI help/manga.txt
     :language: none
 
+Example
+"""""""
+
+The following command lists all the names of the mangas in the database, even the archived ones:
+
+.. code-block:: none
+
+    python3 main.py manga -la
+
 
 add sub-command
-'''''''''''''''
+"""""""""""""""
 
 The add sub-command allows you to add a new entry to the database for the `autodl command`_.
 
 .. literalinclude:: ../CLI help/manga add.txt
     :language: none
 
+Example
+'''''''
+
+The following command adds the manga fullmetal alchemist from the website https://mangadex.og to the database under the name "fullmetal alchemist":
+
+.. code-block:: none
+
+    python3 main.py manga add "fullmetal alchemist" -r https://mangadex.org/rss/wApuURnPsDZ92gX7Th4BySW8dqcVeaCM/manga_id/286 -l https://mangadex.org/title/286/fullmetal-alchemist -f mangadex
+
 
 edit sub-command
-''''''''''''''''
+""""""""""""""""
 
 The edit sub-command allows you to edit one of the already existing entries of the database.
 
 .. literalinclude:: ../CLI help/manga edit.txt
     :language: none
 
+Example
+'''''''
+
+The following command archives the manga saved under the name "fullmetal alchemist":
+
+.. code-block:: none
+
+    python3 main.py manga edit "fullmetal alchemist" -a
+
 
 info sub-command
-''''''''''''''''
+""""""""""""""""
 
 The info sub-command gives you the information available about the requested database entry.
 
@@ -89,18 +138,36 @@ The info consists of:
 .. literalinclude:: ../CLI help/manga info.txt
     :language: none
 
+Example
+'''''''
+
+The following command gets the info about the database entry saved with the name "fullmetal alchemist":
+
+.. code-block:: none
+
+    python3 main.py manga info "fullmetal alchemist"
+
 
 chaplist sub-command
-''''''''''''''''''''
+""""""""""""""""""""
 
 The chaplist sub-command gives you the list of all the chapters downloaded with the `autodl command`_ for this entry in the database.
 
 .. literalinclude:: ../CLI help/manga chaplist.txt
     :language: none
 
+Example
+'''''''
+
+The following command gets the list of chapters downloaded for the database entry saved with the name "fullmetal alchemist":
+
+.. code-block:: none
+
+    python3 main.py manga chaplist "fullmetal alchemist"
+
 
 delete sub-command
-''''''''''''''''''
+""""""""""""""""""
 
 The delete sub-command deletes the specified entry from the database.
 
@@ -109,9 +176,18 @@ The delete sub-command deletes the specified entry from the database.
 .. literalinclude:: ../CLI help/manga delete.txt
     :language: none
 
+Example
+'''''''
+
+The following command gets deletes the database entry saved with the name "fullmetal alchemist":
+
+.. code-block:: none
+
+    python3 main.py manga delete "fullmetal alchemist"
+
 
 rmchaps sub-command
-'''''''''''''''''''
+"""""""""""""""""""
 
 The rmchap sub-command deletes all the chapters listed from the entry of the database requested.
 
@@ -119,3 +195,12 @@ The rmchap sub-command deletes all the chapters listed from the entry of the dat
 
 .. literalinclude:: ../CLI help/manga rmchaps.txt
     :language: none
+
+Example
+'''''''
+
+The following command removes the chapters 10, 25, 42 and 6.9 from the list of downloaded chapters for the manga saved under the name "fullmetal alchemist":
+
+.. code-block:: none
+
+    python3 main.py manga rmchaps "fullmetal alchemist" 10 25 42 6.9
