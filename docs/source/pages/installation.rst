@@ -24,7 +24,7 @@ From source
     the name of the python used might differ depending on your OS and or pythons installed, just be sure to use one with ``pip`` and that is ``python3.7`` or higher
 
 5. install ``nodejs``
-    * windows installer can be found `here <https://nodejs.org/en/download>`_
+    * windows installer can be found here: https://nodejs.org/en/download
     * for linux use your distributions package manager
     * for mac either do like windows or use homebrew
 
@@ -52,7 +52,7 @@ From release
     the name of the python used might differ depending on your OS and or pythons installed, just be sure to use one with ``pip`` and that is ``python3.7`` or higher
 
 5. install ``nodejs``
-    * windows installer can be found `here <https://nodejs.org/en/download>`_
+    * windows installer can be found here: https://nodejs.org/en/download
     * for linux use your distributions package manager
     * for mac either do like windows or use homebrew
 
@@ -67,6 +67,6 @@ Requirements
 
 The current python requirements are:
 
-.. literalinclude:: ../../pyscandl/requirements.txt
+.. literalinclude:: ../../../requirements.txt
 
 Nodejs is also needed.

@@ -1,3 +1,6 @@
+# always keep folders with a .gitkeep even if the folder content has to be ignored
+!.gitkeep
+
 # test files kept apart
 tests/
 test.*
