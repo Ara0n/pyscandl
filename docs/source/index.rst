@@ -14,7 +14,10 @@ Pyscandl is a python programe made to be able to download scans of mangas and we
 
 The currently supported websites are `Fanfox <https://fanfox.net>`_ who also own the mangazone app, `Mangadex <https://mangadex.com>`_ and `NHentai <https://nhentai.net>`_.
 
-.. warning:: This project is just a technical demo, don't download scans and get the mangas from official retailers when they are accessible in your country !
+.. warning::
+   | *Don't overuse this tool.*
+   | *Support the developers of those websites by disabling your adblock on their site. Advertisments pay for the website servers.*
+   | *Get the mangas from official retailers when they are accessible in your country !*
 
 .. toctree::
    :maxdepth: 2
