@@ -1,4 +1,4 @@
-usage: main.py manga [-h] [-l | -la | -lo]
+usage: pyscandl manga [-h] [-l | -la | -lo]
                               {add,edit,info,chaplist,delete,rmchaps} ...
 
 positional arguments:

@@ -1,4 +1,4 @@
-usage: main.py manga rmchaps [-h] name [chap [chap ...]]
+usage: pyscandl manga rmchaps [-h] name [chap [chap ...]]
 
 positional arguments:
   name        name for the stored manga

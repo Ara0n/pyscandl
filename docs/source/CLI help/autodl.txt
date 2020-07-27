@@ -1,4 +1,4 @@
-usage: main.py autodl [-h] [-o OUTPUT] [-t] (-p | -k | -i)
+usage: pyscandl autodl [-h] [-o OUTPUT] [-t] (-p | -k | -i)
 
 optional arguments:
   -h, --help            show this help message and exit

@@ -1,4 +1,4 @@
-usage: main.py manga edit [-h] [-r RSS] [-l LINK] [-f FETCHER]
+usage: pyscandl manga edit [-h] [-r RSS] [-l LINK] [-f FETCHER]
                                    [-c [CHAP [CHAP ...]]] [-a | -u]
                                    name
 

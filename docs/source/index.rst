@@ -7,6 +7,14 @@
 Welcome to Pyscandl's documentation!
 ************************************
 
+.. image:: https://readthedocs.org/projects/pyscandl/badge/?version=latest
+    :target: https://pyscandl.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
+.. image:: https://img.shields.io/pypi/v/pyscandl
+    :target: https://pypi.org/project/pyscandl/
+    :alt: Latest PyPI version
+
 Introduction
 ============
 

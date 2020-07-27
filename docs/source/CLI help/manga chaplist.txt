@@ -1,4 +1,4 @@
-usage: main.py manga chaplist [-h] name
+usage: pyscandl manga chaplist [-h] name
 
 positional arguments:
   name        name for the stored manga

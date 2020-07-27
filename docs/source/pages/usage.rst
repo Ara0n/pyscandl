@@ -31,7 +31,7 @@ The following command downloads to the ``books/`` folder the chapters from 10 to
 
 .. code-block:: none
 
-    python3 main.py -l https://mangadex.org/title/286/fullmetal-alchemist -f mangadex -o books/ -c 10 -e 20 -p
+    pyscandl -l https://mangadex.org/title/286/fullmetal-alchemist -f mangadex -o books/ -c 10 -e 20 -p
 
 
 autodl command
@@ -49,7 +49,7 @@ The following command will launch the auto download in a tiny mode to the folder
 
 .. code-block:: none
 
-    python3 main.py -o books/autodl/ -t -p
+    pyscandl -o books/autodl/ -t -p
 
 
 manga command
@@ -80,7 +80,7 @@ The following command lists all the names of the mangas in the database, even th
 
 .. code-block:: none
 
-    python3 main.py manga -la
+    pyscandl manga -la
 
 
 add sub-command
@@ -98,7 +98,7 @@ The following command adds the manga fullmetal alchemist from the website https:
 
 .. code-block:: none
 
-    python3 main.py manga add "fullmetal alchemist" -r https://mangadex.org/rss/wApuURnPsDZ92gX7Th4BySW8dqcVeaCM/manga_id/286 -l https://mangadex.org/title/286/fullmetal-alchemist -f mangadex
+    pyscandl manga add "fullmetal alchemist" -r https://mangadex.org/rss/wApuURnPsDZ92gX7Th4BySW8dqcVeaCM/manga_id/286 -l https://mangadex.org/title/286/fullmetal-alchemist -f mangadex
 
 
 edit sub-command
@@ -116,7 +116,7 @@ The following command archives the manga saved under the name "fullmetal alchemi
 
 .. code-block:: none
 
-    python3 main.py manga edit "fullmetal alchemist" -a
+    pyscandl manga edit "fullmetal alchemist" -a
 
 
 info sub-command
@@ -145,7 +145,7 @@ The following command gets the info about the database entry saved with the name
 
 .. code-block:: none
 
-    python3 main.py manga info "fullmetal alchemist"
+    pyscandl manga info "fullmetal alchemist"
 
 
 chaplist sub-command
@@ -163,7 +163,7 @@ The following command gets the list of chapters downloaded for the database entr
 
 .. code-block:: none
 
-    python3 main.py manga chaplist "fullmetal alchemist"
+    pyscandl manga chaplist "fullmetal alchemist"
 
 
 delete sub-command
@@ -183,7 +183,7 @@ The following command gets deletes the database entry saved with the name "fullm
 
 .. code-block:: none
 
-    python3 main.py manga delete "fullmetal alchemist"
+    pyscandl manga delete "fullmetal alchemist"
 
 
 rmchaps sub-command
@@ -203,4 +203,4 @@ The following command removes the chapters 10, 25, 42 and 6.9 from the list of d
 
 .. code-block:: none
 
-    python3 main.py manga rmchaps "fullmetal alchemist" 10 25 42 6.9
+    pyscandl manga rmchaps "fullmetal alchemist" 10 25 42 6.9

@@ -1,4 +1,4 @@
-usage: main.py manual [-h] (-l LINK | -m MANGA) -f FETCHER
+usage: pyscandl manual [-h] (-l LINK | -m MANGA) -f FETCHER
                                [-o OUTPUT] [-c CHAPTER_START]
                                [-a | -n DOWNLOAD_NUMBER | -e CHAPTER_END] [-t]
                                [-s SKIP] (-p | -k | -i)
