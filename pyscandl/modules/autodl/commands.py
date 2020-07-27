@@ -254,7 +254,7 @@ class Controller:
 
 	def list_mangas(self, all=False, only=False):
 		"""
-		Gives the list of all the names of the mangas in the ``db.json`` file.
+		Gives the list of all the names of the mangas in the ``db.json`` file. if the db is empty, returns None
 
 		:param all: get also the archived mangas
 		:type all: bool
@@ -265,6 +265,10 @@ class Controller:
 		"""
 
 		titles = []
+
+		if not self.db:
+			return None
+
 		max_len = len(max(self.db.keys(), key=lambda x: len(x)))
 		for title in self.db.keys():
 			if self.db[title]["archived"] and (all or only):
