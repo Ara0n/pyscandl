@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as f:
 
 setup(
     name='pyscandl',
-    version='2.2.0',
+    version='2.2.1',
     packages=['pyscandl', 'pyscandl.modules', 'pyscandl.modules.autodl', 'pyscandl.modules.fetchers'],
     url='https://pyscandl.readthedocs.io/',
     license='BSD-3-Clause License',
@@ -21,7 +21,7 @@ setup(
         "Source Code": "https://github.com/Ara0n/pyscandl"
     },
     python_requires=">=3.7",
-    entry_points={"console_scripts": ["ppyscandl = pyscandl.main:main"]},
+    entry_points={"console_scripts": ["pyscandl = pyscandl.main:main"]},
     long_description=readme,
     long_description_content_type='text/x-rst',
     install_requires=requires,
