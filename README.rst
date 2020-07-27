@@ -11,6 +11,10 @@ Welcome to Pyscandl
     :target: https://pyscandl.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. image:: https://img.shields.io/pypi/v/pyscandl
+    :target: https://pypi.org/project/pyscandl/
+    :alt: Latest PyPI version
+
 |
 
 Pyscandl is a tool to download Mangas and Webtoons from various Manga and Webtoon sites easily.
