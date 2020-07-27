@@ -13,7 +13,7 @@ requires = [
 
 setup(
     name='pyscandl',
-    version='2.2.2',
+    version='2.3.0',
     packages=['pyscandl', 'pyscandl.modules', 'pyscandl.modules.autodl', 'pyscandl.modules.fetchers'],
     url='https://pyscandl.readthedocs.io/',
     license='BSD-3-Clause License',
