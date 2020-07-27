@@ -1,5 +1,4 @@
-usage: pyscandl manga [-h] [-l | -la | -lo]
-                              {add,edit,info,chaplist,delete,rmchaps} ...
+usage: pyscandl manga [-h] [-l | -la | -lo] [-e EXPORT_DB | -i IMPORT_DB] {add,edit,info,chaplist,delete,rmchaps} ...
 
 positional arguments:
   {add,edit,info,chaplist,delete,rmchaps}
@@ -20,5 +19,9 @@ optional arguments:
   -l, --list            list all the non-archived mangas for autodl
   -la, --list-all       list all the mangas for autodl
   -lo, --list-only      list only the archived mangas for autodl
+  -e EXPORT_DB, --export-db EXPORT_DB
+                        exports the current database into a json file
+  -i IMPORT_DB, --import-db IMPORT_DB
+                        imports a new database from a json file
 
 The current list of image fetcher is: NHENTAI, FANFOX, MANGADEX

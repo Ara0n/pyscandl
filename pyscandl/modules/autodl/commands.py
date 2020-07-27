@@ -337,7 +337,7 @@ class Controller:
 		"""
 		Saves a copy of the current database to the file path specified.
 
-		:param path: pat to the save location, may be either a file or a folder, if it is a folder the filename will be db.json
+		:param path: path to the save location, may be either a file or a folder, if it is a folder the filename will be db.json
 		:type path: str
 
 		:raises TypeError: if you specify the file name in the destination, the file extension must be .json

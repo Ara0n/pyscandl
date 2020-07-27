@@ -1,6 +1,4 @@
-usage: pyscandl manga add [-h] -r RSS -l LINK -f FETCHER
-                                  [-c [CHAP [CHAP ...]]] [-a]
-                                  name
+usage: pyscandl manga add [-h] -r RSS -l LINK -f FETCHER [-c [CHAP [CHAP ...]]] [-a] name
 
 positional arguments:
   name                  name for the stored manga

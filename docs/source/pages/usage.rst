@@ -59,7 +59,7 @@ The manga command is the part that controls the database used by the `autodl com
 
 .. note:: An archived manga wont be checked when using ``-l`` or with the ``autodl`` subcommand.
 
-You can also use this command to list all the current manga in the database.
+You can also use this command to list all the current manga in the database and to import or export a database.
 
 Each entry in the database consists of:
 
@@ -73,14 +73,52 @@ Each entry in the database consists of:
 .. literalinclude:: ../CLI help/manga.txt
     :language: none
 
+Listing database entries
+""""""""""""""""""""""""
+
+You can use the ``pyscandl manga`` command to list the current mangas that are in the database
+
 Example
-"""""""
+'''''''
+
+The following command lists all the names of the non-archived mangas in the database:
+
+.. code-block:: none
+
+    pyscandl manga -l
+
+The following command lists all the names of the archived mangas in the database:
+
+.. code-block:: none
+
+    pyscandl manga -lo
 
 The following command lists all the names of the mangas in the database, even the archived ones:
 
 .. code-block:: none
 
     pyscandl manga -la
+
+
+Importing and exporting the database
+""""""""""""""""""""""""""""""""""""
+
+It is possible to import and export databases with the ``pyscandl manga`` command. It can be usefull to make backups or install already existing databases in a new pyscandl installation.
+
+Example
+'''''''
+
+The following command exports your current database into a ``db.json`` file in ``Documents/pyscandl/``
+
+.. code-block:: none
+
+    pyscandl manga -e Documents/pyscandl
+
+The following command imports the file at ``Documents/pyscandl/backup/db.json`` to the current database of pyscandl
+
+.. code-block:: none
+
+    pyscandl manga -i Documents/pyscandl/backup/db.json
 
 
 add sub-command
