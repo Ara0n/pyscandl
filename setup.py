@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as f:
 
 setup(
     name='pyscandl',
-    version='2.1.0',
+    version='2.2.0',
     packages=['pyscandl', 'pyscandl.modules', 'pyscandl.modules.autodl', 'pyscandl.modules.fetchers'],
     url='https://pyscandl.readthedocs.io/',
     license='BSD-3-Clause License',

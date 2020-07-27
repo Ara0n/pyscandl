@@ -21,3 +21,7 @@ __pycache__/
 
 # venv
 venv/
+
+# pypi dist
+dist/
+pyscandl.egg-info/

@@ -45,6 +45,7 @@ Planned for future releases
 ===========================
 
 | |check| readthedocs documentation
+| |check| pypi release
 | |uncheck| command line interface (CLI) rework
 | |uncheck| text user interface
 | |uncheck| fetchers rework
