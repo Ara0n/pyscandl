@@ -3,12 +3,17 @@ from setuptools import setup
 with open("README.rst", "r") as f:
     readme = f.read()
 
-with open("requirements.txt", "r") as f:
-    requires = f.readlines()
+requires = [
+    "requests~=2.24.0",
+    "img2pdf~=0.3.6",
+    "Pillow~=7.2.0",
+    "pexpect~=4.8.0",
+    "cfscrape~=2.1.1",
+]
 
 setup(
     name='pyscandl',
-    version='2.2.1',
+    version='2.2.2',
     packages=['pyscandl', 'pyscandl.modules', 'pyscandl.modules.autodl', 'pyscandl.modules.fetchers'],
     url='https://pyscandl.readthedocs.io/',
     license='BSD-3-Clause License',
@@ -27,6 +32,7 @@ setup(
     install_requires=requires,
     package_data={
         "pyscandl.modules.fetchers": ["eval.js"],
-        "pyscandl": ["banlist/*"]
+        "pyscandl": ["banlist/*"],
+        "": ["README.rst"]
     }
 )
