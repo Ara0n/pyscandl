@@ -317,3 +317,39 @@ class Controller:
 			return True
 		else:
 			return False
+
+	def db_import(self, path:str):
+		"""
+		Takes an external json file path and put its content as the new database for pyscandl.
+
+		:param path: path to the .json file to import as the database for autodl and manga
+		:type path: str
+		"""
+
+		with open(path, "r") as data:
+			self.db = json.load(data)
+
+	def db_export(self, path:str):
+		"""
+		Saves a copy of the current database to the file path specified.
+
+		:param path: pat to the save location, may be either a file or a folder, if it is a folder the filename will be db.json
+		:type path: str
+
+		:raises TypeError: if you specify the file name in the destination, the file extension must be .json
+		"""
+
+		if os.path.splitext(path)[1]:  # check if the path includes the filename
+			if os.path.splitext(path)[1] != ".json":
+				raise TypeError("the file must be a .json file !")
+
+			path, filename = os.path.split(path)
+
+		else:
+			filename = "db.json"
+
+		if not os.path.exists(path):
+			os.makedirs(path)
+
+		with open(os.path.join(path, filename), "w") as data:
+			json.dump(self.db, data, indent=4, sort_keys=True)
