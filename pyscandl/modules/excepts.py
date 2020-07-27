@@ -40,7 +40,8 @@ class FetcherNotFound(Exception):
 		:type fetcher: str
 		"""
 		from .fetchers import fetcher_enum  # future proofed for circular imports
-		Exception.__init__(self, f"{fetcher.upper()} is not a supported fetcher the list of supported fetchers is: " + ", ".join(fetcher_enum.Fetchers.list()))
+		Exception.__init__(self, f"{fetcher.upper()} is not a supported fetcher the list of supported fetchers is: " + ", ".join(
+            fetcher_enum.Fetchers.list()))
 
 
 class NoFetcherGiven(Exception):

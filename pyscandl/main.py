@@ -1,15 +1,18 @@
-from modules import Pyscandl, arg_parser
-from modules.fetchers import fetcher_enum
-from modules.autodl import commands
+from pyscandl.modules import arg_parser, Pyscandl
+from pyscandl.modules.fetchers import fetcher_enum
+from pyscandl.modules.autodl import commands
 import xml.etree.ElementTree
 
-if __name__ == "__main__":
-	args = arg_parser.get_parser().parse_args()
 
+def main():
+	args = arg_parser.get_parser().parse_args()
 
 	if args.subparser == "manual":
 		fetcher = fetcher_enum.Fetchers.get(args.fetcher)
-		pyscandl = Pyscandl.Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf, keep=args.keep, image=args.image, all=args.all, link=args.link, manga=args.manga, download_number=args.download_number, chapend=args.chapter_end, quiet=args.quiet, skip=args.skip, tiny=args.tiny)
+		pyscandl = Pyscandl.Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf,
+									 keep=args.keep, image=args.image, all=args.all, link=args.link, manga=args.manga,
+									 download_number=args.download_number, chapend=args.chapter_end, quiet=args.quiet,
+									 skip=args.skip, tiny=args.tiny)
 		pyscandl.full_download()
 
 	elif args.subparser == "manga":
@@ -92,7 +95,6 @@ if __name__ == "__main__":
 				if not args.quiet:
 					print(f"manga {args.name} not found")
 
-
 	elif args.subparser == "autodl":
 		autodl = commands.Controller(args.output, args.quiet, args.tiny)
 		# to be sure to save progress done in case of interruption
@@ -120,3 +122,7 @@ if __name__ == "__main__":
 			autodl.save()
 			if not args.quiet:
 				print(f"{autodl.downloads} chapters downloaded")
+
+
+if __name__ == "__main__":
+	main()

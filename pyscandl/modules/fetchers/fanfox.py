@@ -31,7 +31,7 @@ class Fanfox:
 						"Referer": "test"}
 
 		self.domain = ".fanfox.net"
-		self._node = pexpect.spawn(f"node {os.path.dirname(sys.modules['modules.fetchers'].__file__)}/eval.js")
+		self._node = pexpect.spawn(f"node {os.path.dirname(sys.modules['pyscandl.modules.fetchers'].__file__)}/eval.js")
 		# creating the chapter link
 		if link is not None:
 			if link[-1] == "/":

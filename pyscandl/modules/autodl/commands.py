@@ -28,7 +28,7 @@ class Controller:
 		"""
 
 		try:
-			with open(f"{os.path.dirname(sys.modules['modules.autodl'].__file__)}/db.json", "r") as data:
+			with open(f"{os.path.dirname(sys.modules['pyscandl.modules.autodl'].__file__)}/db.json", "r") as data:
 				self.db = json.load(data)
 		except FileNotFoundError:
 			self.db = {}
@@ -45,7 +45,7 @@ class Controller:
 		Saves the current state of the database in the ``db.json`` file.
 		"""
 
-		with open(f"{os.path.dirname(sys.modules['modules.autodl'].__file__)}/db.json", "w") as data:
+		with open(f"{os.path.dirname(sys.modules['pyscandl.modules.autodl'].__file__)}/db.json", "w") as data:
 			json.dump(self.db, data, indent=4, sort_keys=True)
 
 	def add(self, name:str, rss:str, link:str, fetcher:str, chapters:list=None, archived=False):
