@@ -46,6 +46,10 @@ def get_parser():
 	list_type.add_argument("-l", "--list", action="store_true", help="list all the non-archived mangas for autodl")
 	list_type.add_argument("-la", "--list-all", action="store_true", help="list all the mangas for autodl")
 	list_type.add_argument("-lo", "--list-only", action="store_true", help="list only the archived mangas for autodl")
+
+	db_management = manga.add_mutually_exclusive_group()
+	db_management.add_argument("-e", "--export-db", type=str, help="exports the current database into a json file")
+	db_management.add_argument("-i", "--import-db", type=str, help="imports a new database from a json file")
 	manga_subparser = manga.add_subparsers(dest="manga_subparser")
 
 	## add subparser

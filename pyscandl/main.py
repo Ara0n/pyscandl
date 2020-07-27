@@ -25,6 +25,14 @@ def main():
 			else:
 				print("there are currently no mangas in autodl, you may consider adding some to it with manga add")
 
+		elif args.import_db:
+			json = commands.Controller()
+			json.db_import(args.import_db)
+			json.save()
+
+		elif args.export_db:
+			commands.Controller().db_export(args.export_db)
+
 		elif args.manga_subparser == "info":
 			infos = commands.Controller().manga_info(args.name)
 			if infos is None:
