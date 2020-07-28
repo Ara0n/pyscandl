@@ -15,6 +15,18 @@ Welcome to Pyscandl
     :target: https://pypi.org/project/pyscandl/
     :alt: Latest PyPI version
 
+.. image:: https://img.shields.io/github/commits-since/Ara0n/pyscandl/latest
+    :alt: GitHub commits since latest release (by SemVer)
+
+.. image:: https://img.shields.io/github/release-date/Ara0n/pyscandl
+    :alt: GitHub Release Date
+
+.. image:: https://img.shields.io/github/issues/Ara0n/pyscandl
+    :alt: GitHub issues
+
+.. image:: https://img.shields.io/github/license/Ara0n/pyscandl
+    :alt: GitHub
+
 |
 
 Pyscandl is a tool to download Mangas and Webtoons from various Manga and Webtoon sites easily.
