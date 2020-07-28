@@ -1,13 +1,12 @@
 from ..excepts import MangaNotFound, EmptyChapter
+from .fetcher import Fetcher
 import cfscrape
 
 
-class Mangadex:
+class Mangadex(Fetcher):
 	__doc__ = """
 	This is the fetcher in charge of https://mangadex.org/ 
 	"""
-
-	standalone = False
 
 	def __init__(self, link:str=None, manga:str=None, chapstart=1):
 		"""
@@ -23,6 +22,7 @@ class Mangadex:
 		:raises MangaNotFound: the scan asked for can't be found
 		"""
 
+		super().__init__(link, manga, chapstart)
 		self.scrapper = cfscrape.create_scraper()
 
 		# getting the manga id

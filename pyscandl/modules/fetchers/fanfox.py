@@ -1,4 +1,5 @@
 from ..excepts import MangaNotFound, EmptyChapter
+from .fetcher import Fetcher
 import os, sys
 import re
 import pexpect
@@ -6,12 +7,10 @@ import requests
 import secrets
 
 
-class Fanfox:
+class Fanfox(Fetcher):
 	__doc__ = """
 	This is the fetcher in charge of https://fanfox.net/ 
 	"""
-
-	standalone = False
 
 	def __init__(self, link:str=None, manga:str=None, chapstart=1):
 		"""
@@ -27,6 +26,7 @@ class Fanfox:
 		:raises MangaNotFound: the scan asked for can't be found
 		"""
 
+		super().__init__(link, manga, chapstart)
 		self._header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
 						"Referer": "test"}
 

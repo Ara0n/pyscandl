@@ -1,4 +1,5 @@
 from .excepts import DryNoSauceHere, TooManySauce, EmptyChapter
+from .fetchers.fetcher import StandaloneFetcher
 from PIL import Image
 import img2pdf
 import requests
@@ -50,7 +51,10 @@ class Pyscandl:
 		"""
 
 		if link is not None and manga is None or link is None and manga is not None:
-			self.fetcher = fetcher(link=link, manga=manga, chapstart=chapstart)
+			if issubclass(fetcher, StandaloneFetcher):
+				self.fetcher = fetcher(link=link, manga=manga)
+			else:
+				self.fetcher = fetcher(link=link, manga=manga, chapstart=chapstart)
 		elif link is None and manga is None:
 			raise DryNoSauceHere
 		else:
@@ -78,14 +82,14 @@ class Pyscandl:
 		self._tiny = tiny
 
 		if self._tiny:
-			if self.fetcher.standalone:
+			if isinstance(self.fetcher, StandaloneFetcher):
 				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
 				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
-			if self.fetcher.standalone:
+			if isinstance(self.fetcher, StandaloneFetcher):
 				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
@@ -120,7 +124,7 @@ class Pyscandl:
 		"""
 
 		if not self._quiet:
-			if self.fetcher.standalone:
+			if isinstance(self.fetcher, StandaloneFetcher):
 				print(f"fetching: {self.fetcher.chapter_name}")
 			else:
 				print(f"fetching: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
@@ -139,7 +143,7 @@ class Pyscandl:
 		"""
 
 		if not self._quiet:
-			if self.fetcher.standalone:
+			if isinstance(self.fetcher, StandaloneFetcher):
 				print(f"downloading: {self.fetcher.chapter_name}")
 			else:
 				print(f"downloading: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
@@ -222,14 +226,14 @@ class Pyscandl:
 		self._img_bin_list = []
 		# prepares the next pdf path and name
 		if self._tiny:
-			if self.fetcher.standalone:
+			if isinstance(self.fetcher, StandaloneFetcher):
 				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
 				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
-			if self.fetcher.standalone:
+			if isinstance(self.fetcher, StandaloneFetcher):
 				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
@@ -246,14 +250,14 @@ class Pyscandl:
 		self._img_bin_list = []
 		# prepares the next pdf path and name
 		if self._tiny:
-			if self.fetcher.standalone:
+			if isinstance(self.fetcher, StandaloneFetcher):
 				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
 				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
-			if self.fetcher.standalone:
+			if isinstance(self.fetcher, StandaloneFetcher):
 				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
@@ -281,7 +285,7 @@ class Pyscandl:
 					if not self._quiet:
 						print("empty")
 
-			while not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number or float(self.fetcher.chapter_number) < self._chapend):
+			while not isinstance(self.fetcher, StandaloneFetcher) and not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number or float(self.fetcher.chapter_number) < self._chapend):
 				self.next_chapter()
 				if self._keep or self._image:
 					self.keep_full_chapter()

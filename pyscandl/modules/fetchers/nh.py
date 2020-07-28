@@ -1,16 +1,15 @@
 from ..excepts import MangaNotFound
+from .fetcher import StandaloneFetcher
 import requests
 
 
-class NHentai:
+class NHentai(StandaloneFetcher):
 	__doc__ = """
 	This is the fetcher in charge of https://nhentai.net/
 	The fetcher is of standalone type, it considers every manga as a unique non chaptered scan.
 	"""
 
-	standalone = True
-
-	def __init__(self, link:str=None, manga:int=None, chapstart=None):
+	def __init__(self, link:str=None, manga:int=None):
 		"""
 		Initializes the instance of the nhentai fetcher, it needs either manga or link to work.
 
@@ -23,6 +22,7 @@ class NHentai:
 		:raises MangaNotFound: the scan asked for can't be found
 		"""
 
+		super().__init__(link, manga)
 		if link is None:
 			self._manga_json = requests.get(f"https://nhentai.net/api/gallery/{manga}").json()
 		else:
@@ -67,13 +67,6 @@ class NHentai:
 		self.npage += 1
 		self.image = f"{self._image_root}{self.npage}.{self.ext}"
 
-	def next_chapter(self):
-		"""
-		Not used as there is only one chapter but needed to respect the api
-		"""
-
-		pass
-
 	def is_last_image(self):
 		"""
 		Checks if it's the last image in the current chapter
@@ -81,17 +74,3 @@ class NHentai:
 		"""
 
 		return self.npage == self._manga_json.get("num_pages")
-
-	def is_last_chapter(self):
-		"""
-		Not used as there is only one chapter but needed to respect the api
-		"""
-
-		return True
-
-	def quit(self):
-		"""
-		Method used to close everything that was used after finishing to use the fetcher
-		"""
-
-		pass
