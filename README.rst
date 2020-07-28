@@ -10,20 +10,15 @@ Welcome to Pyscandl
 .. image:: https://readthedocs.org/projects/pyscandl/badge/?version=latest
     :target: https://pyscandl.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-
 .. image:: https://img.shields.io/pypi/v/pyscandl
     :target: https://pypi.org/project/pyscandl/
     :alt: Latest PyPI version
-
 .. image:: https://img.shields.io/github/commits-since/Ara0n/pyscandl/latest
     :alt: GitHub commits since latest release (by SemVer)
-
 .. image:: https://img.shields.io/github/release-date/Ara0n/pyscandl
     :alt: GitHub Release Date
-
 .. image:: https://img.shields.io/github/issues/Ara0n/pyscandl
     :alt: GitHub issues
-
 .. image:: https://img.shields.io/github/license/Ara0n/pyscandl
     :alt: GitHub
 
@@ -65,4 +60,4 @@ Planned for future releases
 | |uncheck| command line interface (CLI) rework
 | |check| import and export the ``autodl`` database
 | |uncheck| text user interface
-| |uncheck| fetchers rework
+| |check| fetchers rework
