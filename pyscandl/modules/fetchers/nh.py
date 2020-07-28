@@ -12,7 +12,7 @@ class NHentai:
 
 	def __init__(self, link:str=None, manga:int=None, chapstart=None):
 		"""
-		Initializes the instance of the nhentai fetcher, it needs either :param manga: or :param link: to work.
+		Initializes the instance of the nhentai fetcher, it needs either manga or link to work.
 
 		:param link: link of the scan wanted
 		:type link: str
