@@ -1,6 +1,6 @@
 Fanfox
 ======================================
 
-.. autoclass:: modules.fetchers.fanfox.Fanfox
+.. autoclass:: modules.fetchers.Fanfox
     :members:
     :special-members: __init__

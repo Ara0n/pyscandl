@@ -1,6 +1,6 @@
 Autodl
 ==============
 
-.. autoclass:: modules.autodl.commands.Controller
+.. autoclass:: modules.autodl.Controller
 	:members:
 	:special-members: __init__

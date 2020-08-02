@@ -1,5 +1,5 @@
 Fetcher enumeration
 =======================
 
-.. autoclass:: modules.fetchers.fetcher_enum.Fetchers
+.. autoclass:: modules.fetchers.FetcherEnum
 	:members:
