@@ -1,11 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
-from pyscandl.modules.fetchers.fetcher import Fetcher
-from pyscandl.modules.excepts import MangaNotFound
+from .fetcher import Fetcher
+from ..excepts import MangaNotFound
 
 
 class Naver(Fetcher):
-    def __init__(self, collection,  link: str = None, manga: str = None, chapstart=1):
+    def __init__(self,  link: str = None, manga: str = None, chapstart=1, collection=""):
         super().__init__(link, manga, chapstart)
         self._collection = collection
         self.domain = ".comic.naver.com"
@@ -60,13 +60,16 @@ class Naver(Fetcher):
         return self.chapter_number == int(self._bs4.find("div", class_="pg_area").findChild("span", class_="total").text)
 
 
-def create_naver_webtoon_fetcher(link: str = None, manga: str = None, chapstart=1):
-    return Naver("webtoon", link, manga, chapstart)
+class NaverWebtoon(Naver):
+    def __init__(self, link, manga, chapstart):
+        super().__init__(link, manga, chapstart, "webtoon")
 
 
-def create_naver_bestchallenge_fetcher(link: str = None, manga: str = None, chapstart=1):
-    return Naver("bestChallenge", link, manga, chapstart)
+class NaverBestChallenge(Naver):
+    def __init__(self, link, manga, chapstart):
+        super().__init__(link, manga, chapstart, "bestChallenge")
 
 
-def create_naver_challenge_fecher(link: str = None, manga: str = None, chapstart=1):
-    return Naver("challenge", link, manga, chapstart)
+class NaverChallenge(Naver):
+    def __init__(self, link, manga, chapstart):
+        super().__init__(link, manga, chapstart, "challenge")
