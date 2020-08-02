@@ -22,7 +22,7 @@ class Fetcher(ABC):
 
         self.author:str = "TBD"  #: name of the author of the manga default to TBD if none is found
         self.chapter_name:str = ""  #: name of the chapter currently in the fetcher defaults to an empty string if no name is found
-        self.chapter_number = None  #: number of the chapter currently in the fetcher
+        self.chapter_number = chapstart  #: number of the chapter currently in the fetcher
         self.domain:str = None  #: domain of the website the fetcher is currently on looks like: .domname.ext
         self.ext:str = None  #: extention of the image currently in the fetcher
         self.image:str = None  #: url to the image currently in the fetcher
