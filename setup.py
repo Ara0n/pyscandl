@@ -9,6 +9,7 @@ requires = [
     "Pillow~=7.2.0",
     "pexpect~=4.8.0",
     "cfscrape~=2.1.1",
+    "beautifulsoup4~=4.9.1",
 ]
 
 setup(
