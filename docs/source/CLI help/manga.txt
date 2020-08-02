@@ -24,4 +24,4 @@ optional arguments:
   -i IMPORT_DB, --import-db IMPORT_DB
                         imports a new database from a json file
 
-The current list of image fetcher is: NHENTAI, FANFOX, MANGADEX
+The current list of image fetcher is: NHENTAI, FANFOX, MANGADEX, NAVERWEBTOON, NAVERBESTCHALLENGE, NAVERCHALLENGE
