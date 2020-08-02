@@ -1,6 +1,6 @@
 from pyscandl.modules import arg_parser, Pyscandl
-from pyscandl.modules.fetchers import fetcher_enum
-from pyscandl.modules.autodl import commands
+from pyscandl.modules.fetchers import FetcherEnum
+from pyscandl.modules.autodl import Controller
 import xml.etree.ElementTree
 
 
@@ -8,8 +8,8 @@ def main():
 	args = arg_parser.get_parser().parse_args()
 
 	if args.subparser == "manual":
-		fetcher = fetcher_enum.Fetchers.get(args.fetcher)
-		pyscandl = Pyscandl.Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf,
+		fetcher = FetcherEnum.get(args.fetcher)
+		pyscandl = Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf,
 									 keep=args.keep, image=args.image, all=args.all, link=args.link, manga=args.manga,
 									 download_number=args.download_number, chapend=args.chapter_end, quiet=args.quiet,
 									 skip=args.skip, tiny=args.tiny)
@@ -18,7 +18,7 @@ def main():
 	elif args.subparser == "manga":
 
 		if args.list or args.list_all or args.list_only:
-			ml = commands.Controller().list_mangas(all=args.list_all, only=args.list_only)
+			ml = Controller().list_mangas(all=args.list_all, only=args.list_only)
 			if ml:
 				list = "\n- " + "\n- ".join(ml)
 				print(f"current mangas in the autodl db are:{list}")
@@ -26,15 +26,15 @@ def main():
 				print("there are currently no mangas in autodl, you may consider adding some to it with manga add")
 
 		elif args.import_db:
-			json = commands.Controller()
+			json = Controller()
 			json.db_import(args.import_db)
 			json.save()
 
 		elif args.export_db:
-			commands.Controller().db_export(args.export_db)
+			Controller().db_export(args.export_db)
 
 		elif args.manga_subparser == "info":
-			infos = commands.Controller().manga_info(args.name)
+			infos = Controller().manga_info(args.name)
 			if infos is None:
 				print(f"manga '{args.name}' not in the list, you may consider adding it to it with manga add")
 			elif infos.get("chapters"):
@@ -54,7 +54,7 @@ def main():
 					  f"\tarchived: {infos.get('archived')}")
 
 		elif args.manga_subparser == "add":
-			json = commands.Controller()
+			json = Controller()
 			if args.chap:
 				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
 			else:
@@ -63,7 +63,7 @@ def main():
 			json.save()
 
 		elif args.manga_subparser == "edit":
-			json = commands.Controller()
+			json = Controller()
 			if args.chap:
 				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
 			else:
@@ -80,11 +80,11 @@ def main():
 			json.save()
 
 		elif args.manga_subparser == "chaplist":
-			chaps = commands.Controller().manga_info(args.name).get("chapters")
+			chaps = Controller().manga_info(args.name).get("chapters")
 			print(f"the already downloaded chapters for {args.name} are: {' '.join([str(chap) for chap in chaps])}")
 
 		elif args.manga_subparser == "rmchaps":
-			json = commands.Controller()
+			json = Controller()
 			if json.rm_chaps(args.name, args.chap):
 				json.save()
 				if not args.quiet:
@@ -94,7 +94,7 @@ def main():
 					print(f"no chapters removed for {args.name}")
 
 		elif args.manga_subparser == "delete":
-			json = commands.Controller()
+			json = Controller()
 			if json.delete_manga(args.name):
 				json.save()
 				if not args.quiet:
@@ -104,7 +104,7 @@ def main():
 					print(f"manga {args.name} not found")
 
 	elif args.subparser == "autodl":
-		autodl = commands.Controller(args.output, args.quiet, args.tiny)
+		autodl = Controller(args.output, args.quiet, args.tiny)
 		# to be sure to save progress done in case of interruption
 		try:
 			for name in autodl.db:

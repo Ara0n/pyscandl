@@ -1,5 +1,5 @@
 import argparse
-from .fetchers.fetcher_enum import Fetchers
+from .fetchers import FetcherEnum
 
 
 def get_parser():
@@ -101,7 +101,7 @@ def get_parser():
 	content.add_argument("-i", "--image", action="store_true", help="downloads only the images in a chapter subfolder and don't create the pdf")
 
 
-	manual_pars.epilog = "The current list of image fetcher is: " + ", ".join(Fetchers.list())
+	manual_pars.epilog = "The current list of image fetcher is: " + ", ".join(FetcherEnum.list())
 	manga.epilog = manual_pars.epilog
 
 	return parser

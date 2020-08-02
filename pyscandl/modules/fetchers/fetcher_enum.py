@@ -1,16 +1,16 @@
 from enum import Enum
-from . import nh, fanfox, mangadex
+from . import NHentai, Fanfox, Mangadex
 from ..excepts import FetcherNotFound
 
 
-class Fetchers(Enum):
+class FetcherEnum(Enum):
 	__doc__ = """
 	Enumeration of all the fetchers available to the program at the moment
 	"""
 
-	NHENTAI = nh.NHentai
-	FANFOX = fanfox.Fanfox
-	MANGADEX = mangadex.Mangadex
+	NHENTAI = NHentai
+	FANFOX = Fanfox
+	MANGADEX = Mangadex
 
 	@classmethod
 	def get(cls, fetcher_name_request: str):

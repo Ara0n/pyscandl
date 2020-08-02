@@ -5,8 +5,8 @@ import cfscrape
 import re
 from xml.etree import ElementTree
 from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter
-from ..Pyscandl import Pyscandl
-from ..fetchers.fetcher_enum import Fetchers
+from .. import Pyscandl
+from ..fetchers import FetcherEnum
 
 
 class Controller:
@@ -72,7 +72,7 @@ class Controller:
 		if chapters is None:
 			chapters = []
 
-		if fetcher.upper() not in [i.name for i in Fetchers]:
+		if fetcher.upper() not in [i.name for i in FetcherEnum]:
 			raise FetcherNotFound(fetcher)
 		if fetcher.lower() in ["nhentai"]:
 			raise IsStandalone(name)
@@ -110,7 +110,7 @@ class Controller:
 		if link is not None:
 			self.db.get(name)["link"] = link
 		if fetcher is not None:
-			standalone_check = Fetchers.get(fetcher)
+			standalone_check = FetcherEnum.get(fetcher)
 			if standalone_check.standalone:
 				raise IsStandalone(name)
 			self.db.get(name)["fetcher"] = fetcher
@@ -183,7 +183,7 @@ class Controller:
 		"""
 
 		manga = self.db.get(name)
-		fetcher = Fetchers.get(manga.get("fetcher"))
+		fetcher = FetcherEnum.get(manga.get("fetcher"))
 
 		# initialize to the first downloadable chapter and download it
 		ok = False
