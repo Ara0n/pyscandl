@@ -5,7 +5,7 @@ import cfscrape
 import re
 from xml.etree import ElementTree
 from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter
-from .. import Pyscandl
+from ..Pyscandl import Pyscandl
 from ..fetchers import FetcherEnum
 
 
