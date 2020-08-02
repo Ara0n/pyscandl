@@ -22,8 +22,6 @@ Welcome to Pyscandl
 .. image:: https://img.shields.io/github/license/Ara0n/pyscandl
     :alt: GitHub
 
-|
-
 Pyscandl is a tool to download Mangas and Webtoons from various Manga and Webtoon sites easily.
 
     | *Don't overuse this tool.*
@@ -49,6 +47,7 @@ The list of currently supported websites is:
 * `Mangadex <https://mangadex.org>`_
 * `Fanfox <https://fanfox.net>`_
 * `NHentai <https://nhentai.net>`_
+* `Naver comics <https://comic.naver.com>`_
 
 Pyscandl is far from its end stage so other websites can be added if needed, don't hesitate to ask in the issues about a new website to add.
 
@@ -61,3 +60,4 @@ Planned for future releases
 | |check| import and export the ``autodl`` database
 | |uncheck| text user interface
 | |check| fetchers rework
+| |uncheck| use beautiful soup 4 for fetchers
