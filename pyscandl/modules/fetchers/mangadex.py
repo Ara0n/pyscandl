@@ -22,6 +22,8 @@ class Mangadex(Fetcher):
 		:type chapstart: int/float/str
 
 		:raises MangaNotFound: the scan asked for can't be found
+		:raises EmptyChapter: the chapter you want to download is empty
+		:raises DelayedRelease: the chapter you want to download isn't available yet
 		"""
 
 		super().__init__(link, manga, chapstart)
@@ -67,6 +69,9 @@ class Mangadex(Fetcher):
 		Method used to update the internal info of the parser about the chapter given with the chap_id.
 
 		:param chap_id: id of the chapter we want the info about
+
+		:raises EmptyChapter: the chapter you want to download is empty
+		:raises DelayedRelease: the chapter you want to download isn't available yet
 		"""
 
 		self.npage = 1
