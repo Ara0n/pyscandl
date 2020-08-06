@@ -1,11 +1,10 @@
-usage: pyscandl manga edit [-h] [-r RSS] [-l LINK] [-f FETCHER] [-c [CHAP [CHAP ...]]] [-a | -u] name
+usage: pyscandl manga edit [-h] [-l LINK] [-f FETCHER] [-c [CHAP [CHAP ...]]] [-a | -u] name
 
 positional arguments:
   name                  name for the stored manga
 
 optional arguments:
   -h, --help            show this help message and exit
-  -r RSS, --rss RSS     rss link with the update notification of the manga
   -l LINK, --link LINK  link of the manga
   -f FETCHER, --fetcher FETCHER
                         name of the fetcher needed for the manga
