@@ -77,6 +77,29 @@ class Fetcher(ABC):
 
         pass
 
+    @classmethod
+    @abstractmethod
+    def scan(cls, link:str=None, manga:str=None):
+        """
+        It is a class method to avoid initializing a fetcher with a chapter for othing, which would take time and resources for nothing.
+        As a result you onnly get either the manga link or the manga id to do the method.
+
+        Gives a list of all the chapters available for that current manga.
+        The number given must correspond to the number you give to specify the chapters you want to the fetcher.
+        To facilitate the usage please return a list of int and floats for the *.x* chapters.
+
+        :param link: link of the manga
+        :type link: str
+        :param manga: unique id of the manga
+        :type manga: str
+
+        :rtype: list[int/float]
+
+        :raises MangaNotFound: the asked manga doesn't exist
+        """
+
+        pass
+
     def quit(self):
         """
         Closes everything used by the fetcher safely.

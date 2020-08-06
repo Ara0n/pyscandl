@@ -5,13 +5,14 @@ from ..excepts import MangaNotFound
 
 
 class Naver(Fetcher):
-    def __init__(self,  link: str = None, manga: str = None, chapstart=1, collection=""):
+    def __init__(self, link:str=None, manga:str=None, chapstart=1, collection=""):
         super().__init__(link, manga, chapstart)
-        self._collection = collection
+        if collection:
+            self._collection = collection
         self.domain = ".comic.naver.com"
 
         if link is not None:
-            self._manga_id = link.partition("titleId=")[1]
+            self._manga_id = link.partition("titleId=")[-1]
         elif str(manga).isdigit():
             self._manga_id = manga
         else:
@@ -59,17 +60,41 @@ class Naver(Fetcher):
     def is_last_chapter(self):
         return self.chapter_number == int(self._bs4.find("div", class_="pg_area").findChild("span", class_="total").text)
 
+    @classmethod
+    def scan(cls, link:str=None, manga:str=None):
+        if link is not None:
+            manga_id = link.partition("titleId=")[-1]
+        elif str(manga).isdigit():
+            manga_id = manga
+        else:
+            raise MangaNotFound(manga)
+
+        req = requests.get(f"https://comic.naver.com/webtoon/detail.nhn?titleId={manga_id}")
+
+        if req.url == "https://comic.naver.com/main.nhn":
+            raise MangaNotFound(manga_id)
+
+        last_chap = int(req.url.split("&no=")[-1])
+
+        return list(range(1, last_chap + 1))
+
 
 class NaverWebtoon(Naver):
-    def __init__(self, link, manga, chapstart):
-        super().__init__(link, manga, chapstart, "webtoon")
+    _collection = "webtoon"  # set at class level for the scan method
+
+    def __init__(self, link:str=None, manga:str=None, chapstart=1):
+        super().__init__(link, manga, chapstart)
 
 
 class NaverBestChallenge(Naver):
-    def __init__(self, link, manga, chapstart):
-        super().__init__(link, manga, chapstart, "bestChallenge")
+    _collection = "bestChallenge"  # set at class level for the scan method
+
+    def __init__(self, link:str=None, manga:str=None, chapstart=1):
+        super().__init__(link, manga, chapstart)
 
 
 class NaverChallenge(Naver):
-    def __init__(self, link, manga, chapstart):
-        super().__init__(link, manga, chapstart, "challenge")
+    _collection = "challenge"  # set at class level for the scan method
+
+    def __init__(self, link:str=None, manga:str=None, chapstart=1):
+        super().__init__(link, manga, chapstart)

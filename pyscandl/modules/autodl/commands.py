@@ -133,34 +133,12 @@ class Controller:
 
 		self.missing_chaps.clear()
 		manga = self.db.get(name)
-		if manga.get("fetcher").lower() in ["fanfox", "fanfox_mono"]:
-			xml = ElementTree.fromstring(requests.get(manga.get("rss")).content)
-			for chapter in xml.iter("item"):
-				nb = chapter.find("link").text.split("/")[-2][1:]
-				if "." in nb:
-					nb = float(nb)
-				else:
-					nb = int(nb)
-				if nb not in manga.get("chapters"):
-					self.missing_chaps.append(nb)
-		elif manga.get("fetcher").lower() == "mangadex":
-			raw = self.scrapper.get(manga.get("rss")).text
-			if "The Database server is under heavy load and can't serve your request. Please wait a bit and try refreshing the page." in raw:
-				if not self.quiet:
-					print(f"The Database server of mangadex is under heavy load and can't check the chapters of \"{name}\" at the moment.")
-			else:
-				xml = ElementTree.fromstring(raw)
-				for chapter in xml.iter("item"):
-					if chapter.find("description").text.split(" - ")[-1] == "Language: English":
-						# check if it's a chapter
-						if self._re_mgdex_scan.search(chapter.find("title").text):
-							nb = self._re_mgdex_scan.search(chapter.find("title").text).group("chap")
-							if "." in nb:
-								nb = float(nb)
-							else:
-								nb = int(nb)
-							if nb not in manga.get("chapters"):
-								self.missing_chaps.append(nb)
+
+		manga_fetcher = FetcherEnum.get(manga.get("fetcher"))
+		manga_chapters = manga_fetcher.scan(link=manga.get("link"))
+
+		self.missing_chaps = list(set(manga_chapters) - set(manga.get("chapters")))
+
 		self.missing_chaps.sort()
 		if not self.quiet:
 			if self.missing_chaps:

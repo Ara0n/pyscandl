@@ -1,6 +1,7 @@
 from ..excepts import MangaNotFound, EmptyChapter
 from .fetcher import Fetcher
 import cfscrape
+import requests
 
 
 class Mangadex(Fetcher):
@@ -136,6 +137,25 @@ class Mangadex(Fetcher):
 		"""
 
 		return self._chap_id_pos+1 == len(self._ordered_chaps_json)
+
+	@classmethod
+	def scan(cls, link:str=None, manga:str=None):
+		if link is not None:
+			if link[-1] == "/":
+				link = link[:-1]
+			manga_id = link.split("/")[-2]
+		elif manga.isdecimal():
+			manga_id = manga
+		else:
+			raise MangaNotFound(manga)
+
+		manga_json = requests.get(f"https://mangadex.org/api/manga/{manga_id}").json()
+		if manga_json.get("status") == "Manga ID does not exist.":
+			raise MangaNotFound(manga_id)
+
+		chaps = [chap.get("chapter") for chap in manga_json.get("chapter").values() if chap.get("lang_code") == "gb" and chap.get("chapter") != ""]
+
+		return list({float(chap) if "." in chap else int(chap) for chap in chaps})
 
 	def quit(self):
 		"""

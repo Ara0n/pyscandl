@@ -5,6 +5,8 @@ import re
 import pexpect
 import requests
 import secrets
+import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import ParseError
 
 
 class Fanfox(Fetcher):
@@ -188,6 +190,34 @@ class Fanfox(Fetcher):
 		"""
 
 		return not bool(self._c_next_chap_num.search(self._req.text))
+
+	@classmethod
+	def scan(cls, link:str=None, manga:str=None):
+		if link is not None:
+			manga_id = link.split("manga/")[1].split("/")[0]
+		elif manga is not None:
+			manga_id = manga.replace(" ", "_")
+
+		rss_url = f"https://fanfox.net/rss/{manga_id}.xml"
+
+		try:
+			xml_root = ET.fromstring(requests.get(rss_url).text)
+		except ParseError:
+			raise MangaNotFound(manga_id)
+
+		chap_list = []
+
+		for item in xml_root.iter("item"):
+			chap_nb = item.find("link").text.split("/")[-2][1:]
+			if "." in chap_nb:
+				chap_nb = float(chap_nb)
+			else:
+				chap_nb = int(chap_nb)
+
+			chap_list.append(chap_nb)
+
+		return list(set(chap_list))
+
 
 	def quit(self):
 		"""
