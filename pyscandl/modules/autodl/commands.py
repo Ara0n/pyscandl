@@ -48,14 +48,12 @@ class Controller:
 		with open(f"{os.path.dirname(sys.modules['pyscandl.modules.autodl'].__file__)}/db.json", "w") as data:
 			json.dump(self.db, data, indent=4, sort_keys=True)
 
-	def add(self, name:str, rss:str, link:str, fetcher:str, chapters:list=None, archived=False):
+	def add(self, name:str, link:str, fetcher:str, chapters:list=None, archived=False):
 		"""
 		Adds a new scan entry to the ``db.json`` file.
 
 		:param name: name of the manga
 		:type name: str
-		:param rss: rss link of the manga
-		:type rss: str
 		:param link: link to the page of the manga *(same link that is used for the -l arg in other uses of pyscandl)*
 		:type link: str
 		:param fetcher: name of the associated fetcher
@@ -77,22 +75,19 @@ class Controller:
 		if fetcher.lower() in ["nhentai"]:
 			raise IsStandalone(name)
 		self.db[name] = {
-			"rss": rss,
 			"link": link,
 			"fetcher": fetcher.upper(),
 			"chapters": sorted(chapters, reverse=True),
 			"archived": archived
 		}
 
-	def edit(self, name:str, rss:str=None, link:str=None, fetcher=None, chapters:list=None, archived=None):
+	def edit(self, name:str, link:str=None, fetcher=None, chapters:list=None, archived=None):
 		"""
 		Edits an already existing entry in the ``db.json`` file.
 		The :param name: is mandatory to find the correct entry and every other parameter specified will overwrite the existing values.
 
 		:param name: name of the manga
 		:type name: str
-		:param rss: rss link of the manga
-		:type rss: str
 		:param link: link to the page of the manga *(same link that is used for the -l arg in other uses of pyscandl)*
 		:type link: str
 		:param fetcher: name of the associated fetcher
@@ -105,8 +100,6 @@ class Controller:
 		:raises IsStandalone: the specified fetcher is a standalone fetcher
 		"""
 
-		if rss is not None:
-			self.db.get(name)["rss"] = rss
 		if link is not None:
 			self.db.get(name)["link"] = link
 		if fetcher is not None:

@@ -55,7 +55,6 @@ def get_parser():
 	## add subparser
 	add = manga_subparser.add_parser("add", help="add a new manga to the auto downloader")
 	add.add_argument("name", type=str, help="name for the stored manga")
-	add.add_argument("-r", "--rss", type=str, help="rss link with the update notification of the manga", required=True)
 	add.add_argument("-l", "--link", type=str, help="link of the manga", required=True)
 	add.add_argument("-f", "--fetcher", type=str, help="name of the fetcher needed for the manga", required=True)
 	add.add_argument("-c", "--chap", type=str, nargs="*", help="list of all the chapters already downloaded to be added to the list for the auto-updater")
@@ -64,7 +63,6 @@ def get_parser():
 	## edit subparser
 	edit = manga_subparser.add_parser("edit", help="modify infos for one of the already existing manga in the auto downloader")
 	edit.add_argument("name", type=str, help="name for the stored manga")
-	edit.add_argument("-r", "--rss", type=str, help="rss link with the update notification of the manga")
 	edit.add_argument("-l", "--link", type=str, help="link of the manga")
 	edit.add_argument("-f", "--fetcher", type=str, help="name of the fetcher needed for the manga")
 	edit.add_argument("-c", "--chap", type=str, nargs="*", help="list of all the chapters already downloaded to be added to the list for the auto-updater")

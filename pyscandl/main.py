@@ -39,7 +39,6 @@ def main():
 				print(f"manga '{args.name}' not in the list, you may consider adding it to it with manga add")
 			elif infos.get("chapters"):
 				print(f"{args.name}:\n",
-					  f"\trss link: {infos.get('rss')}\n",
 					  f"\tmanga link: {infos.get('link')}\n",
 					  f"\tfetcher: {infos.get('fetcher').upper()}\n",
 					  f"\tnumber of chapters already downloaded: {len(infos.get('chapters'))}\n",
@@ -47,7 +46,6 @@ def main():
 					  f"\tarchived: {infos.get('archived')}")
 			else:
 				print(f"{args.name}:\n",
-					  f"\trss link: {infos.get('rss')}\n",
 					  f"\tmanga link: {infos.get('link')}\n",
 					  f"\tfetcher: {infos.get('fetcher').upper()}\n",
 					  f"\tno chapter downloaded yet\n",
@@ -59,7 +57,7 @@ def main():
 				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
 			else:
 				chaps = []
-			json.add(args.name, args.rss, args.link, args.fetcher, chaps, args.archived)
+			json.add(args.name, args.link, args.fetcher, chaps, args.archived)
 			json.save()
 
 		elif args.manga_subparser == "edit":
@@ -76,7 +74,7 @@ def main():
 			else:
 				archive = None
 
-			json.edit(args.name, args.rss, args.link, args.fetcher, chaps, archive)
+			json.edit(args.name, args.link, args.fetcher, chaps, archive)
 			json.save()
 
 		elif args.manga_subparser == "chaplist":
