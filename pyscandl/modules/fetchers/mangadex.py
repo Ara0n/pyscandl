@@ -153,7 +153,10 @@ class Mangadex(Fetcher):
 		if manga_json.get("status") == "Manga ID does not exist.":
 			raise MangaNotFound(manga_id)
 
-		chaps = [chap.get("chapter") for chap in manga_json.get("chapter").values() if chap.get("lang_code") == "gb" and chap.get("chapter") != ""]
+		if manga_json.get("chapter"):
+			chaps = [chap.get("chapter") for chap in manga_json.get("chapter").values() if chap.get("lang_code") == "gb" and chap.get("chapter") != ""]
+		else:
+			return []
 
 		return list({float(chap) if "." in chap else int(chap) for chap in chaps})
 
