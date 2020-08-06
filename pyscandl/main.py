@@ -126,6 +126,9 @@ def main():
 						autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
 					elif not args.quiet:
 						print(f"can't access the xml for {name}, please retry it later")
+		except KeyboardInterrupt:
+			if not args.quiet:
+				print("\nmanual interruption")
 		finally:
 			autodl.save()
 			if not args.quiet:
