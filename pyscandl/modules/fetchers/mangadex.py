@@ -1,7 +1,8 @@
-from ..excepts import MangaNotFound, EmptyChapter
+from ..excepts import MangaNotFound, EmptyChapter, DelayedRelease
 from .fetcher import Fetcher
 import cfscrape
 import requests
+from datetime import datetime
 
 
 class Mangadex(Fetcher):
@@ -81,6 +82,11 @@ class Mangadex(Fetcher):
 
 		# checking if chapter is accessible
 		if not self._img_ids:
+			if self._current_chapter_json.get("status") == "delayed":
+				ts = self._current_chapter_json.get("timestamp")
+				date = datetime.fromtimestamp(ts)
+				raise DelayedRelease(self.manga_name, date.isoformat(sep=" "))
+
 			raise EmptyChapter(self.manga_name, self.chapter_number)
 
 		self.image = f"{self._img_root}{self._img_ids[0]}"

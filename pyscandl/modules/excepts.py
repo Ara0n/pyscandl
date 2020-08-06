@@ -81,3 +81,15 @@ class EmptyChapter(Exception):
 		"""
 
 		Exception.__init__(self, f"chapter {chap_num} of {manga} is empty")
+
+
+class DelayedRelease(Exception):
+	__doc__ = "exception used if a chapter is visible on the website but will be available later, this can be the case on mangadex"
+
+	def __init__(self, name, date):
+		"""
+		:param name: name of the manga
+		:param date: date of the availability
+		"""
+
+		Exception.__init__(self, f'the manga "{name}" will be available starting {date}')

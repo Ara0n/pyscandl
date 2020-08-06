@@ -1,4 +1,4 @@
-from .excepts import DryNoSauceHere, TooManySauce, EmptyChapter
+from .excepts import DryNoSauceHere, TooManySauce, EmptyChapter, DelayedRelease
 from .fetchers.fetcher import StandaloneFetcher
 from PIL import Image
 import img2pdf
@@ -273,20 +273,8 @@ class Pyscandl:
 			# emulating a do while
 			self._skip()
 			counter = 1
-			if self._keep or self._image:
-				self.keep_full_chapter()
-			else:
-				self.full_chapter()
 
-			if not self._image:
-				try:
-					self.create_pdf()
-				except EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number):
-					if not self._quiet:
-						print("empty")
-
-			while not isinstance(self.fetcher, StandaloneFetcher) and not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number or float(self.fetcher.chapter_number) < self._chapend):
-				self.next_chapter()
+			try:
 				if self._keep or self._image:
 					self.keep_full_chapter()
 				else:
@@ -295,9 +283,30 @@ class Pyscandl:
 				if not self._image:
 					try:
 						self.create_pdf()
-					except EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number):
+					except EmptyChapter:
 						if not self._quiet:
 							print("empty")
+			except DelayedRelease as e:
+				if not self._quiet:
+					print(e)
+
+			while not isinstance(self.fetcher, StandaloneFetcher) and not self.fetcher.is_last_chapter() and (self._all or counter < self._download_number or float(self.fetcher.chapter_number) < self._chapend):
+				self.next_chapter()
+				try:
+					if self._keep or self._image:
+						self.keep_full_chapter()
+					else:
+						self.full_chapter()
+
+					if not self._image:
+						try:
+							self.create_pdf()
+						except EmptyChapter:
+							if not self._quiet:
+								print("empty")
+				except DelayedRelease as e:
+					if not self._quiet:
+						print(e)
 				counter += 1
 		except KeyboardInterrupt:
 			if not self._quiet:

@@ -4,7 +4,7 @@ import requests
 import cfscrape
 import re
 from xml.etree import ElementTree
-from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter
+from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter, DelayedRelease
 from ..Pyscandl import Pyscandl
 from ..fetchers import FetcherEnum
 
@@ -192,6 +192,10 @@ class Controller:
 			except EmptyChapter:
 				if not self.quiet:
 					print(f"skipping {name} chapter {self.missing_chaps[chapter_id]}: empty, wont be added in the downloaded list")
+			except DelayedRelease as e:
+				if not self.quiet:
+					print(e)
+					print("skipping...")
 
 		# if chapters are left to doawnload proceeds with it
 		if ok:
@@ -217,6 +221,10 @@ class Controller:
 				except EmptyChapter:
 					if not self.quiet:
 						print(f"skipping {name} chapter {self.missing_chaps[chapter_id]}: empty, wont be added in the downloaded list")
+				except DelayedRelease as e:
+					if not self.quiet:
+						print(e)
+						print("skipping...")
 
 			downloader.fetcher.quit()
 			self.db.get(name).get("chapters").sort(reverse=True)
