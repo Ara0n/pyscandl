@@ -60,4 +60,4 @@ Planned for future releases
 | |check| import and export the ``autodl`` database
 | |uncheck| text user interface
 | |check| fetchers rework
-| |uncheck| use beautiful soup 4 for fetchers
+| |uncheck| remove node dependence for fanfox
