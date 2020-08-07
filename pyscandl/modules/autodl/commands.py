@@ -188,7 +188,6 @@ class Controller:
 			except DelayedRelease as e:
 				if not self.quiet:
 					print(e)
-					print("skipping...")
 
 		# if chapters are left to doawnload proceeds with it
 		if ok:
@@ -217,7 +216,6 @@ class Controller:
 				except DelayedRelease as e:
 					if not self.quiet:
 						print(e)
-						print("skipping...")
 
 			downloader.fetcher.quit()
 			self.db.get(name).get("chapters").sort(reverse=True)

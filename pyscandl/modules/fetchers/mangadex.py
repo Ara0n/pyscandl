@@ -90,7 +90,7 @@ class Mangadex(Fetcher):
 			if self._current_chapter_json.get("status") == "delayed":
 				ts = self._current_chapter_json.get("timestamp")
 				date = datetime.fromtimestamp(ts)
-				raise DelayedRelease(self.manga_name, date.isoformat(sep=" "))
+				raise DelayedRelease(f"{self.manga_name}, chap {self.chapter_number}", date.isoformat(sep=" "))
 
 			raise EmptyChapter(self.manga_name, self.chapter_number)
 

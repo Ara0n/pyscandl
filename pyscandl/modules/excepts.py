@@ -92,4 +92,4 @@ class DelayedRelease(Exception):
 		:param date: date of the availability
 		"""
 
-		Exception.__init__(self, f'the manga "{name}" will be available starting {date}')
+		Exception.__init__(self, f'the manga {name} will be available starting {date}')
