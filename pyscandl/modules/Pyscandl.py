@@ -6,6 +6,7 @@ import requests
 import logging
 import os
 import io
+from re import sub as re_sub
 
 
 class Pyscandl:
@@ -21,8 +22,6 @@ class Pyscandl:
 		:type chapstart: int/float/str
 		:param output: output folder
 		:type output: str
-		:param name: name of the manga
-		:type name: str
 		:param pdf: tell if the result should be kept as a pdf
 		:type pdf: bool
 		:param keep: tell if the result should be kept as a pdf and as a collection of images
@@ -59,8 +58,16 @@ class Pyscandl:
 			raise DryNoSauceHere
 		else:
 			raise TooManySauce
+
+		# in case windows is the os, remove the banned characters
+		if os.name == "nt":
+			manga_name = re_sub(r'[\\/*?:"<>|]', u"█", self.fetcher.manga_name)
+		else:
+			manga_name = self.fetcher.manga_name
+
 		# creating output folder
-		self._output = (output[-1] == "/" and output or output + "/") + self.fetcher.manga_name + "/"
+		self._output = (output[-1] == "/" and output or output + "/") + manga_name + "/"
+
 		if not os.path.exists(self._output):
 			os.makedirs(self._output)
 
@@ -81,19 +88,25 @@ class Pyscandl:
 		self._img_bin_list = []
 		self._tiny = tiny
 
+		# in case windows is the os, remove the banned characters
+		if os.name == "nt":
+			chapter_name = re_sub(r'[\\/*?:"<>|]', u"█", self.fetcher.chapter_name)
+		else:
+			chapter_name = self.fetcher.chapter_name
+
 		if self._tiny:
 			if isinstance(self.fetcher, StandaloneFetcher):
-				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}{chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
-				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {chapter_name}.pdf"
 				self._name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
 			if isinstance(self.fetcher, StandaloneFetcher):
-				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}{manga_name} - {chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
-				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}{manga_name} - ch.{self.fetcher.chapter_number} {chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 		self._banlist = []
@@ -221,23 +234,30 @@ class Pyscandl:
 		:param chap_num: chapter number that was asked for
 		:type chap_num: int/str/float
 		"""
+
+		# in case windows is the os, remove the banned characters
+		if os.name == "nt":
+			chapter_name = re_sub(r'[\\/*?:"<>|]', u"█", self.fetcher.chapter_name)
+		else:
+			chapter_name = self.fetcher.chapter_name
+
 		self.fetcher.go_to_chapter(chap_num)
-		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
+		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {chapter_name}/"
 		self._img_bin_list = []
 		# prepares the next pdf path and name
 		if self._tiny:
 			if isinstance(self.fetcher, StandaloneFetcher):
-				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}{chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
-				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {chapter_name}.pdf"
 				self._name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
 			if isinstance(self.fetcher, StandaloneFetcher):
-				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
-				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 	def next_chapter(self):
@@ -245,23 +265,29 @@ class Pyscandl:
 		Goes to the next chapter
 		"""
 
+		# in case windows is the os, remove the banned characters
+		if os.name == "nt":
+			chapter_name = re_sub(r'[\\/*?:"<>|]', u"█", self.fetcher.chapter_name)
+		else:
+			chapter_name = self.fetcher.chapter_name
+
 		self.fetcher.next_chapter()
-		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"
+		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {chapter_name}/"
 		self._img_bin_list = []
 		# prepares the next pdf path and name
 		if self._tiny:
 			if isinstance(self.fetcher, StandaloneFetcher):
-				self._pdf_path = f"{self._output}{self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}{chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.chapter_name}"
 			else:
-				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}ch.{self.fetcher.chapter_number} {chapter_name}.pdf"
 				self._name_metadata_pdf = f"ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 		else:
 			if isinstance(self.fetcher, StandaloneFetcher):
-				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - {chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - {self.fetcher.chapter_name}"
 			else:
-				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}.pdf"
+				self._pdf_path = f"{self._output}{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {chapter_name}.pdf"
 				self._name_metadata_pdf = f"{self.fetcher.manga_name} - ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}"
 
 	def full_download(self):
