@@ -151,6 +151,13 @@ class Mangadex(Fetcher):
 
 	@classmethod
 	def scan(cls, link:str=None, manga:str=None):
+
+		header = {
+			"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
+			"Set-Cookie": "domain=.mangadex.org",
+			"Path": "/"
+		}
+
 		if link is not None:
 			if link[-1] == "/":
 				link = link[:-1]
@@ -160,7 +167,7 @@ class Mangadex(Fetcher):
 		else:
 			raise MangaNotFound(manga)
 
-		manga_json = requests.get(f"https://mangadex.org/api/manga/{manga_id}").json()
+		manga_json = requests.get(f"https://mangadex.org/api/manga/{manga_id}", headers=header).json()
 		if manga_json.get("status") == "Manga ID does not exist.":
 			raise MangaNotFound(manga_id)
 
