@@ -1,6 +1,7 @@
 from pyscandl.modules import arg_parser, Pyscandl
 from pyscandl.modules.fetchers import FetcherEnum
 from pyscandl.modules.autodl import Controller
+from pyscandl.modules.excepts import DownedSite
 import xml.etree.ElementTree
 
 
@@ -117,13 +118,17 @@ def main():
 							tries_left = 0
 						except xml.etree.ElementTree.ParseError:
 							if not args.quiet:
-								print(f"problem with the xml fetching for {name}, retrying...")
+								print(f"problem with the fetching for {name}, retrying...")
 							success = False
 							tries_left -= 1
+						except DownedSite:
+							# the website can't be accessed for the time being so no retrying
+							success = False
+							tries_left = 0
 					if success:
 						autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
 					elif not args.quiet:
-						print(f"can't access the xml for {name}, please retry it later")
+						print(f"can't access {name}, please retry it later")
 		except KeyboardInterrupt:
 			if not args.quiet:
 				print("\nmanual interruption")

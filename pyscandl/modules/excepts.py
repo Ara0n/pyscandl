@@ -93,3 +93,16 @@ class DelayedRelease(Exception):
 		"""
 
 		Exception.__init__(self, f'the manga {name} will be available starting {date}')
+
+
+class DownedSite(Exception):
+	__doc__ = """
+	Exception used when the fetcher can't access its website to do the downloads
+	"""
+
+	def __init__(self, website_name):
+		"""
+		:param website_name:
+		"""
+
+		Exception.__init__(self, f"The website {website_name} isn't accessible for the moment, please retry it later")

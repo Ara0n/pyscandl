@@ -1,4 +1,4 @@
-from ..excepts import MangaNotFound, EmptyChapter, DelayedRelease
+from ..excepts import MangaNotFound, EmptyChapter, DelayedRelease, DownedSite
 from .fetcher import Fetcher
 import cfscrape
 import requests
@@ -167,7 +167,13 @@ class Mangadex(Fetcher):
 		else:
 			raise MangaNotFound(manga)
 
-		manga_json = requests.get(f"https://mangadex.org/api/manga/{manga_id}", headers=header).json()
+
+		req = requests.get(f"https://mangadex.org/api/manga/{manga_id}", headers=header)
+		if req.status_code == 200:
+			manga_json = req.json()
+		else:
+			raise DownedSite("Mangadex")
+
 		if manga_json.get("status") == "Manga ID does not exist.":
 			raise MangaNotFound(manga_id)
 
