@@ -126,7 +126,10 @@ def main():
 							success = False
 							tries_left = 0
 					if success:
-						autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
+						try:
+							autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
+						except DownedSite:
+							print(f"can't access {name}, please retry it later")
 					elif not args.quiet:
 						print(f"can't access {name}, please retry it later")
 		except KeyboardInterrupt:

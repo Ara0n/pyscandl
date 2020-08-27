@@ -2,6 +2,7 @@ from ..excepts import MangaNotFound, EmptyChapter, DelayedRelease, DownedSite
 from .fetcher import Fetcher
 import cfscrape
 import requests
+import json.decoder
 from datetime import datetime
 
 
@@ -42,7 +43,10 @@ class Mangadex(Fetcher):
 
 		self.domain = ".mangadex.org"
 
-		manga_json = self.scrapper.get(f"https://mangadex.org/api/manga/{manga_id}").json()
+		try:
+			manga_json = self.scrapper.get(f"https://mangadex.org/api/manga/{manga_id}").json()
+		except json.decoder.JSONDecodeError:
+			raise DownedSite("Mangadex")
 		if manga_json.get("status") == "Manga ID does not exist.":
 			raise MangaNotFound(manga_id)
 
@@ -75,7 +79,13 @@ class Mangadex(Fetcher):
 		"""
 
 		self.npage = 1
-		self._current_chapter_json = self.scrapper.get(f"https://mangadex.org/api/chapter/{chap_id}").json()
+
+
+		try:
+			self._current_chapter_json = self.scrapper.get(f"https://mangadex.org/api/chapter/{chap_id}").json()
+		except json.decoder.JSONDecodeError:
+			raise DownedSite("Mangadex")
+
 		self.chapter_name = self._current_chapter_json.get("title").replace("/", "-")
 
 		self.chapter_number = str(self._current_chapter_json.get("chapter")).split(".")[0].zfill(3)
