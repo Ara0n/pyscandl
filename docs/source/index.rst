@@ -27,7 +27,7 @@ Introduction
 
 Pyscandl is a python programe made to be able to download scans of mangas and webtoons on multiple different websites without the need for `selenium <https://www.selenium.dev/>`_ and its `python version <https://selenium-python.readthedocs.io/>`_.
 
-The currently supported websites are `Fanfox <https://fanfox.net>`_ who also own the mangazone app, `Mangadex <https://mangadex.com>`_ and `NHentai <https://nhentai.net>`_.
+The currently supported websites are `Fanfox <https://fanfox.net>`_ who also own the mangazone app, `Mangadex <https://mangadex.com>`_, `NHentai <https://nhentai.net>`_ and `Naver <https://comic.naver.com>`_ with the Webtoon, BestChallenge and Challenge collections.
 
 .. warning::
    | *Don't overuse this tool.*
