@@ -7,7 +7,6 @@ requires = [
     "requests~=2.24.0",
     "img2pdf~=0.3.6",
     "Pillow~=7.2.0",
-    "pexpect~=4.8.0",
     "cfscrape~=2.1.1",
     "beautifulsoup4~=4.9.1",
 ]
@@ -32,7 +31,6 @@ setup(
     long_description_content_type='text/x-rst',
     install_requires=requires,
     package_data={
-        "pyscandl.modules.fetchers": ["eval.js"],
         "pyscandl": ["banlist/*"],
         "": ["README.rst"]
     }

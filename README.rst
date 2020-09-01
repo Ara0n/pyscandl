@@ -56,8 +56,7 @@ Planned for future releases
 
 | |check| readthedocs documentation
 | |check| pypi release
-| |uncheck| command line interface (CLI) rework
 | |check| import and export the ``autodl`` database
 | |uncheck| text user interface
 | |check| fetchers rework
-| |uncheck| remove node dependence for fanfox
+| |check| remove node dependence for fanfox

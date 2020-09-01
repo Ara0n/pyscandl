@@ -1,8 +1,6 @@
 from ..excepts import MangaNotFound, EmptyChapter
 from .fetcher import Fetcher
-import os, sys
 import re
-import pexpect
 import requests
 import secrets
 import xml.etree.ElementTree as ET
@@ -33,7 +31,6 @@ class Fanfox(Fetcher):
 						"Referer": "test"}
 
 		self.domain = ".fanfox.net"
-		self._node = pexpect.spawn(f"node {os.path.dirname(sys.modules['pyscandl.modules.fetchers'].__file__)}/eval.js")
 		# creating the chapter link
 		if link is not None:
 			if link[-1] == "/":
@@ -46,7 +43,8 @@ class Fanfox(Fetcher):
 			self.manga_name = manga.replace("_", " ").title().replace("/", "_")
 
 		# regex used
-		self._c_eval_args = re.compile(r"eval\(function\(p,a,c,k,e,d\).*?p;}\('(?P<arg1>.*?;)',(?P<arg2>\d+),(?P<arg3>\d+),'(?P<arg4>.*?)'.split")
+		self._c_eval_args = re.compile(r"eval\(function\(p,a,c,k,e,d\).+?p;}\('(?P<pattern>.+?)',(?P<counter1>\d+?),(?P<counter2>\d+?),'(?P<str_table>.+?)'\.split")
+		self._c_decode_word_replacer = re.compile(r"\b\w+\b")
 		self._c_chap_name = re.compile(r"<p class=\"reader-header-title-2\">(?:Vol\.(?:\d+|TBD) )?Ch\.\d+(?:\.\d+)? ?(?P<chap_name>.*?)</p>")
 		self._c_multi_max_page = re.compile(r"(?:data-page=\")(?P<page_num>\d+)")
 		self._c_multi_cid = re.compile(r"(?:var chapterid =)(?P<cid>\d+)(?:;)")
@@ -141,20 +139,31 @@ class Fanfox(Fetcher):
 		:rtype decoded: str
 		"""
 
-		args = list(self._c_eval_args.search(obfuscated).groups())
-		args[0] = args[0].replace("\\", "")
-		args = args[0] + "£" + args[1] + "£" + args[2] + "£" + args[3]
-		self._node.sendline(args)
+		match = self._c_eval_args.search(obfuscated)
+		pattern = match.group("pattern").replace("\\", "")
+		counter1 = int(match.group("counter1"))
+		counter2 = int(match.group("counter2"))
+		str_table = match.group("str_table").split("|")
+		pattern_dict = {}
 
-		decoded = b""
-		self._node.readline()
-		temp = self._node.readline()
-		while temp != b"EOF\r\n":
-			decoded += temp
-			temp = self._node.readline()
-		decoded = decoded.replace(b"\r\n", b"").decode()
+		def calc_dict_indices(iter_number):
+			if iter_number < counter1:
+				prefix = ""
+			else:
+				prefix = calc_dict_indices(int(iter_number / counter1))
 
-		return decoded
+			remainder = iter_number % counter1
+
+			if remainder > 35:
+				return prefix + chr(remainder + 29)
+			else:
+				return prefix + "0123456789abcdefghijklmnopqrstuvwxyz"[remainder]
+
+		for i in range(counter2 - 1, -1, -1):
+			dict_index = calc_dict_indices(i)
+			pattern_dict[dict_index] = str_table[i] if str_table[i] else dict_index
+
+		return self._c_decode_word_replacer.sub(repl=lambda word: pattern_dict[word.group()], string=pattern)
 
 	def next_image(self):
 		"""
@@ -223,5 +232,4 @@ class Fanfox(Fetcher):
 		"""
 		Method used to close everything that was used after finishing to use the fetcher
 		"""
-
-		self._node.terminate(force=True)
+		pass
