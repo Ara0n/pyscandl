@@ -11,16 +11,8 @@ This option is recommended for most users, you will have the most stable experie
 
 .. code-block:: none
 
-    pip3 install pyscandl
+    python3 -m pip install pyscandl
 
-2. install ``nodejs``
-    * windows installer can be found here: https://nodejs.org/en/download
-    * for linux use your distributions package manager
-    * for mac either do like windows or use homebrew
-
-.. code-block:: bash
-
-    brew install node
 
 Updating
 --------
@@ -29,13 +21,13 @@ When a new release is made you can upgrade your installation using:
 
 .. code-block:: none
 
-    pip3 install pyscandl -U
+    python3 -m pip install pyscandl -U
 
 
 Using setup.py
 ==============
 
-This option is recommended for devellopement and people wanting to use the bleeding edge before the releases. Syability is not guaranteed.
+This option is recommended for development and people wanting to use the bleeding edge before the releases. Stability is not guaranteed.
 
 1. install the python program:
 
@@ -44,15 +36,6 @@ This option is recommended for devellopement and people wanting to use the bleed
     git clone https://github.com/Ara0n/pyscandl.git
     cd pyscandl
     python3 setup.py install
-
-2. install ``nodejs``
-    * windows installer can be found here: https://nodejs.org/en/download
-    * for linux use your distributions package manager
-    * for mac either do like windows or use homebrew
-
-.. code-block:: bash
-
-    brew install node
 
 
 Legacy (Not recommended)
@@ -82,15 +65,6 @@ From source
 .. note::
     the name of the python used might differ depending on your OS and or pythons installed, just be sure to use one with ``pip`` and that is ``python3.7`` or higher
 
-5. install ``nodejs``
-    * windows installer can be found here: https://nodejs.org/en/download
-    * for linux use your distributions package manager
-    * for mac either do like windows or use homebrew
-
-.. code-block:: bash
-
-    brew install node
-
 The program is now ready to be used, don't forget from time to time to check if new code and features were added and if yes do a ``git pull``
 
 
@@ -110,15 +84,6 @@ From release
 .. note::
     the name of the python used might differ depending on your OS and or pythons installed, just be sure to use one with ``pip`` and that is ``python3.7`` or higher
 
-5. install ``nodejs``
-    * windows installer can be found here: https://nodejs.org/en/download
-    * for linux use your distributions package manager
-    * for mac either do like windows or use homebrew
-
-.. code-block:: bash
-
-    brew install node
-
 The program is now ready to be used, don't forget from time to time to check if a new release is out `here <https://github.com/Ara0n/pyscandl/release/latest>`_ and if yes download it.
 
 Requirements
@@ -127,5 +92,3 @@ Requirements
 The current python requirements are:
 
 .. literalinclude:: ../../../requirements.txt
-
-Nodejs is also needed.
