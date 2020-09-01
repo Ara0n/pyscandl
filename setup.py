@@ -1,4 +1,5 @@
 from setuptools import setup
+from pyscandl import __version__
 
 with open("README.rst", "r") as f:
     readme = f.read()
@@ -13,7 +14,7 @@ requires = [
 
 setup(
     name='pyscandl',
-    version='2.5.2',
+    version=__version__,
     packages=['pyscandl', 'pyscandl.modules', 'pyscandl.modules.autodl', 'pyscandl.modules.fetchers'],
     url='https://pyscandl.readthedocs.io/',
     license='BSD-3-Clause License',
