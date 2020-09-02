@@ -11,7 +11,7 @@ class Mangadex(Fetcher):
 	This is the fetcher in charge of https://mangadex.org/ 
 	"""
 
-	def __init__(self, link:str=None, manga:str=None, chapstart=1):
+	def __init__(self, link:str=None, manga:str=None, chapstart=1, lang="gb"):
 		"""
 		Initializes the instance of the nhentai fetcher, it needs either manga or link to work.
 
@@ -29,6 +29,7 @@ class Mangadex(Fetcher):
 
 		super().__init__(link, manga, chapstart)
 		self.scrapper = cfscrape.create_scraper()
+		self._lang = lang
 
 		# getting the manga id
 		if link is not None:
@@ -55,7 +56,7 @@ class Mangadex(Fetcher):
 		self._ordered_chaps_json = []
 		for item in sorted(self._chapters_json.keys(), key=lambda x: self._chapters_json[x]["chapter"].zfill(10)):
 			self._ordered_chaps_json.append((item, self._chapters_json.get(item)))
-		self._ordered_chaps_json = [chap for chap in self._ordered_chaps_json if chap[1].get("lang_code")=="gb"]
+		self._ordered_chaps_json = [chap for chap in self._ordered_chaps_json if chap[1].get("lang_code")==self._lang]
 
 		self.manga_name = manga_json.get("manga").get("title")
 		self.author = manga_json.get("manga").get("author")
@@ -160,7 +161,7 @@ class Mangadex(Fetcher):
 		return self._chap_id_pos+1 == len(self._ordered_chaps_json)
 
 	@classmethod
-	def scan(cls, link:str=None, manga:str=None):
+	def scan(cls, link:str=None, manga:str=None, lang="gb"):
 
 		header = {
 			"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
@@ -188,7 +189,7 @@ class Mangadex(Fetcher):
 			raise MangaNotFound(manga_id)
 
 		if manga_json.get("chapter"):
-			chaps = [chap.get("chapter") for chap in manga_json.get("chapter").values() if chap.get("lang_code") == "gb" and chap.get("chapter") != ""]
+			chaps = [chap.get("chapter") for chap in manga_json.get("chapter").values() if chap.get("lang_code") == lang and chap.get("chapter") != ""]
 		else:
 			return []
 
@@ -200,3 +201,21 @@ class Mangadex(Fetcher):
 		"""
 
 		self.scrapper.close()
+
+
+class MangadexEN(Mangadex):
+	def __init__(link: str = None, manga: str = None, chapstart=1):
+		super().__init__(link=link, manga=manga, chapstart=chapstart, lang="gb")
+
+	@classmethod
+	def scan(cls, link:str=None, manga:str=None):
+		return super().scan(link=link, manga=manga, lang="gb")
+
+
+class MangadexFR(Mangadex):
+	def __init__(link: str = None, manga: str = None, chapstart=1):
+		super().__init__(link=link, manga=manga, chapstart=chapstart, lang="fr")
+
+	@classmethod
+	def scan(cls, link:str=None, manga:str=None):
+		return super().scan(link=link, manga=manga, lang="fr")

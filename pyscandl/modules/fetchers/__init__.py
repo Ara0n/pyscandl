@@ -1,7 +1,7 @@
 # referencing the fetchers for the PyPI package
 
 from .fanfox import Fanfox
-from .mangadex import Mangadex
+from .mangadex import Mangadex, MangadexEN, MangadexFR
 from .nh import NHentai
 
 # naver webtoons
