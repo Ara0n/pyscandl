@@ -36,4 +36,4 @@ optional arguments:
   -i, --image           downloads only the images in a chapter subfolder and
                         don't create the pdf
 
-The current list of image fetcher is: NHENTAI, FANFOX, MANGADEX, NAVERWEBTOON, NAVERBESTCHALLENGE, NAVERCHALLENGE
+The current list of image fetcher is: NHENTAI, FANFOX, MANGADEX, MANGADEX_FR, FRSCAN, NAVERWEBTOON, NAVERBESTCHALLENGE, NAVERCHALLENGE

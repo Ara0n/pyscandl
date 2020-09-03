@@ -1,4 +1,4 @@
-usage: pyscandl [-h] [-q] {autodl,manga,manual} ...
+usage: pyscandl [-h] [-q] [--version] {autodl,manga,manual} ...
 
 positional arguments:
   {autodl,manga,manual}
@@ -13,3 +13,4 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -q, --quiet           removes the verbose
+  --version             print the current software version
