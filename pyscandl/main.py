@@ -2,13 +2,17 @@ from pyscandl.modules import arg_parser, Pyscandl
 from pyscandl.modules.fetchers import FetcherEnum
 from pyscandl.modules.autodl import Controller
 from pyscandl.modules.excepts import DownedSite
+from pyscandl import __version__
 import xml.etree.ElementTree
 
 
 def main():
 	args = arg_parser.get_parser().parse_args()
 
-	if args.subparser == "manual":
+	if args.version:
+		print(f" The current version of pyscandl is {__version__}")
+
+	elif args.subparser == "manual":
 		fetcher = FetcherEnum.get(args.fetcher)
 		pyscandl = Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf,
 									 keep=args.keep, image=args.image, all=args.all, link=args.link, manga=args.manga,
