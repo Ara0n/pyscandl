@@ -3,6 +3,7 @@
 from .fanfox import Fanfox
 from .mangadex import Mangadex, MangadexEN, MangadexFR
 from .nh import NHentai
+from .frscan import FRScan
 
 # naver webtoons
 from .naver import NaverWebtoon
