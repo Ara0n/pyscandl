@@ -34,7 +34,7 @@ All the methods here are required for you to implement for your fetcher to work 
 
 All the required attributes of you fetcher are also listed here.
 
-.. autoclass:: modules.fetchers.fetcher.Fetcher
+.. autoclass:: pyscandl.modules.fetchers.fetcher.Fetcher
     :members:
     :special-members: __init__
 
@@ -50,7 +50,7 @@ All the methods here are required for you to implement for your fetcher to work 
 
 All the required attributes of you fetcher are also listed here.
 
-.. autoclass:: modules.fetchers.fetcher.StandaloneFetcher
+.. autoclass:: pyscandl.modules.fetchers.fetcher.StandaloneFetcher
     :members:
     :special-members: __init__
 

@@ -16,7 +16,7 @@ To download the webtoon, just use the fetcher corresponding to the right categor
 Naver webtoon collection
 ========================
 
-.. autoclass:: modules.fetchers.NaverWebtoon
+.. autoclass:: pyscandl.modules.fetchers.NaverWebtoon
     :members:
     :inherited-members:
     :special-members: __init__
@@ -25,7 +25,7 @@ Naver webtoon collection
 Naver bestChallenge collection
 ==============================
 
-.. autoclass:: modules.fetchers.NaverBestChallenge
+.. autoclass:: pyscandl.modules.fetchers.NaverBestChallenge
     :members:
     :inherited-members:
     :special-members: __init__
@@ -34,7 +34,7 @@ Naver bestChallenge collection
 Naver challenge collection
 ==========================
 
-.. autoclass:: modules.fetchers.NaverChallenge
+.. autoclass:: pyscandl.modules.fetchers.NaverChallenge
     :members:
     :inherited-members:
     :special-members: __init__

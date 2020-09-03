@@ -1,5 +1,5 @@
 Fetcher enumeration
 =======================
 
-.. autoclass:: modules.fetchers.FetcherEnum
+.. autoclass:: pyscandl.modules.fetchers.FetcherEnum
 	:members:

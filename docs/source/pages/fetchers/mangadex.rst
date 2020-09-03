@@ -7,7 +7,7 @@ English version
 ---------------
 Use the ``MANGADEX`` fetcher for the english scans
 
-.. autoclass:: modules.fetchers.Mangadex
+.. autoclass:: pyscandl.modules.fetchers.Mangadex
 	:members:
 	:special-members: __init__
 
@@ -15,6 +15,6 @@ French version
 --------------
 Use the ``MANGADEX_FR`` fetcher for the french scans
 
-.. autoclass:: modules.fetchers.MangadexFR
+.. autoclass:: pyscandl.modules.fetchers.MangadexFR
 	:members:
 	:special-members: __init__
