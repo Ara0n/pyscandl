@@ -1,4 +1,4 @@
-Fanfox
+FRScan
 ======================================
 
 .. autoclass:: pyscandl.modules.fetchers.FRScan
