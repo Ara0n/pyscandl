@@ -44,10 +44,11 @@ Websites sutported
 
 The list of currently supported websites is:
 
-* `Mangadex <https://mangadex.org>`_
+* `Mangadex <https://mangadex.org>`_ (english and french, if you want more languages, just ask and I'll add them)
 * `Fanfox <https://fanfox.net>`_
 * `NHentai <https://nhentai.net>`_
 * `Naver comics <https://comic.naver.com>`_
+* `FRScan <https://www.frscan.me/>`_
 
 Pyscandl is far from its end stage so other websites can be added if needed, don't hesitate to ask in the issues about a new website to add.
 

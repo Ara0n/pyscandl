@@ -21,7 +21,7 @@ setup(
     author='Thomas MONTERO | Ara0n',
     author_email='thomas99.montero@gmail.com',
     description='a scan downloader in python',
-    keywords=" scraping web scan download manga comics mangadex webtoon nhentai fanfox",
+    keywords="scraping web scan download manga comics mangadex webtoon nhentai fanfox naver frscan english french",
     project_urls={
         "Documentation": "https://pyscandl.readthedocs.io",
         "Source Code": "https://github.com/Ara0n/pyscandl"
