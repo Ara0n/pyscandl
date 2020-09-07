@@ -1,7 +1,12 @@
 # referencing the fetchers for the PyPI package
 
 from .fanfox import Fanfox
-from .mangadex import Mangadex, MangadexEN, MangadexFR
+
+# mangadex setup
+from .mangadex import Mangadex
+from .mangadex import MangadexEN
+from .mangadex import MangadexFR
+
 from .nh import NHentai
 from .frscan import FRScan
 
