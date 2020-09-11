@@ -7,6 +7,7 @@ from xml.etree import ElementTree
 from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter, DelayedRelease
 from ..Pyscandl import Pyscandl
 from ..fetchers import FetcherEnum
+from ..fetchers.fetcher import StandaloneFetcher
 
 
 class Controller:
@@ -104,7 +105,7 @@ class Controller:
 			self.db.get(name)["link"] = link
 		if fetcher is not None:
 			standalone_check = FetcherEnum.get(fetcher)
-			if standalone_check.standalone:
+			if issubclass(standalone_check, StandaloneFetcher):
 				raise IsStandalone(name)
 			self.db.get(name)["fetcher"] = fetcher
 		if chapters is not None:
