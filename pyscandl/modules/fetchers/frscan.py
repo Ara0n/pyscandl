@@ -60,6 +60,8 @@ class FRScan(Fetcher):
         self._chap_soup = BeautifulSoup(req.text, "html.parser")
 
         self.image: str = self._chap_soup.find(class_="img-responsive scan-page").get("src").strip()  #: url to the image currently in the fetcher
+        if "http" not in self.image.split("/")[0]:
+            self.image = "http:" + self.image
         self.ext: str = self.image.split(".")[-1]  #: extention of the image currently in the fetcher
         self.npage: int = 1  #: number of the page the fetcher is currently on
 
@@ -69,6 +71,8 @@ class FRScan(Fetcher):
         self._chap_soup = BeautifulSoup(req.text, "html.parser")
 
         self.image: str = self._chap_soup.find(class_="img-responsive scan-page").get("src").strip()  #: url to the image currently in the fetcher
+        if "http" not in self.image.split("/")[0]:
+            self.image = "http:" + self.image
         self.ext: str = self.image.split(".")[-1]  #: extention of the image currently in the fetcher
 
     def next_chapter(self):
