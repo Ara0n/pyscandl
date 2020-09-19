@@ -25,3 +25,4 @@ venv/
 # pypi dist
 dist/
 pyscandl.egg-info/
+/build/
