@@ -55,6 +55,8 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+def setup(app):
+    app.add_css_file('custom.css')
 
 # -- Options for HTML output -------------------------------------------------
 
