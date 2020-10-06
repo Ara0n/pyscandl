@@ -65,13 +65,7 @@ class Mangadex(Fetcher):
 		self.manga_name = manga_json.get("manga").get("title")
 		self.author = manga_json.get("manga").get("author")
 
-		self._chap_id_pos = 0
-		while self._chap_id_pos < len(self._ordered_chaps_json) and self._ordered_chaps_json[self._chap_id_pos][1].get("chapter") != str(chapstart):
-			self._chap_id_pos += 1
-		if self._chap_id_pos >= len(self._ordered_chaps_json):
-			raise MangaNotFound(f"{self.manga_name}, chapter {chapstart}")
-
-		self._set_current_chap_info(self._ordered_chaps_json[self._chap_id_pos][0])
+		self.go_to_chapter(chapstart)
 
 	def _set_current_chap_info(self, chap_id):
 		"""
@@ -213,13 +207,7 @@ class Mangadex(Fetcher):
 class MangadexEN(Mangadex):
 	_lang = "gb"
 
-	def __init__(self, link: str = None, manga: str = None, chapstart=1):
-		super().__init__(link=link, manga=manga, chapstart=chapstart)
-
 
 class MangadexFR(Mangadex):
 	_lang = "fr"
-
-	def __init__(self, link: str = None, manga: str = None, chapstart=1):
-		super().__init__(link=link, manga=manga, chapstart=chapstart)
 
