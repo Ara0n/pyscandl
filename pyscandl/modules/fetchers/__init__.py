@@ -15,5 +15,10 @@ from .naver import NaverWebtoon
 from .naver import NaverBestChallenge
 from .naver import NaverChallenge
 
+# webtoons setup
+from .webtoons import Webtoons
+from .webtoons import WebtoonsEN
+from .webtoons import WebtoonsFR
+
 # getting the enumeration
 from .fetcher_enum import FetcherEnum

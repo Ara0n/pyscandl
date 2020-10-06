@@ -1,5 +1,5 @@
 from enum import Enum
-from . import NHentai, Fanfox, MangadexEN, MangadexFR, NaverWebtoon, NaverBestChallenge, NaverChallenge, FRScan
+from . import NHentai, Fanfox, MangadexEN, MangadexFR, NaverWebtoon, NaverBestChallenge, NaverChallenge, FRScan, WebtoonsEN, WebtoonsFR
 from ..excepts import FetcherNotFound
 
 
@@ -16,6 +16,8 @@ class FetcherEnum(Enum):
 	NAVERWEBTOON = NaverWebtoon
 	NAVERBESTCHALLENGE = NaverBestChallenge
 	NAVERCHALLENGE = NaverChallenge
+	WEBTOONS = WebtoonsEN
+	WEBTOONS_FR = WebtoonsFR
 
 	@classmethod
 	def get(cls, fetcher_name_request: str):
