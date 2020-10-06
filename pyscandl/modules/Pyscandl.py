@@ -266,13 +266,14 @@ class Pyscandl:
 		Goes to the next chapter
 		"""
 
+		self.fetcher.next_chapter()
+
 		# in case windows is the os, remove the banned characters
 		if os.name == "nt":
 			chapter_name = re_sub(r'[\\/*?:"<>|]', u"█", self.fetcher.chapter_name)
 		else:
 			chapter_name = self.fetcher.chapter_name
 
-		self.fetcher.next_chapter()
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {chapter_name}/"
 		self._img_bin_list = []
 		# prepares the next pdf path and name
