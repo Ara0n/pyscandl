@@ -28,6 +28,7 @@ class Fetcher(ABC):
         self.image:str = None  #: url to the image currently in the fetcher
         self.manga_name:str = None  #: name of the manga currentl in the fetcher
         self.npage:int = 1  #: number of the page the fetcher is currently on
+        self.headers = {} #: if the fetching of the image requires specific parameters in the request header put them here
 
     @abstractmethod
     def next_image(self):
@@ -133,6 +134,7 @@ class StandaloneFetcher(ABC):
         self.image:str = None  #: url to the image currently in the fetcher
         self.manga_name:str = None  #: name of the manga currentl in the fetcher, can be used differently as this dictates the name of the folder they are stored in, for example, the fetcher NHentaiuse this to store everything in a NSFW folder and tags them as NSFW
         self.npage:int = 1  #: number of the page the fetcher is currently on
+        self.header = {} #: if the fetching of the image requires specific parameters in the request header put them here
 
     @abstractmethod
     def next_image(self):

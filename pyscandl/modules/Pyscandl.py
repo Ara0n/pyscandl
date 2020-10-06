@@ -73,6 +73,7 @@ class Pyscandl:
 
 		self._header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36",
 					   "Set-Cookie": f"domain={self.fetcher.domain}"}
+		self._header.update(self.fetcher.headers)
 		self._nskip = skip
 		self._quiet = quiet
 
