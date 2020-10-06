@@ -5,7 +5,7 @@ The Mangadex website now has fetchers for different languages, at the moment for
 
 English version
 ---------------
-Use the ``MANGADEX`` fetcher for the english scans
+Use the ``MANGADEX`` fetcher for the english scans with the enum or the cli
 
 .. autoclass:: pyscandl.modules.fetchers.Mangadex
 	:members:
@@ -13,7 +13,7 @@ Use the ``MANGADEX`` fetcher for the english scans
 
 French version
 --------------
-Use the ``MANGADEX_FR`` fetcher for the french scans
+Use the ``MANGADEX_FR`` fetcher for the french scans with the enum or the cli
 
 .. autoclass:: pyscandl.modules.fetchers.MangadexFR
 	:members:
