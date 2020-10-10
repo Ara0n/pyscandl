@@ -1,9 +1,7 @@
 import os, sys
 import json
-import requests
 import cfscrape
 import re
-from xml.etree import ElementTree
 from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter, DelayedRelease
 from ..Pyscandl import Pyscandl
 from ..fetchers import FetcherEnum
