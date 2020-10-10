@@ -161,7 +161,7 @@ class Controller:
 		ok = False
 		for chapter_id in range(len(self.missing_chaps)):
 			try:
-				downloader = Pyscandl(fetcher, self.missing_chaps[chapter_id], self.output, link=manga.get("link"), quiet=self.quiet, tiny=self.tiny)
+				downloader = Pyscandl(fetcher, self.missing_chaps[chapter_id], self.output, link=manga.get("link"), pdf=pdf, image=image, keep=keep, quiet=self.quiet, tiny=self.tiny)
 
 				bad_image = True
 				while bad_image:  # protect against bad downloads
