@@ -34,7 +34,7 @@ Welcome to Pyscandl's documentation!
 Introduction
 ============
 
-Pyscandl is a python programe made to be able to download scans of mangas and webtoons on multiple different websites without the need for `selenium <https://www.selenium.dev/>`_ and its `python version <https://selenium-python.readthedocs.io/>`_.
+Pyscandl is a python program made to be able to download scans of mangas and webtoons on multiple different websites without the need for `selenium <https://www.selenium.dev/>`_ and its `python version <https://selenium-python.readthedocs.io/>`_.
 
 The currently supported websites are:
 
@@ -42,7 +42,7 @@ The currently supported websites are:
 * `Mangadex <https://mangadex.com>`_ with EN and FR scans (if more languages are needed, juste ask and they'll be added in the next possible release)
 * `NHentai <https://nhentai.net>`_
 * `Naver <https://comic.naver.com>`_ with the Webtoon, BestChallenge and Challenge collections.
-* `FRScan <https://www.frscan.me/>`_
+* `FRScan <https://www.frscan.me/>`_ **currently not working because of a change in cloudflare.**
 * `Webtoons <https://webtoons.com>`_ with EN and FR scans (if more languages are needed, juste ask and they'll be added in the next possible release)
 
 
