@@ -84,7 +84,7 @@ class Pyscandl:
 
 		self._all = all
 		self._download_number = download_number
-		self._chapend = chapend
+		self._chapend = float(chapend) if "." in chapend else int(chapend)
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}/"  # save path for images
 		self._img_bin_list = []
 		self._tiny = tiny
