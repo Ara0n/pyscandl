@@ -162,8 +162,13 @@ class Pyscandl:
 			else:
 				print(f"downloading: ch.{self.fetcher.chapter_number} {self.fetcher.chapter_name}")
 		while not self.fetcher.is_last_image():
+			if self._keep:
+				self._img_bin_list.append(requests.get(self.fetcher.image, headers=self._header).content)
 			self._dl_image()
 			self.fetcher.next_image()
+
+		if self._keep:
+			self._img_bin_list.append(requests.get(self.fetcher.image, headers=self._header).content)
 		self._dl_image()
 		if not self._quiet and self._image:
 			print("")
@@ -185,18 +190,6 @@ class Pyscandl:
 		if not self._quiet:
 			print("\nconverting...", end=" ")
 		# loading the downloaded images if keep mode
-		if self._keep:
-			for loop in range(1, self.fetcher.npage + 1):
-				try:
-					with open(f"{self._path}{loop}.jpg", "rb") as img:
-						self._img_bin_list.append(img.read())
-				except FileNotFoundError:
-					try:
-						with open(f"{self._path}{loop}.png", "rb") as img:
-							self._img_bin_list.append(img.read())
-					except FileNotFoundError:
-						with open(f"{self._path}{loop}.gif", "rb") as img:
-							self._img_bin_list.append(img.read())
 
 		# removing the images found in the banlist
 		self._img_bin_list = [img for img in self._img_bin_list if img not in self._banlist]
