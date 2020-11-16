@@ -1,11 +1,13 @@
 from bs4 import BeautifulSoup
-import requests
+import cfscrape
 import re
 
 from pyscandl.modules.fetchers.fetcher import Fetcher
 from pyscandl.modules.excepts import MangaNotFound, DryNoSauceHere, DelayedRelease
 
 class FRScan(Fetcher):
+    scrapper = cfscrape.create_scraper()
+
     def __init__(self, link: str = None, manga: str = None, chapstart=1):
         # getting the manga id
         super().__init__(chapstart=chapstart)
@@ -20,7 +22,7 @@ class FRScan(Fetcher):
         else:
             raise DryNoSauceHere()
 
-        req = requests.get(self._link)
+        req = self.scrapper.get(self._link)
         if req.status_code == 404:
             raise MangaNotFound(manga_id)
 
@@ -56,7 +58,7 @@ class FRScan(Fetcher):
         if self.chapter_name == -1:
             raise DelayedRelease(f"{self.manga_name}, chapter {self.chapter_number}", "later")
 
-        req = requests.get(f"{self._link}/{self.chapter_number}/1")
+        req = self.scrapper.get(f"{self._link}/{self.chapter_number}/1")
         self._chap_soup = BeautifulSoup(req.text, "html.parser")
 
         self.image: str = self._chap_soup.find(class_="img-responsive scan-page").get("src").strip()  #: url to the image currently in the fetcher
@@ -67,7 +69,7 @@ class FRScan(Fetcher):
 
     def next_image(self):
         self.npage += 1
-        req = requests.get(f"{self._link}/{self.chapter_number}/{self.npage}")
+        req = self.scrapper.get(f"{self._link}/{self.chapter_number}/{self.npage}")
         self._chap_soup = BeautifulSoup(req.text, "html.parser")
 
         self.image: str = self._chap_soup.find(class_="img-responsive scan-page").get("src").strip()  #: url to the image currently in the fetcher
@@ -101,7 +103,7 @@ class FRScan(Fetcher):
         else:
             raise DryNoSauceHere()
 
-        req = requests.get(link)
+        req = cls.scrapper.get(link)
         if req.status_code == 404:
             raise MangaNotFound(manga_id)
 
