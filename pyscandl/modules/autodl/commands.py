@@ -245,12 +245,25 @@ class Controller:
 		if not self.db:
 			return None
 
-		max_len = len(max(self.db.keys(), key=lambda x: len(x)))
-		for title in self.db.keys():
+		max_len_title = len(max(self.db.keys(), key=lambda x: len(x)))
+		fetchers = [title.get("fetcher") for title in self.db.values()]
+		max_len_fetcher = len(max(fetchers, key=lambda x: len(x)))
+		for title, info in self.db.items():
 			if self.db[title]["archived"] and (all or only):
-				titles.append("{title:<{size}}|{}".format("    Archived", title=title, size=max_len + 4))
+				titles.append("{title:<{title_size}}|{fetcher:^{fetcher_size}}|{}".format(
+					"    Archived",
+					title=title,
+					title_size=max_len_title + 4,
+					fetcher=info.get("fetcher"),
+					fetcher_size=max_len_fetcher + 8
+				))
 			elif not self.db[title]["archived"] and not only:
-				titles.append("{title:<{size}}|".format(title=title, size=max_len + 4))
+				titles.append("{title:<{title_size}}|{fetcher:^{fetcher_size}}|".format(
+					title=title,
+					title_size=max_len_title + 4,
+					fetcher=info.get("fetcher"),
+					fetcher_size=max_len_fetcher + 8
+				))
 		return titles
 
 	def manga_info(self, name):
