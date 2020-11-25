@@ -1,4 +1,4 @@
-from ..excepts import MangaNotFound, EmptyChapter
+from ..excepts import MangaNotFound, EmptyChapter, DownedSite
 from .fetcher import Fetcher
 import re
 import requests
@@ -210,7 +210,10 @@ class Fanfox(Fetcher):
 		rss_url = f"https://fanfox.net/rss/{manga_id}.xml"
 
 		try:
-			xml_root = ET.fromstring(requests.get(rss_url).text)
+			req = requests.get(rss_url)
+			if req.status_code == 522:
+				raise DownedSite("https://fanfox.net")
+			xml_root = ET.fromstring(req.text)
 		except ParseError:
 			raise MangaNotFound(manga_id)
 
