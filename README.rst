@@ -39,7 +39,7 @@ Welcome to Pyscandl
 Pyscandl is a tool to download Mangas and Webtoons from various Manga and Webtoon sites easily.
 
     | *Don't overuse this tool.*
-    | *Support the developers of those websites by disabling your adblock on their site. Advertisments pay for the website servers.*
+    | *Support the developers of those websites by disabling your adblock on their site. Advertisements pay for the website servers.*
     | *Get the mangas from official retailers when they are accessible in your country !*
 
 It is also built to be lightweight and to not require external tools like selenium, to be used you only need python 3.7 or higher and nodejs installed.
@@ -72,6 +72,9 @@ Planned for future releases
 | |check| readthedocs documentation
 | |check| pypi release
 | |check| import and export the ``autodl`` database
-| |uncheck| text user interface
+| |uncheck| text user interface or graphical user interface
 | |check| fetchers rework
 | |check| remove node dependence for fanfox
+| |uncheck| place the db in the userdata folder
+| |uncheck| pass fanfox from regex to bs4
+| |uncheck| add mangadraft if possible
