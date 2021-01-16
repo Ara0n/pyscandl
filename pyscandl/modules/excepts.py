@@ -102,7 +102,21 @@ class DownedSite(Exception):
 
 	def __init__(self, website_name):
 		"""
-		:param website_name:
+		:param website_name: name of the downed website
 		"""
 
 		Exception.__init__(self, f"The website {website_name} isn't accessible for the moment, please retry it later")
+
+
+class DecodingError(Exception):
+	__doc__ = """
+	Exception used when the decoder used for offuscated website doesn't work, mainly the case for some random chapters on fanfox atm if the change again some stuff
+	"""
+
+	def __init__(self, manga_name, chapter_number):
+		"""
+		:param manga_name: name of the manga having the decoding error
+		:param chapter_number: number of the chapter having the issue
+		"""
+
+		Exception.__init__(self, f"{manga_name} chapter {chapter_number} have issues being decoded for the moment, might work better with a future version of pyscandl")

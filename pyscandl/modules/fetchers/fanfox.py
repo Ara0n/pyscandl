@@ -94,8 +94,33 @@ class Fanfox(Fetcher):
         else:
             self._multi_go_to_chap()
 
-		self.image = self._image_list[0]
-		self.ext = self.image.split(".")[-1]
+        self.image = self._image_list[0]
+
+        if requests.get(self.image).status_code == 404:  # if a chapter has TBE as a volume it doesn't work without stating vTBE to redo but with it
+            self._image_list = []
+            self.npage = 1
+            self.chapter_number = str(chap_num).split(".")[0].zfill(3)
+            if "." in str(chap_num):
+                self.chapter_number += "." + str(chap_num).split(".")[1]
+
+            url = f"{self._link}vTBE/c{self.chapter_number}/1.html"
+            self._req = requests.get(url, cookies={"isAdult": "1"})
+            if "<title>404</title>" in self._req.text:
+                raise MangaNotFound(f"{self.manga_name}, chapter {self.chapter_number}")
+            if '<p class="detail-block-content">No Images</p>' in self._req.text:
+                raise EmptyChapter(self.manga_name, self.chapter_number)
+
+            self._mono = self._req.text.count("dm5_key") == 1
+            self.chapter_name = self._c_chap_name.search(self._req.text).group("chap_name").replace("/", "_")
+
+            if self._mono:
+                self._mono_go_to_chap()
+            else:
+                self._multi_go_to_chap()
+
+            self.image = self._image_list[0]
+
+        self.ext = self.image.split(".")[-1]
 
     def _mono_go_to_chap(self):
         """
