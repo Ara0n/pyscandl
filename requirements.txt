@@ -1,5 +1,5 @@
-requests~=2.24.0
-img2pdf~=0.3.6
-Pillow~=7.2.0
+requests~=2.25.1
+img2pdf~=0.4.0
+Pillow~=8.1.0
 cfscrape~=2.1.1
-beautifulsoup4~=4.9.1
+beautifulsoup4~=4.9.3
