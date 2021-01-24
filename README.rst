@@ -76,5 +76,6 @@ Planned for future releases
 | |check| fetchers rework
 | |check| remove node dependence for fanfox
 | |uncheck| place the db in the userdata folder
-| |uncheck| pass fanfox from regex to bs4
+| |uncheck| migrate the db to sqlite
+| |check| pass fanfox from regex to bs4
 | |uncheck| add mangadraft if possible

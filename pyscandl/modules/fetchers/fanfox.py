@@ -1,10 +1,12 @@
-from ..excepts import MangaNotFound, EmptyChapter, DownedSite, DecodingError
-from .fetcher import Fetcher
 import re
-import requests
 import secrets
+import requests
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import ParseError
+from bs4 import BeautifulSoup
+
+from ..excepts import MangaNotFound, EmptyChapter, DownedSite
+from .fetcher import Fetcher
 
 
 class Fanfox(Fetcher):
@@ -14,7 +16,7 @@ class Fanfox(Fetcher):
 
     def __init__(self, link:str=None, manga:str=None, chapstart=1):
         """
-        Initializes the instance of the nhentai fetcher, it needs either manga or link to work.
+        Initializes the instance of the fanfox fetcher, it needs either manga or link to work.
 
         :param link: link of the scan wanted
         :type link: str
@@ -42,116 +44,20 @@ class Fanfox(Fetcher):
             self._link = f"https://fanfox.net/manga/{manga.replace(' ', '_').lower()}/"
             self.manga_name = manga.replace("_", " ").title().replace("/", "_")
 
-        # regex used
-        self._c_eval_args = re.compile(r"eval\(function\(p,a,c,k,e,d\).+?p;}\('(?P<pattern>.+?)',(?P<counter1>\d+?),(?P<counter2>\d+?),'(?P<str_table>.+?)'\.split")
-        self._c_decode_word_replacer = re.compile(r"\b\w+\b")
-        self._c_chap_name = re.compile(r"<p class=\"reader-header-title-2\">(?:Vol\.(?:\d+|TBD|TBE) )?Ch\.\d+(?:\.\d+)? ?(?P<chap_name>.*?)</p>")
-        self._c_multi_max_page = re.compile(r"(?:data-page=\")(?P<page_num>\d+)")
-        self._c_multi_cid = re.compile(r"(?:var chapterid =)(?P<cid>\d+)(?:;)")
-        self._c_multi_page_list = re.compile(r"(?:var pix=\")(?P<link>.*?)\".*?\[(?P<chaps>\".*?\")\]")
-        self._c_mono_page_list = re.compile(r"=\[(?P<chaps>'.*?')];")
-        self._c_next_chap_num = re.compile(f"reader-main-next\" href=\"/manga/{self.manga_name.replace(' ', '_').lower()}" + r"/(?:v(?:TBD|\d+|TBE)/)?c(?P<next_chap>\d+(?:\.\d+)?)/1\.html\" title=.*?>Next Chapter</a>")
-
         req = requests.get(self._link)
+        soup = BeautifulSoup(req.text, "html.parser")
         if req.url != self._link:
             raise MangaNotFound(self.manga_name)
         try:
-            self.author = re.search(r"Author: <a href=.*? title=\"(.*?)\">", req.text).group(1)
+            self.author = soup.find("p", class_="detail-info-right-say").findChild("a").text
         except AttributeError:
             self.author = "unknown"
 
+        # regex i can't get rid of... :/
+        self._c_eval_args = re.compile(r"eval\(function\(p,a,c,k,e,d\).+?p;}\('(?P<pattern>.+?)',(?P<counter1>\d+?),(?P<counter2>\d+?),'(?P<str_table>.+?)'\.split")
+        self._c_decode_word_replacer = re.compile(r"\b\w+\b")
+
         self.go_to_chapter(chapstart)
-
-    def go_to_chapter(self, chap_num):
-        """
-        Make the fetcher go to the asked chapter.
-
-        :param chap_num: chapter number that was asked for
-        :type chap_num: int/str/float
-
-        :raises MangaNotFound: the asked chapter doesn't exist
-        :raises EmptyChapter: the chapter exists but is void of images
-        """
-
-        self._image_list = []
-        self.npage = 1
-        self.chapter_number = str(chap_num).split(".")[0].zfill(3)
-        if "." in str(chap_num):
-            self.chapter_number += "." + str(chap_num).split(".")[1]
-
-        url = f"{self._link}c{self.chapter_number}/1.html"
-        self._req = requests.get(url, cookies={"isAdult": "1"})
-        if "<title>404</title>" in self._req.text:
-            raise MangaNotFound(f"{self.manga_name}, chapter {self.chapter_number}")
-        if '<p class="detail-block-content">No Images</p>' in self._req.text:
-            raise EmptyChapter(self.manga_name, self.chapter_number)
-
-        self._mono = self._req.text.count("dm5_key") == 1
-        self.chapter_name = self._c_chap_name.search(self._req.text).group("chap_name").replace("/", "_")
-
-        if self._mono:
-            self._mono_go_to_chap()
-        else:
-            self._multi_go_to_chap()
-
-        self.image = self._image_list[0]
-
-        if requests.get(self.image).status_code == 404:  # if a chapter has TBE as a volume it doesn't work without stating vTBE to redo but with it
-            self._image_list = []
-            self.npage = 1
-            self.chapter_number = str(chap_num).split(".")[0].zfill(3)
-            if "." in str(chap_num):
-                self.chapter_number += "." + str(chap_num).split(".")[1]
-
-            url = f"{self._link}vTBE/c{self.chapter_number}/1.html"
-            self._req = requests.get(url, cookies={"isAdult": "1"})
-            if "<title>404</title>" in self._req.text:
-                raise MangaNotFound(f"{self.manga_name}, chapter {self.chapter_number}")
-            if '<p class="detail-block-content">No Images</p>' in self._req.text:
-                raise EmptyChapter(self.manga_name, self.chapter_number)
-
-            self._mono = self._req.text.count("dm5_key") == 1
-            self.chapter_name = self._c_chap_name.search(self._req.text).group("chap_name").replace("/", "_")
-
-            if self._mono:
-                self._mono_go_to_chap()
-            else:
-                self._multi_go_to_chap()
-
-            self.image = self._image_list[0]
-
-        self.ext = self.image.split(".")[-1]
-
-    def _mono_go_to_chap(self):
-        """
-        Method used to get the obfuscated image info in mono type scan chapters.
-        *mono type chapters are characterized by having all the images displayed one after another in a single page*
-        """
-
-        out = self._decode(self._req.text)
-        self._image_list = [f"https:{page.split('?')[0]}" for page in self._c_mono_page_list.search(out).group("chaps").replace("'", "").split(",")]
-        self._last_page = len(self._image_list)
-
-    def _multi_go_to_chap(self):
-        """
-        Method used to get obfuscated image info in multi type scan chapters.
-        *multi type chapters are characterized by having one image per page*
-        """
-
-        cid = self._c_multi_cid.search(self._req.text).group("cid")
-        self._last_page = max([int(i) for i in self._c_multi_max_page.findall(self._req.text)])
-
-        for page in range(1, self._last_page+1):
-            if page > len(self._image_list):
-                req2 = requests.get(f"https://fanfox.net/chapterfun.ashx?cid={cid}&page={page}&key={secrets.token_hex(8)}", headers=self._header)
-                out = self._decode(req2.text)
-                root = self._c_multi_page_list.search(out).group("link")
-                chaps = [i.split("?")[0] for i in self._c_multi_page_list.search(out).group("chaps").split('"') if i != "" and i != ","]
-
-                for i in chaps:
-                    if i[0] != "/":
-                        i = "/" + i
-                    self._image_list.append(f"https:{root + i}")
 
     def _decode(self, obfuscated:str):
         """
@@ -190,40 +96,115 @@ class Fanfox(Fetcher):
 
         return self._c_decode_word_replacer.sub(repl=lambda word: pattern_dict[word.group()], string=pattern)
 
-    def next_image(self):
+    def go_to_chapter(self, chap):
         """
-        Goes to the next image in the scan being fetched.
+        Go to the specified chapter.
+
+        :param chap: number of the specified chapter
+
+        :raises MangaNotFound: the asked chapter doesn't exist
+        :raises EmptyChapter: the chapter exists but is void of images
         """
 
+        self._image_list = []
+        self.npage = 1
+        self.chapter_number = str(chap).split(".")[0].zfill(3)
+        if "." in str(chap):
+            self.chapter_number += "." + str(chap).split(".")[1]
+
+        url = f"{self._link}c{self.chapter_number}/1.html"
+        self._req = requests.get(url, cookies={"isAdult": "1"})
+        if "<title>404</title>" in self._req.text:
+            raise MangaNotFound(f"{self.manga_name}, chapter {self.chapter_number}")
+        if '<p class="detail-block-content">No Images</p>' in self._req.text:
+            raise EmptyChapter(self.manga_name, self.chapter_number)
+        self._soup = BeautifulSoup(self._req.text, "html.parser")
+
+        self._mono = self._req.text.count("dm5_key") == 1
+        self.chapter_name = " ".join(self._soup.find("p", class_="reader-header-title-2").text.split("Ch.")[-1].split(" ")[1:])
+
+        if self._mono:
+            self._mono_go_to_chap()
+        else:
+            self._multi_go_to_chap()
+
+        self.image = self._image_list[0]
+
+        if requests.get(self.image).status_code == 404:  # if a chapter has TBE as a volume it doesn't work without stating vTBE to redo but with it
+            self._image_list = []
+            self.npage = 1
+            self.chapter_number = str(chap).split(".")[0].zfill(3)
+            if "." in str(chap):
+                self.chapter_number += "." + str(chap).split(".")[1]
+
+            url = f"{self._link}vTBE/c{self.chapter_number}/1.html"
+            self._req = requests.get(url, cookies={"isAdult": "1"})
+            if "<title>404</title>" in self._req.text:
+                raise MangaNotFound(f"{self.manga_name}, chapter {self.chapter_number}")
+            if '<p class="detail-block-content">No Images</p>' in self._req.text:
+                raise EmptyChapter(self.manga_name, self.chapter_number)
+            self._soup = BeautifulSoup(self._req.text, "html.parser")
+
+            self._mono = self._req.text.count("dm5_key") == 1
+            self.chapter_name = " ".join(
+                self._soup.find("p", class_="reader-header-title-2").text.split("Ch.")[-1].split(" ")[1:])
+
+            if self._mono:
+                self._mono_go_to_chap()
+            else:
+                self._multi_go_to_chap()
+
+            self.image = self._image_list[0]
+
+    def _mono_go_to_chap(self):
+        """
+        Method used to get the obfuscated image info in mono type scan chapters.
+        *mono type chapters are characterized by having all the images displayed one after another in a single page*
+        """
+
+        out = self._decode(self._req.text)
+        self._image_list = [f"https:{page.split('?')[0]}" for page in out.split("=[")[1].split("];")[0].replace("'", "").split(",")]  # get the inside of the js list of images and transforms it onto the proper python list of image
+        self._last_page = len(self._image_list)
+
+    def _multi_go_to_chap(self):
+        """
+        Method used to get obfuscated image info in multi type scan chapters.
+        *multi type chapters are characterized by having one image per page*
+        """
+
+        cid = self._req.text.split("var chapterid =")[1].split(";")[0]
+        self._last_page = max([int(i.text) for i in self._soup.find_all(lambda x: x.has_attr("data-page") and x.text.isdigit())])
+
+        for page in range(1, self._last_page+1):
+            if page > len(self._image_list):
+                req2 = requests.get(f"https://fanfox.net/chapterfun.ashx?cid={cid}&page={page}&key={secrets.token_hex(8)}", headers=self._header)
+                out = self._decode(req2.text)
+                root = out.split("(){")[1].split('pix="')[1].split('";')[0]
+                chaps = [i.split("?")[0] for i in out.split("pvalue=[")[1].split("];")[0].split('"') if i != "" and i != ","]
+
+                for i in chaps:
+                    if i[0] != "/":
+                        i = "/" + i
+                    self._image_list.append(f"https:{root + i}")
+
+    def next_image(self):
         self.image = self._image_list[self.npage]
         self.npage += 1
         self.ext = self.image.split(".")[-1]
 
     def is_last_image(self):
-        """
-        Checks if it's the last image in the current chapter.
-        :rtype: bool
-        """
-
         # automatically ignoring the last page of add
         return self.npage == len(self._image_list)-1
 
     def next_chapter(self):
-        """
-        Goes to the next chapter
-        """
-
-        next = self._c_next_chap_num.search(self._req.text).group("next_chap")
-        self.go_to_chapter(next)
+        self.go_to_chapter(self._soup.find("a", class_="reader-main-next").get("href").split("/")[-2][1:])
 
     def is_last_chapter(self):
-        """
-        Checks if the current chapter is the last available one
-
-        :rtype: bool
-        """
-
-        return not bool(self._c_next_chap_num.search(self._req.text))
+        try:
+            self._soup.find("a", class_="reader-main-next").get("href").split("/")[-2][1:]
+            return False
+        except AttributeError:
+            return True
 
     @classmethod
     def scan(cls, link:str=None, manga:str=None):
@@ -256,8 +237,3 @@ class Fanfox(Fetcher):
         return list(set(chap_list))
 
 
-    def quit(self):
-        """
-        Method used to close everything that was used after finishing to use the fetcher
-        """
-        pass
