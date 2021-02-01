@@ -1,6 +1,8 @@
 Installation
 ************
 
+.. warning:: In the next major release (3.0.0) the requirements for the pdf creation will change. ``img2pdf`` will not be used anymore and instead `Wand <https://docs.wand-py.org/>`_ and you will need to install `ImageMagick <https://imagemagick.org/>`_ too for it to work. Installation instructions will be updated accordingly.
+
 .. note::
     | If you already have python installed in you system please verify that the script folder is in your PATH or you wont be able to call ``pyscandl``.
     | If you encounter a similar line during the installation it mean that you don't have the script folder in your PATH, add it to it

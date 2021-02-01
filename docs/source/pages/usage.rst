@@ -1,6 +1,8 @@
 Usage
 *****
 
+.. warning:: The database will migrate and be changed during the next major release. There will be a command to do the migration on release, don't forget to do it.
+
 Command Line Interface
 ======================
 

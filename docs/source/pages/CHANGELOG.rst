@@ -1,0 +1,1 @@
+/home/_ara0n_/PycharmProjects/pyscandl/CHANGELOG.rst

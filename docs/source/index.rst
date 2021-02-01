@@ -62,6 +62,7 @@ The currently supported websites are:
    pages/fetcher
    pages/autodl
    pages/exceptions
+   pages/CHANGELOG
 
 
 
