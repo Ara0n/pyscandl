@@ -1,3 +1,5 @@
+from sys import stderr
+
 from pyscandl.modules import arg_parser, Pyscandl
 from pyscandl.modules.fetchers import FetcherEnum
 from pyscandl.modules.autodl import Controller
@@ -21,6 +23,7 @@ def main():
 		pyscandl.full_download()
 
 	elif args.subparser == "manga":
+		print("Warning: the current db will be replaced wy a new system in the next major release (3.0.0). Please do not forget the migration at that time", file=stderr)
 
 		if args.list or args.list_all or args.list_only:
 			ml = Controller().list_mangas(all=args.list_all, only=args.list_only)
@@ -107,6 +110,8 @@ def main():
 					print(f"manga {args.name} not found")
 
 	elif args.subparser == "autodl":
+		print("Warning: the current db will be replaced wy a new system in the next major release (3.0.0). Please do not forget the migration at that time", file=stderr)
+
 		autodl = Controller(args.output, args.quiet, args.tiny)
 		# to be sure to save progress done in case of interruption
 		try:
