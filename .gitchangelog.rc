@@ -67,6 +67,7 @@ ignore_regexps = [
     r'^(.{3,3}\s*:)?\s*[fF]irst commit.?\s*$',
     r'^[Uu]pdated changelog',
     r'[Uu]pdated version( number)?',
+    r'[Uu]pdated doc(umentation)?',
     r'^$',  ## ignore commits with empty messages
 ]
 

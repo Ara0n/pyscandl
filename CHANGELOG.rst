@@ -2,12 +2,17 @@ Changelog
 =========
 
 
-(unreleased)
-------------
+2.10.0 (2021-02-01)
+-------------------
 
 New
 ~~~
 - Added changelog to pyscandl, from now on commits will respect the format asked by https://github.com/vaab/gitchangelog.
+
+
+Changes
+~~~~~~~
+- Added warning for future changes in the next major release.
 
 
 2.9.0 (2021-01-24)
@@ -34,8 +39,6 @@ New
 
 2.8.2 (2020-11-16)
 ------------------
-- Updated doc.
-
 - Fixed -e not supporting floats.
 
 - Frscan now needs cfscrape.
@@ -49,8 +52,6 @@ New
 2.8.0 (2020-10-06)
 ------------------
 - Updated README.
-
-- Updated documentation.
 
 - Added webtoons to the enum and the cli.
 
@@ -75,8 +76,6 @@ New
 
 2.7.1 (2020-09-07)
 ------------------
-- Updated doc.
-
 - Fixed and improved mangadex fetchers.
 
 
@@ -86,13 +85,9 @@ New
 
 - Proper title.
 
-- Updated doc.
-
 - Forgot dependence.
 
 - Fixed adding to PYTHONPATH from autodoc.
-
-- Updated doc.
 
 - Added more use for __version__
 
@@ -105,10 +100,6 @@ New
 
 2.6.0 (2020-09-01)
 ------------------
-- Updated doc without node.
-
-- Updated doc without node.
-
 - Removed the need for node for the Fanfox fetcher.
 
 
@@ -129,11 +120,7 @@ New
 
 - Updated README.rst.
 
-- Updated documentation.
-
 - Removed the rss from the cli and the controller database as it's no longer needed for autodl.
-
-- Updated docstring.
 
 - Added a dedicated exception for mangas that are visible but not available yet.
 
@@ -174,8 +161,6 @@ New
 
 - Added badges.
 
-- Updated documentation.
-
 - The current fetchers now use the ABC for fetchers.
 
 - Added ABC for fetchers as a guidline to help their creation.
@@ -187,8 +172,6 @@ New
 
 2.3.0 (2020-07-27)
 ------------------
-- Updated documentation.
-
 - Fixed crash with an empty db.
 
 - Added a way to import and export the db to the cli.
@@ -201,8 +184,6 @@ New
 2.2.2 (2020-07-27)
 ------------------
 - Fixed requirements.
-
-- Updated documentation with PyPI stuff.
 
 
 2.2.1 (2020-07-27)
