@@ -17,7 +17,7 @@ setup(
     version=__version__,
     packages=['pyscandl', 'pyscandl.modules', 'pyscandl.modules.autodl', 'pyscandl.modules.fetchers'],
     url='https://pyscandl.readthedocs.io/',
-    license='BSD-3-Clause License',
+    license='BSD 3-Clause License',
     author='Thomas MONTERO | Ara0n',
     author_email='thomas99.montero@gmail.com',
     description='a scan downloader in python',

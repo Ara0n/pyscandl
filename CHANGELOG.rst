@@ -2,6 +2,14 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+New
+~~~
+- Added changelog to pyscandl, from now on commits will respect the format asked by https://github.com/vaab/gitchangelog.
+
+
 2.9.0 (2021-01-24)
 ------------------
 - Fanfox now uses bs4 instead of most regex to make it easier to maintain.
