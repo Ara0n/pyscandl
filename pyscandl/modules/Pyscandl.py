@@ -1,13 +1,13 @@
+import contextlib
+
 from .excepts import DryNoSauceHere, TooManySauce, EmptyChapter, DelayedRelease
 from .fetchers.fetcher import StandaloneFetcher
 from PIL import Image
-import img2pdf
 import requests
-import logging
 import os
-import io
 from re import sub as re_sub
 from sys import stderr
+from wand.image import Image
 
 
 class Pyscandl:
@@ -117,9 +117,6 @@ class Pyscandl:
 			with open(f"{ban_path}/{img}", "rb") as img_bin:
 				self._banlist.append(img_bin.read())
 
-		# disabling logging for alpha-channels for img2pdf
-		logging.disable()
-
 	def _dl_image(self):
 		"""
 		Downloads the currently selected image.
@@ -199,25 +196,18 @@ class Pyscandl:
 
 		if len(self._img_bin_list) > 0:
 			# creating the pdf
-			try:
-				with open(self._pdf_path, "wb") as pdf:
-					pdf.write(img2pdf.convert(self._img_bin_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
-			except Exception as e:
-				# removing alpha from all the images of the chapter
-				if e.args[0] == "Refusing to work on images with alpha channel":
-					if not self._quiet:
-						print("removing alpha...", end=" ")
+			with Image() as pdf:
+				for img_bin in self._img_bin_list:
+					with contextlib.redirect_stderr(None):  # to mute alpha channel and ICC warnings as wand processes the image well anyway
+						with Image(blob=img_bin) as img:
+							pdf.sequence.append(img)
+				pdf.save(filename=self._pdf_path)
 
-					dealpha_list = []
-					for img in self._img_bin_list:
-						temp = Image.open(io.BytesIO(img)).convert("RGB")
-						with io.BytesIO() as dealpha_img:
-							temp.save(dealpha_img, format="JPEG")
-							dealpha_list.append(dealpha_img.getvalue())
-					with open(self._pdf_path, "wb") as pdf:
-						pdf.write(img2pdf.convert(dealpha_list, title=self._name_metadata_pdf, author=self.fetcher.author, keywords=[self.fetcher.manga_name]))
-				else:
-					raise e
+			with open(self._pdf_path, "rb") as file:
+				pdf = file.read()
+			with open(self._pdf_path, "wb") as file:
+				file.write(pdf.replace(b"/CreationDate", f"/Author <{self.fetcher.author.encode().hex()}>\n/Keywords <{self.fetcher.manga_name.encode().hex()}>\n/CreationDate".encode())
+							.replace(b"/Producer (https://imagemagick.org)", b"/Producer (https://pypi.org/project/pyscandl/)"))  # manually adding the missing metadate from the pdf creation
 
 			if not self._quiet:
 				print("converted")

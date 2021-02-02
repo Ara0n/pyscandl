@@ -6,7 +6,7 @@ with open("README.rst", "r") as f:
 
 requires = [
     "requests~=2.25.1",
-    "img2pdf~=0.4.0",
+    "wand~=0.6.5",
     "Pillow~=8.1.0",
     "cfscrape~=2.1.1",
     "beautifulsoup4~=4.9.3",
@@ -33,6 +33,6 @@ setup(
     install_requires=requires,
     package_data={
         "pyscandl": ["banlist/*"],
-        "": ["README.rst"]
+        "": ["README.rst", "CHANGELOG.rst"]
     }
 )
