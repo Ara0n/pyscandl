@@ -1,4 +1,8 @@
-from sys import stderr
+from sys import stderr, modules
+from platform import system
+from os import path, makedirs, remove
+import sqlite3
+import json as json_lib
 
 from pyscandl.modules import arg_parser, Pyscandl
 from pyscandl.modules.fetchers import FetcherEnum
@@ -108,6 +112,102 @@ def main():
 			else:
 				if not args.quiet:
 					print(f"manga {args.name} not found")
+
+		elif args.manga_subparser == "migrate":
+			if not args.quiet:
+				print("WARNING: if there is already a database that was migrated before it will be erased in the process !")
+			if args.quiet or input("Continue ? [y/N]").lower() == "y":
+				if not args.quiet:
+					print("Creating new db file...", end=" ")
+
+				# as it's in the users folder now it's OS dependent
+				platform = system()
+				if platform == "Linux":
+					folder_path = path.expanduser("~/.local/share/pyscandl/")
+					# removing the old db if it exists
+					try:
+						remove(folder_path+"db.sqlite")
+					except FileNotFoundError:
+						pass
+
+					# creating the new db
+					makedirs(folder_path, exist_ok=True)
+					conn = sqlite3.connect(folder_path + "db.sqlite")
+				elif platform == "Windows":
+					folder_path = path.expandvars("%APPDATA%/pyscandl/")
+					# removing the old db if it exists
+					try:
+						remove(folder_path+"db.sqlite")
+					except FileNotFoundError:
+						pass
+
+					# creating the new db
+					makedirs(folder_path, exist_ok=True)
+					conn = sqlite3.connect(folder_path + "db.sqlite")
+				elif platform == "Darwin":
+					folder_path = path.expanduser("~\Library\Preferences/pyscandl/")
+					# removing the old db if it exists
+					try:
+						remove(folder_path+"db.sqlite")
+					except FileNotFoundError:
+						pass
+
+					# creating the new db
+					makedirs(folder_path, exist_ok=True)
+					conn = sqlite3.connect(folder_path + "db.sqlite")
+				else:
+					raise OSError("The OS couldn't be detected, the db don't have a place to be stored")
+				curs = conn.cursor()
+
+				if not args.quiet:
+					print("Loading the old db file...")
+				try:
+					with open(f"{path.dirname(modules['pyscandl.modules.autodl'].__file__)}/db.json", "r") as data:
+						old_db = json_lib.load(data)
+				except FileNotFoundError:
+					old_db.db = {}
+
+				if not args.quiet:
+					print("Creating new tables...", end=" ")
+				curs.execute("""
+				CREATE TABLE IF NOT EXISTS "manga" (
+					"id" INTEGER PRIMARY KEY,
+					"name" TEXT UNIQUE,
+					"fetcher" TEXT,
+					"link" TEXT,
+					"archived" BOOL DEFAULT FALSE
+				);
+				""")
+
+				curs.execute("""
+				CREATE TABLE IF NOT EXISTS "chaplist" (
+					"manga" INTEGER REFERENCES manga(id),
+					"chapter" BLOB
+				);
+				""")
+
+				if not args.quiet:
+					print("Transfering data...")
+				for key, value in old_db.items():
+					if not args.quiet:
+						print(f"{key}: autodl data...", end=" ")
+					curs.execute("""INSERT INTO manga("name", "fetcher", "link", "archived") VALUES (?, ?, ?, ?);""",
+								 (
+									 key,
+									 value.get("fetcher").upper(),
+									 value.get("link"),
+									 value.get("archived")
+								 ))
+					if not args.quiet:
+						print("already downloaded chapters...")
+					curs.execute("""SELECT id FROM manga WHERE "name"=?""", (key,))
+					manga_id = curs.fetchone()
+					curs.executemany("""INSERT INTO chaplist("manga", "chapter") VALUES (?, ?);""", [(manga_id[0], chap) for chap in value.get("chapters")])
+
+				conn.commit()
+				conn.close()
+			else:
+				print("Cancelling migration")
 
 	elif args.subparser == "autodl":
 		print("Warning: the current db will be replaced wy a new system in the next major release (3.0.0). Please do not forget the migration at that time", file=stderr)

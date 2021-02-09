@@ -90,6 +90,10 @@ def get_parser():
 	rmchaps.add_argument("name", type=str, help="name for the stored manga")
 	rmchaps.add_argument("chap", type=str, nargs="*", help="remove the listed chapters for this manga from the database")
 
+	## migrate db subparser
+	migrate = manga_subparser.add_parser("migrate", help="migrates the manga and autodl DB to the new format introduced in 3.0.0")
+	migrate.add_argument("--location", type=str, help="location of the old db that will be migrated")
+
 
 	# autodl subparser
 	autodl.add_argument("-o", "--output", type=str, default=".", help="the path (absolute or relative) to the folder where to save the data")
