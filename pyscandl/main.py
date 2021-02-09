@@ -2,7 +2,7 @@ from sys import stderr, modules
 from platform import system
 from os import path, makedirs, remove
 import sqlite3
-import json as json_lib
+import json
 
 from pyscandl.modules import arg_parser, Pyscandl
 from pyscandl.modules.fetchers import FetcherEnum
@@ -38,9 +38,9 @@ def main():
 				print("there are currently no mangas in autodl, you may consider adding some to it with manga add")
 
 		elif args.import_db:
-			json = Controller()
-			json.db_import(args.import_db)
-			json.save()
+			controller = Controller()
+			controller.db_import(args.import_db)
+			controller.save()
 
 		elif args.export_db:
 			Controller().db_export(args.export_db)
@@ -64,16 +64,16 @@ def main():
 					  f"\tarchived: {infos.get('archived')}")
 
 		elif args.manga_subparser == "add":
-			json = Controller()
+			controller = Controller()
 			if args.chap:
 				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
 			else:
 				chaps = []
-			json.add(args.name, args.link, args.fetcher, chaps, args.archived)
-			json.save()
+			controller.add(args.name, args.link, args.fetcher, chaps, args.archived)
+			controller.save()
 
 		elif args.manga_subparser == "edit":
-			json = Controller()
+			controller = Controller()
 			if args.chap:
 				chaps = [float(chap) if "." in chap else int(chap) for chap in args.chap]
 			else:
@@ -86,17 +86,17 @@ def main():
 			else:
 				archive = None
 
-			json.edit(args.name, args.link, args.fetcher, chaps, archive)
-			json.save()
+			controller.edit(args.name, args.link, args.fetcher, chaps, archive)
+			controller.save()
 
 		elif args.manga_subparser == "chaplist":
 			chaps = Controller().manga_info(args.name).get("chapters")
 			print(f"the already downloaded chapters for {args.name} are: {' '.join([str(chap) for chap in chaps])}")
 
 		elif args.manga_subparser == "rmchaps":
-			json = Controller()
-			if json.rm_chaps(args.name, args.chap):
-				json.save()
+			controller = Controller()
+			if controller.rm_chaps(args.name, args.chap):
+				controller.save()
 				if not args.quiet:
 					print(f"deletion of the chapters {', '.join(args.chap)} from {args.name} sucessfull")
 			else:
@@ -104,9 +104,9 @@ def main():
 					print(f"no chapters removed for {args.name}")
 
 		elif args.manga_subparser == "delete":
-			json = Controller()
-			if json.delete_manga(args.name):
-				json.save()
+			controller = Controller()
+			if controller.delete_manga(args.name):
+				controller.save()
 				if not args.quiet:
 					print(f"deletion of {args.name} successful")
 			else:
@@ -163,9 +163,9 @@ def main():
 					print("Loading the old db file...")
 				try:
 					with open(f"{path.dirname(modules['pyscandl.modules.autodl'].__file__)}/db.json", "r") as data:
-						old_db = json_lib.load(data)
+						old_db = json.load(data)
 				except FileNotFoundError:
-					old_db.db = {}
+					old_db = {}
 
 				if not args.quiet:
 					print("Creating new tables...", end=" ")
