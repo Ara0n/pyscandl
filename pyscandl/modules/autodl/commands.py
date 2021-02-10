@@ -181,11 +181,15 @@ class Controller:
 		fetcher = FetcherEnum.get(manga[2])
 
 
-		# initialize to the first downloadable chapter and download it
-		ok = False
-		for chapter_id in range(len(self.missing_chaps)):
+		first = True
+		chapter_id = 0
+		while chapter_id < len(self.missing_chaps):
 			try:
-				downloader = Pyscandl(fetcher, self.missing_chaps[chapter_id], self.output, link=manga[3], pdf=pdf, image=image, keep=keep, quiet=self.quiet, tiny=self.tiny)
+				if first:
+					downloader = Pyscandl(fetcher, self.missing_chaps[chapter_id], self.output, link=manga[3], pdf=pdf, image=image, keep=keep, quiet=self.quiet, tiny=self.tiny)
+					first = False
+				else:
+					downloader.go_to_chapter(self.missing_chaps[chapter_id])
 
 				bad_image = True
 				while bad_image:  # protect against bad downloads
@@ -194,7 +198,6 @@ class Controller:
 							downloader.keep_full_chapter()
 						elif pdf:
 							downloader.full_chapter()
-							raise IOError
 						if not image:
 							downloader.create_pdf()
 						bad_image = False
@@ -206,47 +209,15 @@ class Controller:
 					INSERT INTO chaplist (manga, chapter) VALUES ((SELECT id FROM manga where name=?), ?)
 				""", (name, self.missing_chaps[chapter_id]))
 				self.downloads += 1
-
-				self.missing_chaps = self.missing_chaps[chapter_id+1:]
-				ok = True
-				break
 			except EmptyChapter:
 				if not self.quiet:
 					print(f"skipping {name} chapter {self.missing_chaps[chapter_id]}: empty, wont be added in the downloaded list")
 			except DelayedRelease as e:
 				if not self.quiet:
 					print(e)
-
-		# if chapters are left to doawnload proceeds with it
-		if ok:
-			for chapter_id in range(len(self.missing_chaps)):
-				try:
-					bad_image = True
-					while bad_image:  # protect against bad downloads
-						try:
-							downloader.go_to_chapter(self.missing_chaps[chapter_id])
-
-							if keep or image:
-								downloader.keep_full_chapter()
-							else:
-								downloader.full_chapter()
-							if not image:
-								downloader.create_pdf()
-							bad_image = False
-						except IOError:
-							print(f"problem during download, retrying {name} chapter {self.missing_chaps[chapter_id]}")
-
-					self._curs.execute("""
-						INSERT INTO chaplist (manga, chapter) VALUES ((SELECT id FROM manga where name=?), ?)
-					""", (name, self.missing_chaps[chapter_id]))
-					self.downloads += 1
-				except EmptyChapter:
-					if not self.quiet:
-						print(f"skipping {name} chapter {self.missing_chaps[chapter_id]}: empty, wont be added in the downloaded list")
-				except DelayedRelease as e:
-					if not self.quiet:
-						print(e)
-
+			finally:
+				chapter_id += 1
+		if self.missing_chaps:
 			downloader.fetcher.quit()
 
 		# remove the directory if there is no chapter
