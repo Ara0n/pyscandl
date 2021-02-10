@@ -49,19 +49,19 @@ def main():
 			infos = Controller().manga_info(args.name)
 			if infos is None:
 				print(f"manga '{args.name}' not in the list, you may consider adding it to it with manga add")
-			elif infos.get("chapters"):
+			elif infos[4]:
 				print(f"{args.name}:\n",
-					  f"\tmanga link: {infos.get('link')}\n",
-					  f"\tfetcher: {infos.get('fetcher').upper()}\n",
-					  f"\tnumber of chapters already downloaded: {len(infos.get('chapters'))}\n",
-					  f"\tlast chapter downloaded: {infos.get('chapters')[0]}\n",
-					  f"\tarchived: {infos.get('archived')}")
+					  f"\tmanga link: {infos[2]}\n",
+					  f"\tfetcher: {infos[1]}\n",
+					  f"\tnumber of chapters already downloaded: {len(infos[4])}\n",
+					  f"\tlast chapter downloaded: {infos[4][0]}\n",
+					  f"\tarchived: {bool(infos[3])}")
 			else:
 				print(f"{args.name}:\n",
-					  f"\tmanga link: {infos.get('link')}\n",
-					  f"\tfetcher: {infos.get('fetcher').upper()}\n",
+					  f"\tmanga link: {infos[2]}\n",
+					  f"\tfetcher: {infos[1]}\n",
 					  f"\tno chapter downloaded yet\n",
-					  f"\tarchived: {infos.get('archived')}")
+					  f"\tarchived: {bool(infos[3])}")
 
 		elif args.manga_subparser == "add":
 			controller = Controller()
@@ -90,8 +90,17 @@ def main():
 			controller.save()
 
 		elif args.manga_subparser == "chaplist":
-			chaps = Controller().manga_info(args.name).get("chapters")
-			print(f"the already downloaded chapters for {args.name} are: {' '.join([str(chap) for chap in chaps])}")
+			info = Controller().manga_info(args.name)
+			if info is not None:
+				chaps = info[4]
+				if chaps:
+					if not args.quiet:
+						print(f"the already downloaded chapters for '{args.name}' are:", end=" ")
+					print(' '.join([str(chap) for chap in chaps]))
+				else:
+					print(f"no chapter downloaded yet for '{args.name}'")
+			elif not args.quiet:
+				print(f"manga '{args.name}' not in the list, you may consider adding it to it with manga add")
 
 		elif args.manga_subparser == "rmchaps":
 			controller = Controller()
@@ -215,32 +224,30 @@ def main():
 		autodl = Controller(args.output, args.quiet, args.tiny)
 		# to be sure to save progress done in case of interruption
 		try:
-			for name in autodl.db:
-				# checking if the manga is archived
-				if not autodl.db[name]["archived"]:
-					# currently having problems with the xml tree fetching sometimes so giving a retry possibility to happen
-					tries_left = 3
-					while tries_left > 0:
-						try:
-							autodl.scan(name)
-							success = True
-							tries_left = 0
-						except xml.etree.ElementTree.ParseError:
-							if not args.quiet:
-								print(f"problem with the fetching for {name}, retrying...")
-							success = False
-							tries_left -= 1
-						except DownedSite:
-							# the website can't be accessed for the time being so no retrying
-							success = False
-							tries_left = 0
-					if success:
-						try:
-							autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
-						except DownedSite:
-							print(f"can't access {name}, please retry it later")
-					elif not args.quiet:
+			for name in [row[0] for row in autodl._curs.execute("SELECT name FROM manga WHERE archived=false ORDER BY name").fetchall()]:
+				# currently having problems with the xml tree fetching sometimes so giving a retry possibility to happen
+				tries_left = 3
+				while tries_left > 0:
+					try:
+						autodl.scan(name)
+						success = True
+						tries_left = 0
+					except xml.etree.ElementTree.ParseError:
+						if not args.quiet:
+							print(f"problem with the fetching for {name}, retrying...")
+						success = False
+						tries_left -= 1
+					except DownedSite:
+						# the website can't be accessed for the time being so no retrying
+						success = False
+						tries_left = 0
+				if success:
+					try:
+						autodl.download(name, pdf=args.pdf, keep=args.keep, image=args.image)
+					except DownedSite:
 						print(f"can't access {name}, please retry it later")
+				elif not args.quiet:
+					print(f"can't access {name}, please retry it later")
 		except KeyboardInterrupt:
 			if not args.quiet:
 				print("\nmanual interruption")

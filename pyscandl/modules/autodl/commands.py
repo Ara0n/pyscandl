@@ -1,5 +1,9 @@
 import os, sys
 import json
+from platform import system
+import sqlite3
+import shutil
+
 import cfscrape
 import re
 from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter, DelayedRelease
@@ -16,7 +20,11 @@ class Controller:
 	def __init__(self, output:str=".", quiet:bool=False, tiny:bool=False):
 		"""
 		Initializes this instance of the autodl controller.
-		If there is no json database for autodl currently in existence a new one is created at ``pyscandl/modules/autodl/db.json``.
+		If there is no sqlite database for autodl currently in existence a new one is created at:
+
+		- ``~/.local/share/pyscandl/`` for linux
+		- ``%APPDATA%/pyscandl/` for windows
+		- ``~/Library/Preferences/pyscandl/`` for mac
 
 		:param output: location where the outputted scans should be stored
 		:type output: str
@@ -26,30 +34,43 @@ class Controller:
 		:type tiny: bool
 		"""
 
+		# as it's in the users folder now it's OS dependent
+		platform = system()
+		if platform == "Linux":
+			folder_path = os.path.expanduser("~/.local/share/pyscandl/")
+		elif platform == "Windows":
+			folder_path = os.path.expandvars("%APPDATA%/pyscandl/")
+		elif platform == "Darwin":
+			folder_path = os.path.expanduser("~/Library/Preferences/pyscandl/")
+		else:
+			raise OSError("The OS couldn't be detected, the db don't have a place to be stored")
+
 		try:
-			with open(f"{os.path.dirname(sys.modules['pyscandl.modules.autodl'].__file__)}/db.json", "r") as data:
-				self.db = json.load(data)
-		except FileNotFoundError:
-			self.db = {}
+			self._conn = sqlite3.connect(folder_path + "db.sqlite")
+			self._curs = self._conn.cursor()
+		except sqlite3.OperationalError as e:
+			if str(e) == "unable to open database file":
+				os.makedirs(folder_path)
+				self._conn = sqlite3.connect(folder_path + "db.sqlite")
+				self._curs = self._conn.cursor()
 		self.output = output
 		self.quiet = quiet
 		self.tiny = tiny
-		self._re_mgdex_scan = re.compile(r"(?:Chapter \d+, )?Chapter (?P<chap>\d+(\.\d+)?)")
 		self.scrapper = cfscrape.create_scraper()
 		self.missing_chaps = []
 		self.downloads = 0
 
 	def save(self):
 		"""
-		Saves the current state of the database in the ``db.json`` file.
+		Saves the current state of the database in the ``db.sqlite`` file and closes the connection.
 		"""
 
-		with open(f"{os.path.dirname(sys.modules['pyscandl.modules.autodl'].__file__)}/db.json", "w") as data:
-			json.dump(self.db, data, indent=4, sort_keys=True)
+		self._conn.commit()
+		self._conn.close()
 
 	def add(self, name:str, link:str, fetcher:str, chapters:list=None, archived=False):
 		"""
-		Adds a new scan entry to the ``db.json`` file.
+		Adds a new scan entry to the ``db.sqlite`` file.
 
 		:param name: name of the manga
 		:type name: str
@@ -73,16 +94,21 @@ class Controller:
 			raise FetcherNotFound(fetcher)
 		if fetcher.lower() in ["nhentai"]:
 			raise IsStandalone(name)
-		self.db[name] = {
-			"link": link,
-			"fetcher": fetcher.upper(),
-			"chapters": sorted(chapters, reverse=True),
-			"archived": archived
-		}
+
+		self._curs.execute("""INSERT INTO manga("name", "fetcher", "link", "archived") VALUES (?, ?, ?, ?);""",
+						   (
+							   name,
+							   fetcher.upper(),
+							   link,
+							   archived
+						   ))
+		self._curs.execute("""SELECT id FROM manga WHERE "name"=?""", (name,))
+		manga_id = self._curs.fetchone()
+		self._curs.executemany("""INSERT INTO chaplist("manga", "chapter") VALUES (?, ?);""", [(manga_id[0], chap) for chap in chapters])
 
 	def edit(self, name:str, link:str=None, fetcher=None, chapters:list=None, archived=None):
 		"""
-		Edits an already existing entry in the ``db.json`` file.
+		Edits an already existing entry in the ``db.sqlite`` file.
 		The :param name: is mandatory to find the correct entry and every other parameter specified will overwrite the existing values.
 
 		:param name: name of the manga
@@ -100,19 +126,16 @@ class Controller:
 		"""
 
 		if link is not None:
-			self.db.get(name)["link"] = link
+			self._curs.execute("""UPDATE manga SET link=? WHERE name=?;""", (link, name))
 		if fetcher is not None:
 			standalone_check = FetcherEnum.get(fetcher)
 			if issubclass(standalone_check, StandaloneFetcher):
 				raise IsStandalone(name)
-			self.db.get(name)["fetcher"] = fetcher
+			self._curs.execute("""UPDATE manga SET fetcher=? WHERE name=?;""", (fetcher, name))
 		if chapters is not None:
-			self.db.get(name)["chapters"] = sorted(self.db.get(name)["chapters"] + chapters, reverse=True)
+			self._curs.execute("""INSERT INTO chaplist("manga", "chapter") VALUES ((SELECT id FROM manga WHERE name=?), ?);""", [(name, chap) for chap in chapters])
 		if archived is not None:
-			try:
-				self.db.get(name)["archived"] = archived
-			except TypeError:
-				print(f"\"{name}\" isn't a manga in the database, you may consider adding it with manga add")
+			self._curs.execute("""UPDATE manga SET archived=? WHERE name=?;""", (archived, name))
 
 	# each website/fetcher can have differently made xml from their rss so we need to treat them separately if need be
 	def scan(self, name:str):
@@ -124,12 +147,14 @@ class Controller:
 		"""
 
 		self.missing_chaps.clear()
-		manga = self.db.get(name)
+		manga = self._curs.execute("""SELECT * FROM manga WHERE name=?""", (name,)).fetchone()
 
-		manga_fetcher = FetcherEnum.get(manga.get("fetcher"))
-		manga_chapters = manga_fetcher.scan(link=manga.get("link"))
-
-		self.missing_chaps = list(set(manga_chapters) - set(manga.get("chapters")))
+		manga_fetcher = FetcherEnum.get(manga[2])
+		manga_chapters = set(manga_fetcher.scan(link=manga[3]))
+		possessed_chaps = {row[0] for row in self._curs.execute(
+			"""SELECT chapter FROM chaplist WHERE manga=(SELECT id FROM manga WHERE name=?)""", (name,)
+		).fetchall()}
+		self.missing_chaps = list(manga_chapters - possessed_chaps)
 
 		self.missing_chaps.sort()
 		if not self.quiet:
@@ -152,14 +177,15 @@ class Controller:
 		:type image: bool
 		"""
 
-		manga = self.db.get(name)
-		fetcher = FetcherEnum.get(manga.get("fetcher"))
+		manga = self._curs.execute("""SELECT * FROM manga WHERE name=?""", (name,)).fetchone()
+		fetcher = FetcherEnum.get(manga[2])
+
 
 		# initialize to the first downloadable chapter and download it
 		ok = False
 		for chapter_id in range(len(self.missing_chaps)):
 			try:
-				downloader = Pyscandl(fetcher, self.missing_chaps[chapter_id], self.output, link=manga.get("link"), pdf=pdf, image=image, keep=keep, quiet=self.quiet, tiny=self.tiny)
+				downloader = Pyscandl(fetcher, self.missing_chaps[chapter_id], self.output, link=manga[3], pdf=pdf, image=image, keep=keep, quiet=self.quiet, tiny=self.tiny)
 
 				bad_image = True
 				while bad_image:  # protect against bad downloads
@@ -168,6 +194,7 @@ class Controller:
 							downloader.keep_full_chapter()
 						elif pdf:
 							downloader.full_chapter()
+							raise IOError
 						if not image:
 							downloader.create_pdf()
 						bad_image = False
@@ -175,7 +202,9 @@ class Controller:
 						print(f"problem during download, retrying {name} chapter {self.missing_chaps[chapter_id]}")
 						downloader.go_to_chapter(self.missing_chaps[chapter_id])
 
-				self.db.get(name).get("chapters").append(self.missing_chaps[chapter_id])
+				self._curs.execute("""
+					INSERT INTO chaplist (manga, chapter) VALUES ((SELECT id FROM manga where name=?), ?)
+				""", (name, self.missing_chaps[chapter_id]))
 				self.downloads += 1
 
 				self.missing_chaps = self.missing_chaps[chapter_id+1:]
@@ -207,7 +236,9 @@ class Controller:
 						except IOError:
 							print(f"problem during download, retrying {name} chapter {self.missing_chaps[chapter_id]}")
 
-					self.db.get(name).get("chapters").append(self.missing_chaps[chapter_id])
+					self._curs.execute("""
+						INSERT INTO chaplist (manga, chapter) VALUES ((SELECT id FROM manga where name=?), ?)
+					""", (name, self.missing_chaps[chapter_id]))
 					self.downloads += 1
 				except EmptyChapter:
 					if not self.quiet:
@@ -217,7 +248,6 @@ class Controller:
 						print(e)
 
 			downloader.fetcher.quit()
-			self.db.get(name).get("chapters").sort(reverse=True)
 
 		# remove the directory if there is no chapter
 		try:
@@ -230,7 +260,7 @@ class Controller:
 
 	def list_mangas(self, all=False, only=False):
 		"""
-		Gives the list of all the names of the mangas in the ``db.json`` file. if the db is empty, returns None
+		Gives the list of all the names of the mangas in the ``db.sqlite`` file. if the db is empty, returns None
 
 		:param all: get also the archived mangas
 		:type all: bool
@@ -242,26 +272,30 @@ class Controller:
 
 		titles = []
 
-		if not self.db:
-			return None
+		if all:
+			manga = self._curs.execute("""SELECT * FROM manga ORDER BY name""").fetchall()
+		elif only:
+			manga = self._curs.execute("""SELECT * FROM manga WHERE archived=true ORDER BY name""").fetchall()
+		else:
+			manga = self._curs.execute("""SELECT * FROM manga WHERE archived=false ORDER BY name""").fetchall()
 
-		max_len_title = len(max(self.db.keys(), key=lambda x: len(x)))
-		fetchers = [title.get("fetcher") for title in self.db.values()]
+		max_len_title = len(max(manga, key=lambda x: len(x[1]))[1])
+		fetchers = [row[2] for row in manga]
 		max_len_fetcher = len(max(fetchers, key=lambda x: len(x)))
-		for title, info in self.db.items():
-			if self.db[title]["archived"] and (all or only):
+		for id, title, fetcher, link, archived in manga:
+			if archived and (all or only):
 				titles.append("{title:<{title_size}}|{fetcher:^{fetcher_size}}|{}".format(
 					"    Archived",
 					title=title,
 					title_size=max_len_title + 4,
-					fetcher=info.get("fetcher"),
+					fetcher=fetcher,
 					fetcher_size=max_len_fetcher + 8
 				))
-			elif not self.db[title]["archived"] and not only:
+			elif not archived and not only:
 				titles.append("{title:<{title_size}}|{fetcher:^{fetcher_size}}|".format(
 					title=title,
 					title_size=max_len_title + 4,
-					fetcher=info.get("fetcher"),
+					fetcher=fetcher,
 					fetcher_size=max_len_fetcher + 8
 				))
 		return titles
@@ -273,22 +307,29 @@ class Controller:
 		:param name: name of the manga
 		:type name: str
 
-		:rtype: dict
+		:rtype: tuple
+		:returns: name, fetcher, link, list[chapters]
 		"""
 
-		return self.db.get(name)
+		try:
+			info = self._curs.execute("""SELECT * FROM manga WHERE name=?""", (name,)).fetchone()
+			chaps = self._curs.execute("""SELECT chapter FROM chaplist WHERE manga=? ORDER BY chapter DESC""", (info[0],)).fetchall()
+			return (*info[1:], [row[0] for row in chaps])
+		except TypeError:
+			return None
 
 	def delete_manga(self, name):
 		"""
-		Deletes a manga from the ``db.json`` file.
+		Deletes a manga from the ``db.sqlite`` file.
 
 		:param name: name of the manga
 
 		:return: confirms the deletion
 		:rtype: bool
 		"""
-		if name in self.db:
-			del self.db[name]
+		if self._curs.execute("""SELECT * FROM manga where name=?;""", (name,)).fetchone():
+			self._curs.execute("""DELETE from chaplist where manga=(SELECT id FROM manga where name=?);""", (name,))
+			self._curs.execute("""DELETE FROM manga where name=?;""", (name,))
 			return True
 		else:
 			return False
@@ -305,44 +346,50 @@ class Controller:
 		:return: confirms the deletion
 		:rtype: bool
 		"""
-		if name in self.db:
-			self.db.get(name)["chapters"] = [chap for chap in self.db.get(name)["chapters"] if not chap not in rm_chaps]
-			return True
-		else:
-			return False
+
+		vals = [(float(chap) if "." in chap else int(chap), name) for chap in rm_chaps[0]]
+		return bool(self._curs.executemany("""DELETE FROM chaplist where chapter=? and manga=(SELECT id FROM manga WHERE name=?)""", vals).rowcount)
 
 	def db_import(self, path:str):
 		"""
-		Takes an external json file path and put its content as the new database for pyscandl.
+		Takes an external sqlite file path and put its content as the new database for pyscandl.
 
-		:param path: path to the .json file to import as the database for autodl and manga
+		:param path: path to the .sqlite file to import as the database for autodl and manga
 		:type path: str
 		"""
 
-		with open(path, "r") as data:
-			self.db = json.load(data)
+		# as it's in the users folder now it's OS dependent
+		platform = system()
+		if platform == "Linux":
+			folder_path = os.path.expanduser("~/.local/share/pyscandl/")
+		elif platform == "Windows":
+			folder_path = os.path.expandvars("%APPDATA%/pyscandl/")
+		elif platform == "Darwin":
+			folder_path = os.path.expanduser("~\Library\Preferences/pyscandl/")
+		else:
+			raise OSError("The OS couldn't be detected, the db don't have a place to be stored")
+
+		shutil.copy(path, folder_path + "db.sqlite")
 
 	def db_export(self, path:str):
 		"""
-		Saves a copy of the current database to the file path specified.
+		Saves a copy of the current database to the folder specified.
 
-		:param path: path to the save location, may be either a file or a folder, if it is a folder the filename will be db.json
+		:param path: path to the save folder location
 		:type path: str
-
-		:raises TypeError: if you specify the file name in the destination, the file extension must be .json
 		"""
 
-		if os.path.splitext(path)[1]:  # check if the path includes the filename
-			if os.path.splitext(path)[1] != ".json":
-				raise TypeError("the file must be a .json file !")
-
-			path, filename = os.path.split(path)
-
+		# as it's in the users folder now it's OS dependent
+		platform = system()
+		if platform == "Linux":
+			folder_path = os.path.expanduser("~/.local/share/pyscandl/")
+		elif platform == "Windows":
+			folder_path = os.path.expandvars("%APPDATA%/pyscandl/")
+		elif platform == "Darwin":
+			folder_path = os.path.expanduser("~\Library\Preferences/pyscandl/")
 		else:
-			filename = "db.json"
+			raise OSError("The OS couldn't be detected, the db don't have a place to be stored")
 
 		if not os.path.exists(path):
 			os.makedirs(path)
-
-		with open(os.path.join(path, filename), "w") as data:
-			json.dump(self.db, data, indent=4, sort_keys=True)
+		shutil.copy(folder_path + "db.sqlite", path)
