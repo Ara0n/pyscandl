@@ -217,7 +217,7 @@ class Fanfox(Fetcher):
 
         try:
             req = requests.get(rss_url)
-            if req.status_code == 522:
+            if req.status_code in (522, 504):
                 raise DownedSite("https://fanfox.net")
             xml_root = ET.fromstring(req.text)
         except ParseError:

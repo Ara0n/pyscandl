@@ -97,6 +97,7 @@ class Fetcher(ABC):
         :rtype: list[int/float]
 
         :raises MangaNotFound: the asked manga doesn't exist
+        :raise DownedSite: the website can't answer for the moment
         """
 
         pass
