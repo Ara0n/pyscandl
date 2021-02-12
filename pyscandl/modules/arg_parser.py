@@ -1,5 +1,6 @@
 import argparse
 from .fetchers import FetcherEnum
+from pyscandl import __version__
 
 
 def get_parser():
@@ -16,7 +17,7 @@ def get_parser():
 	manual_pars = subparsers.add_parser("manual", help="manually download scans, it will not update the downloaded scans json, if you plan on setting up a manga with the automatic rss mode don't mix both commands")
 
 	parser.add_argument("-q", "--quiet", action="store_true", help="removes the verbose")
-	parser.add_argument("--version", action="store_true", help="print the current software version")
+	parser.add_argument("--version", action="version", version=f"pyscandl {__version__}", help="print the current software version")
 
 
 	# manual downloading subparser
