@@ -217,8 +217,12 @@ class Controller:
 					print(e)
 			finally:
 				chapter_id += 1
+
 		if self.missing_chaps:
-			downloader.fetcher.quit()
+			try:
+				downloader.fetcher.quit()
+			except UnboundLocalError:
+				pass  # only available chapter was a delayed release or an empty chapter
 
 		# remove the directory if there is no chapter
 		try:
