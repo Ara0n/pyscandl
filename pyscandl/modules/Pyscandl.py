@@ -206,8 +206,11 @@ class Pyscandl:
 			with open(self._pdf_path, "rb") as file:
 				pdf = file.read()
 			with open(self._pdf_path, "wb") as file:
-				file.write(pdf.replace(b"/CreationDate", f"/Author <{self.fetcher.author.encode().hex()}>\n/Keywords <{self.fetcher.manga_name.encode().hex()}>\n/CreationDate".encode())
-							.replace(b"/Producer (https://imagemagick.org)", b"/Producer (https://pypi.org/project/pyscandl/)"))  # manually adding the missing metadate from the pdf creation
+				file.write(pdf.replace(b"/Producer (https://imagemagick.org)", b"/Producer (https://pypi.org/project/pyscandl/)")
+						   .replace(
+							b"/CreationDate", b"/Author <feff"+self.fetcher.author.encode("utf-16_be").hex().encode()+
+											  b">\n/Keywords <feff"+self.fetcher.manga_name.encode("utf-16_be").hex().encode()+b">\n/CreationDate")
+						   )  # manually adding the missing metadate from the pdf creation
 
 			if not self._quiet:
 				print("converted")
