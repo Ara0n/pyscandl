@@ -17,8 +17,8 @@ optional arguments:
   -la, --list-all       list all the mangas for autodl
   -lo, --list-only      list only the archived mangas for autodl
   -e EXPORT_DB, --export-db EXPORT_DB
-                        exports the current database into a json file
+                        exports the current database into a folder
   -i IMPORT_DB, --import-db IMPORT_DB
-                        imports a new database from a json file
+                        imports a new database from a .sqlite file
 
 The current list of image fetcher is: NHENTAI, FANFOX, MANGADEX, MANGADEX_FR, FRSCAN, NAVERWEBTOON, NAVERBESTCHALLENGE, NAVERCHALLENGE, WEBTOONS, WEBTOONS_FR

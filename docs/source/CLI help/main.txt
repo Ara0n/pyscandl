@@ -2,9 +2,9 @@ usage: pyscandl [-h] [-q] [--version] {autodl,manga,manual} ...
 
 positional arguments:
   {autodl,manga,manual}
-    autodl              auto downloader using the mangas in the json
-    manga               tool to modify, add and remove mangas from the automatic rss downloader mode list
-    manual              manually download scans, it will not update the downloaded scans json, if you plan on setting up a manga with the automatic rss mode don't mix both commands
+    autodl              auto downloader using the mangas in the db
+    manga               tool to modify, add and remove mangas from the downloader mode list
+    manual              manually download scans, it will not update the downloaded scans db, if you plan on setting up a manga with the automatic mode don't mix both commands
 
 optional arguments:
   -h, --help            show this help message and exit

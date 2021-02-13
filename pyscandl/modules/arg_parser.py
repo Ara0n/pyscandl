@@ -12,9 +12,9 @@ def get_parser():
 
 	parser = argparse.ArgumentParser()
 	subparsers = parser.add_subparsers(dest="subparser")
-	autodl = subparsers.add_parser("autodl", help="auto downloader using the mangas in the json")
-	manga = subparsers.add_parser("manga", help="tool to modify, add and remove mangas from the automatic rss downloader mode list")
-	manual_pars = subparsers.add_parser("manual", help="manually download scans, it will not update the downloaded scans json, if you plan on setting up a manga with the automatic rss mode don't mix both commands")
+	autodl = subparsers.add_parser("autodl", help="auto downloader using the mangas in the db")
+	manga = subparsers.add_parser("manga", help="tool to modify, add and remove mangas from the downloader mode list")
+	manual_pars = subparsers.add_parser("manual", help="manually download scans, it will not update the downloaded scans db, if you plan on setting up a manga with the automatic mode don't mix both commands")
 
 	parser.add_argument("-q", "--quiet", action="store_true", help="removes the verbose")
 	parser.add_argument("--version", action="version", version=f"pyscandl {__version__}", help="print the current software version")
@@ -50,8 +50,8 @@ def get_parser():
 	list_type.add_argument("-lo", "--list-only", action="store_true", help="list only the archived mangas for autodl")
 
 	db_management = manga.add_mutually_exclusive_group()
-	db_management.add_argument("-e", "--export-db", type=str, help="exports the current database into a json file")
-	db_management.add_argument("-i", "--import-db", type=str, help="imports a new database from a json file")
+	db_management.add_argument("-e", "--export-db", type=str, help="exports the current database into a folder")
+	db_management.add_argument("-i", "--import-db", type=str, help="imports a new database from a .sqlite file")
 	manga_subparser = manga.add_subparsers(dest="manga_subparser")
 
 	# scan subparser

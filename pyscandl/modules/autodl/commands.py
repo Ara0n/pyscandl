@@ -1,11 +1,9 @@
-import os, sys
-import json
+import os
 from platform import system
 import sqlite3
 import shutil
 
 import cfscrape
-import re
 from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter, DelayedRelease, MangaNotFound
 from ..Pyscandl import Pyscandl
 from ..fetchers import FetcherEnum
@@ -137,7 +135,6 @@ class Controller:
 		if archived is not None:
 			self._curs.execute("""UPDATE manga SET archived=? WHERE name=?;""", (archived, name))
 
-	# each website/fetcher can have differently made xml from their rss so we need to treat them separately if need be
 	def scan(self, name:str):
 		"""
 		Scans the asked manga for new and non downloaded chapters and adds them to the controller queue.
