@@ -2,6 +2,36 @@ Changelog
 =========
 
 
+3.0.0-b1 (2021-02-13)
+---------------------
+
+New
+~~~
+- Added a ``manga scan [name]`` option to check if there are new chapter released without downloading them. Placing a name will make it search for that specific manga, otherwise it scans for all the non archived mangas in the db.
+
+- Command option to migrate the db with ``pyscandl manga migrate``
+
+- The pdf creation is now made with Wand and no longer img2pdf. `ImageMagick <https://imagemagick.org>`_ is now needed for the pdf creation instead.
+
+
+Changes
+~~~~~~~
+- Updated the CLI help outputs.
+
+- Scan will now throw MangaNotFound if the requested manga isn't in the db.
+
+- ``autodl`` and ``manga`` now uses the new db.
+
+
+Fix
+~~~
+- Removed outdated references to the rss and json.
+
+- Fanfox download no longuer crashes on 504 errors.
+
+- Issue with chapters being skipped with ``autodl`` when retrying in some cases.
+
+
 2.10.0 (2021-02-01)
 -------------------
 
