@@ -1,39 +1,26 @@
-usage: pyscandl manual [-h] (-l LINK | -m MANGA) -f FETCHER [-o OUTPUT] [-c CHAPTER_START] [-a | -n DOWNLOAD_NUMBER | -e CHAPTER_END] [-t] [-s SKIP] (-p | -k | -i)
+usage: pyscandl py manual [-h] (-l LINK | -m MANGA) -f FETCHER [-o OUTPUT] [-c CHAPTER_START] [-a | -n DOWNLOAD_NUMBER | -e CHAPTER_END] [-t] [-s SKIP] (-p | -k | -i)
 
 optional arguments:
   -h, --help            show this help message and exit
   -l LINK, --link LINK  gives the link to the page with all the chapter listed
   -m MANGA, --manga MANGA
-                        gives the manga name, the image fetcher will find the
-                        corresponding manga
+                        gives the manga name, the image fetcher will find the corresponding manga
   -f FETCHER, --fetcher FETCHER
-                        the name of the image links fetcher that will be used
-                        for the download
+                        the name of the image links fetcher that will be used for the download
   -o OUTPUT, --output OUTPUT
-                        the path (absolute or relative) to the folder where to
-                        save the data, the images will be stored in a
-                        subfolder images with inside one folder per chapter
-                        and the pdfs will be stored in a pdf subfolder
+                        the path (absolute or relative) to the folder where to save the data, the images will be stored in a subfolder images with inside one folder per chapter and the pdfs will be stored in a
+                        pdf subfolder
   -c CHAPTER_START, --chapter-start CHAPTER_START
-                        gives the chapter to start the download on (defaults
-                        at 1)
-  -a, --all             downloads all the chapters from the starting point to
-                        the end
+                        gives the chapter to start the download on (defaults at 1)
+  -a, --all             downloads all the chapters from the starting point to the end
   -n DOWNLOAD_NUMBER, --download-number DOWNLOAD_NUMBER
-                        gives the number of chapters to download (defaults at
-                        1)
+                        gives the number of chapters to download (defaults at 1)
   -e CHAPTER_END, --chapter-end CHAPTER_END
-                        gives the ending chapter number, if the chapter
-                        doesn't exists the program will stop once it's
-                        surpassed
-  -t, --tiny            don't write the manga name in the title (useful if
-                        using ebook libraries)
-  -s SKIP, --skip SKIP  skips n images before starting to download the first
-                        chapter
+                        gives the ending chapter number, if the chapter doesn't exists the program will stop once it's surpassed
+  -t, --tiny            don't write the manga name in the title (useful if using ebook libraries)
+  -s SKIP, --skip SKIP  skips n images before starting to download the first chapter
   -p, --pdf             downloads only the pdf of the manga
-  -k, --keep            downloads the pdf but also keep the images in a
-                        chapter subfolder
-  -i, --image           downloads only the images in a chapter subfolder and
-                        don't create the pdf
+  -k, --keep            downloads the pdf but also keep the images in a chapter subfolder
+  -i, --image           downloads only the images in a chapter subfolder and don't create the pdf
 
 The current list of image fetcher is: NHENTAI, FANFOX, MANGADEX, MANGADEX_FR, FRSCAN, NAVERWEBTOON, NAVERBESTCHALLENGE, NAVERCHALLENGE, WEBTOONS, WEBTOONS_FR

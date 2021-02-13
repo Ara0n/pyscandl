@@ -1,0 +1,8 @@
+usage: pyscandl manga scan -h
+usage: test.py manga scan [-h] [name]
+
+positional arguments:
+  name        name of a specific manga you want to check for, if left blank it'll scann all of the non archived ones
+
+optional arguments:
+  -h, --help  show this help message and exit

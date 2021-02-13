@@ -1,4 +1,4 @@
-usage: pyscandl manga edit [-h] [-l LINK] [-f FETCHER] [-c [CHAP [CHAP ...]]] [-a | -u] name
+usage: pyscandl manga edit [-h] [-l LINK] [-f FETCHER] [-c [CHAP ...]] [-a | -u] name
 
 positional arguments:
   name                  name for the stored manga
@@ -8,8 +8,7 @@ optional arguments:
   -l LINK, --link LINK  link of the manga
   -f FETCHER, --fetcher FETCHER
                         name of the fetcher needed for the manga
-  -c [CHAP [CHAP ...]], --chap [CHAP [CHAP ...]]
-                        list of all the chapters already downloaded to be
-                        added to the list for the auto-updater
+  -c [CHAP ...], --chap [CHAP ...]
+                        list of all the chapters already downloaded to be added to the list for the auto-updater
   -a, --archive         makes the edited manga archived
   -u, --unarchive       unarchives the edited manga
