@@ -6,7 +6,7 @@ import shutil
 
 import cfscrape
 import re
-from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter, DelayedRelease
+from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter, DelayedRelease, MangaNotFound
 from ..Pyscandl import Pyscandl
 from ..fetchers import FetcherEnum
 from ..fetchers.fetcher import StandaloneFetcher
@@ -144,10 +144,14 @@ class Controller:
 
 		:param name: name of the manga
 		:type name: str
+
+		:raise MangaNotFound: the asked manga isn't in the db
 		"""
 
 		self.missing_chaps.clear()
 		manga = self._curs.execute("""SELECT * FROM manga WHERE name=?""", (name,)).fetchone()
+		if manga is None:
+			raise MangaNotFound(name)
 
 		manga_fetcher = FetcherEnum.get(manga[2])
 		manga_chapters = set(manga_fetcher.scan(link=manga[3]))
