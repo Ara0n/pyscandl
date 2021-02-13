@@ -67,7 +67,6 @@ Each entry in the database consists of:
 
 * the name of the manga
 * a link the the manga's main page
-* a link to the manga's rss feed
 * the name of the fetcher used
 * the list of all the downloaded chapters
 * if the manga is archived or not
@@ -123,6 +122,24 @@ The following command imports the file at ``Documents/pyscandl/backup/db.json`` 
     pyscandl manga -i Documents/pyscandl/backup/db.json
 
 
+scan sub-command
+""""""""""""""""
+
+The scan sub-command allows you to check if there are new chapters available for you database entries. You can either specify a name to check or checkk all non archived entries.
+
+.. literalinclude:: ../CLI help/manga scan.txt
+    :language: none
+
+Example
+'''''''
+
+The following command scans the manga fullmetal alchemist
+
+.. code-block:: none
+
+    pyscandl manga scan "fullmetal alchemist"
+
+
 add sub-command
 """""""""""""""
 
@@ -138,7 +155,7 @@ The following command adds the manga fullmetal alchemist from the website https:
 
 .. code-block:: none
 
-    pyscandl manga add "fullmetal alchemist" -r https://mangadex.org/rss/wApuURnPsDZ92gX7Th4BySW8dqcVeaCM/manga_id/286 -l https://mangadex.org/title/286/fullmetal-alchemist -f mangadex
+    pyscandl manga add "fullmetal alchemist" -l https://mangadex.org/title/286/fullmetal-alchemist -f mangadex
 
 
 edit sub-command
@@ -168,7 +185,6 @@ The info consists of:
 
 * the name of the manga
 * a link the the manga's main page
-* a link to the manga's rss feed
 * the name of the fetcher used
 * the list of all the downloaded chapters
 * the number of last chapter downloaded

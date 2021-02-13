@@ -1,5 +1,5 @@
 requests~=2.24.0
-img2pdf~=0.3.6
+wand~=0.6.5
 Pillow~=7.2.0
 cfscrape~=2.1.1
 sphinx-copybutton~=0.2.12
