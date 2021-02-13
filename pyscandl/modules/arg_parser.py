@@ -43,7 +43,7 @@ def get_parser():
 	content.add_argument("-i", "--image", action="store_true", help="downloads only the images in a chapter subfolder and don't create the pdf")
 
 
-	# json interaction subparser
+	# db interaction subparser
 	list_type = manga.add_mutually_exclusive_group()
 	list_type.add_argument("-l", "--list", action="store_true", help="list all the non-archived mangas for autodl")
 	list_type.add_argument("-la", "--list-all", action="store_true", help="list all the mangas for autodl")
@@ -53,6 +53,10 @@ def get_parser():
 	db_management.add_argument("-e", "--export-db", type=str, help="exports the current database into a json file")
 	db_management.add_argument("-i", "--import-db", type=str, help="imports a new database from a json file")
 	manga_subparser = manga.add_subparsers(dest="manga_subparser")
+
+	# scan subparser
+	scan = manga_subparser.add_parser("scan", help="scans the current db entries to see if new chapters are available without starting a download")
+	scan.add_argument("name", nargs="?", help="name of a specific manga you want to check for, if left blank it'll scann all of the non archived ones")
 
 	## add subparser
 	add = manga_subparser.add_parser("add", help="add a new manga to the auto downloader")

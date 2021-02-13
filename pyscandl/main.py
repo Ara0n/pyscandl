@@ -7,7 +7,7 @@ import json
 from pyscandl.modules import arg_parser, Pyscandl
 from pyscandl.modules.fetchers import FetcherEnum
 from pyscandl.modules.autodl import Controller
-from pyscandl.modules.excepts import DownedSite
+from pyscandl.modules.excepts import DownedSite, MangaNotFound
 import xml.etree.ElementTree
 
 
@@ -40,6 +40,18 @@ def main():
 
 		elif args.export_db:
 			Controller().db_export(args.export_db)
+
+		elif args.manga_subparser == "scan":
+			infos = Controller()
+			if args.name:
+				try:
+					infos.scan(args.name)
+				except MangaNotFound as e:
+					print(e)
+			else:
+				mangas = [row[0] for row in infos._curs.execute("""SELECT name FROM manga WHERE archived=false ORDER BY name""").fetchall()]
+				for manga in mangas:
+					infos.scan(manga)
 
 		elif args.manga_subparser == "info":
 			infos = Controller().manga_info(args.name)
