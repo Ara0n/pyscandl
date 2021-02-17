@@ -51,6 +51,23 @@ class Controller:
 				os.makedirs(folder_path)
 				self._conn = sqlite3.connect(folder_path + "db.sqlite")
 				self._curs = self._conn.cursor()
+				self._curs.execute("""
+				CREATE TABLE "manga" (
+					"id" INTEGER PRIMARY KEY,
+					"name" TEXT UNIQUE,
+					"fetcher" TEXT,
+					"link" TEXT,
+					"archived" BOOL DEFAULT FALSE
+				);
+				""")
+
+				self._curs.execute("""
+				CREATE TABLE "chaplist" (
+					"manga" INTEGER REFERENCES manga(id),
+					"chapter" BLOB,
+					CONSTRAINT unique_chap UNIQUE (manga, chapter)
+				);
+				""")
 		self.output = output
 		self.quiet = quiet
 		self.tiny = tiny
@@ -101,7 +118,7 @@ class Controller:
 						   ))
 		self._curs.execute("""SELECT id FROM manga WHERE "name"=?""", (name,))
 		manga_id = self._curs.fetchone()
-		self._curs.executemany("""INSERT INTO chaplist("manga", "chapter") VALUES (?, ?);""", [(manga_id[0], chap) for chap in chapters])
+		self._curs.executemany("""INSERT OR IGNORE INTO chaplist("manga", "chapter") VALUES (?, ?);""", [(manga_id[0], chap) for chap in chapters])
 
 	def edit(self, name:str, link:str=None, fetcher=None, chapters:list=None, archived=None):
 		"""
@@ -130,7 +147,7 @@ class Controller:
 				raise IsStandalone(name)
 			self._curs.execute("""UPDATE manga SET fetcher=? WHERE name=?;""", (fetcher, name))
 		if chapters is not None:
-			self._curs.execute("""INSERT INTO chaplist("manga", "chapter") VALUES ((SELECT id FROM manga WHERE name=?), ?);""", [(name, chap) for chap in chapters])
+			self._curs.executemany("""INSERT OR IGNORE INTO chaplist("manga", "chapter") VALUES ((SELECT id FROM manga WHERE name=?), ?);""", [(name, chap) for chap in chapters])
 		if archived is not None:
 			self._curs.execute("""UPDATE manga SET archived=? WHERE name=?;""", (archived, name))
 
@@ -285,7 +302,7 @@ class Controller:
 		:type name: str
 
 		:rtype: tuple
-		:returns: name, fetcher, link, list[chapters]
+		:returns: name, fetcher, link, archived, list[chapters]
 		"""
 
 		try:

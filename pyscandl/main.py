@@ -199,7 +199,8 @@ def main():
 				curs.execute("""
 				CREATE TABLE IF NOT EXISTS "chaplist" (
 					"manga" INTEGER REFERENCES manga(id),
-					"chapter" BLOB
+					"chapter" BLOB,
+					CONSTRAINT unique_chap UNIQUE (manga, chapter)
 				);
 				""")
 
@@ -219,7 +220,7 @@ def main():
 						print("already downloaded chapters...")
 					curs.execute("""SELECT id FROM manga WHERE "name"=?""", (key,))
 					manga_id = curs.fetchone()
-					curs.executemany("""INSERT INTO chaplist("manga", "chapter") VALUES (?, ?);""", [(manga_id[0], chap) for chap in value.get("chapters")])
+					curs.executemany("""INSERT OR IGNORE INTO chaplist("manga", "chapter") VALUES (?, ?);""", [(manga_id[0], chap) for chap in value.get("chapters")])
 
 				conn.commit()
 				conn.close()
