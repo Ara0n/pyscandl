@@ -89,7 +89,7 @@ class Controller:
 
 		if fetcher.upper() not in [i.name for i in FetcherEnum]:
 			raise FetcherNotFound(fetcher)
-		if fetcher.lower() in ["nhentai"]:
+		if issubclass(FetcherEnum.get(fetcher), StandaloneFetcher):
 			raise IsStandalone(name)
 
 		self._curs.execute("""INSERT INTO manga("name", "fetcher", "link", "archived") VALUES (?, ?, ?, ?);""",
