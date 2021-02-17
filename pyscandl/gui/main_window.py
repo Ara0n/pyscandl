@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 
 from ..modules.autodl import Controller
+from ..modules.fetchers import FetcherEnum
 
 
 class MainWindow(QMainWindow):
@@ -38,6 +39,7 @@ class MainWindow(QMainWindow):
         see_chaps_button = QPushButton("see all chapters")
         see_chaps_button.clicked.connect(self._chapter_list_message)
         new_button = QPushButton("new")
+        new_button.clicked.connect(self._create_dialog)
         edit_button = QPushButton("edit")
         delete_button = QPushButton("delete")
         delete_button.clicked.connect(self._delete_confirm)
@@ -85,6 +87,71 @@ class MainWindow(QMainWindow):
             self._controller.delete_manga(self._mangas.currentText())
             self._controller.save()
             self._mangas.removeItem(self._mangas.currentIndex())
+
+    def _create_dialog(self):
+        create = QDialog()
+        layout = QVBoxLayout()
+        form = QFormLayout()
+
+        # info form
+        form.addRow("Name:", QLineEdit())
+        form.addRow("Link:", QLineEdit())
+        fetchers = QComboBox()
+        fetchers.addItems(FetcherEnum.list(standalone=False))
+        form.addRow("Fetcher:", fetchers)
+        form.addRow("Chapters (optional):", QTextEdit())
+        form.addRow("Archived ?", QCheckBox())
+
+        # accept and cancel buttons
+        buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self._create_save)
+        buttons.accepted.connect(create.accept)
+        buttons.rejected.connect(create.reject)
+
+        layout.addLayout(form)
+        layout.addWidget(buttons)
+        create.setLayout(layout)
+        create.exec()
+
+    def _create_save(self):
+        sender = self.sender()
+        form = sender.parent().layout().itemAt(0)
+        name = form.itemAt(1).widget().text()
+        link = form.itemAt(3).widget().text()
+        if not name:
+            self._error_popups(
+                icon=QMessageBox.Critical,
+                title="name error",
+                text="an error when entering the name was detected:",
+                info_text="please enter a name for the new manga"
+            )
+            sender.parent().reject()
+        elif not link:
+            self._error_popups(
+                icon=QMessageBox.Critical,
+                title="name error",
+                text="an error when entering the link was detected:",
+                info_text="please enter a link for the new manga"
+            )
+            sender.parent().reject()
+        else:
+            fetcher = form.itemAt(5).widget().currentText()
+            archived = form.itemAt(9).widget().isChecked()
+            try:
+                chaps = [float(chap) if "." in chap else int(chap) for chap in form.itemAt(7).widget().toPlainText().replace("\n", " ").split(" ") if chap != ""]
+
+                self._controller.add(name, link, fetcher, chaps, archived)
+                self._controller.save()
+                self._mangas.addItem(name)
+            except ValueError as e:
+                # setting up the error message box
+                self._error_popups(
+                    icon=QMessageBox.Critical,
+                    title="chapter list error",
+                    text="an error when entering the chapters was detected:",
+                    info_text="please only type chapter numbers like 23, 0 or 2.3 separated only by spaces or carriage returns",
+                    detailed_text=str(e))
+                sender.parent().reject()
 
     def _update_info(self):
         sender = self.sender()
