@@ -41,6 +41,7 @@ class MainWindow(QMainWindow):
         new_button = QPushButton("new")
         new_button.clicked.connect(self._create_dialog)
         edit_button = QPushButton("edit")
+        edit_button.clicked.connect(self._edit_dialog)
         delete_button = QPushButton("delete")
         delete_button.clicked.connect(self._delete_confirm)
         top_layout.addWidget(see_chaps_button)
@@ -92,6 +93,85 @@ class MainWindow(QMainWindow):
             self._controller.delete_manga(self._mangas.currentText())
             self._controller.save()
             self._mangas.removeItem(self._mangas.currentIndex())
+
+    def _edit_dialog(self):
+        create = QDialog()
+        layout = QVBoxLayout()
+        form = QFormLayout()
+        manga = self._controller.manga_info(self._mangas.currentText())
+
+        # info form
+        link = QLineEdit()
+        link.setText(manga[2])
+        form.addRow("Link:", link)
+        fetchers = QComboBox()
+        fetchers.addItems(FetcherEnum.list(standalone=False))
+        fetchers.setCurrentIndex(fetchers.findText(manga[1]))
+        form.addRow("Fetcher:", fetchers)
+        mode = QComboBox()
+        mode.addItems(["set", "add", "delete"])
+        mode.setToolTip("""- set: set the listed chapters as the chapters stored
+- add: add the listed chapters to the chapters stored
+- delete: delete the listed chapters from the chapters stored""")
+        form.addRow("Chapter mode:", mode)
+        chaps = QTextEdit()
+        chaps.setText(" ".join([str(chap) for chap in manga[4]]))
+        form.addRow("Chapters:", chaps)
+        archived = QCheckBox()
+        archived.setChecked(manga[3])
+        form.addRow("Archived ?", archived)
+
+        # accept and cancel buttons
+        buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self._edit_save)
+        buttons.accepted.connect(create.accept)
+        buttons.rejected.connect(create.reject)
+
+        layout.addLayout(form)
+        layout.addWidget(buttons)
+        create.setLayout(layout)
+        create.exec()
+
+    def _edit_save(self):
+        sender = self.sender()
+        form = sender.parent().layout().itemAt(0)
+        link = form.itemAt(1).widget().text()
+        if not link:
+            self._error_popups(
+                icon=QMessageBox.Critical,
+                title="name error",
+                text="an error when entering the link was detected:",
+                info_text="please enter a link for the new manga"
+            )
+            sender.parent().reject()
+        else:
+            fetcher = form.itemAt(3).widget().currentText()
+            archived = form.itemAt(9).widget().isChecked()
+            try:
+                chaps = [float(chap) if "." in chap else int(chap) for chap in
+                         form.itemAt(7).widget().toPlainText().replace("\n", " ").split(" ") if chap != ""]
+
+                mode = form.itemAt(5).widget().currentText()
+                if mode == "set":
+                    old_chaps = self._controller.manga_info(self._mangas.currentText())[4]
+                    self._controller.rm_chaps(self._mangas.currentText(), [str(chap) for chap in old_chaps])
+                    self._controller.edit(self._mangas.currentText(), link, fetcher, chaps, archived)
+                elif mode == "add":
+                    self._controller.edit(self._mangas.currentText(), link, fetcher, chaps, archived)
+                elif mode == "delete":
+                    self._controller.rm_chaps(self._mangas.currentText(), [str(chap) for chap in chaps])
+                    self._controller.edit(self._mangas.currentText(), link, fetcher, None, archived)
+                self._controller.save()
+                self._update_info()
+            except ValueError as e:
+                # setting up the error message box
+                self._error_popups(
+                    icon=QMessageBox.Critical,
+                    title="chapter list error",
+                    text="an error when entering the chapters was detected:",
+                    info_text="please only type chapter numbers like 23, 0 or 2.3 separated only by spaces or carriage returns",
+                    detailed_text=str(e))
+                sender.parent().reject()
 
     def _create_dialog(self):
         create = QDialog()
@@ -159,8 +239,7 @@ class MainWindow(QMainWindow):
                 sender.parent().reject()
 
     def _update_info(self):
-        sender = self.sender()
-        current = self._controller.manga_info(sender.currentText())
+        current = self._controller.manga_info(self._mangas.currentText())
         self._form.itemAt(1).widget().setText(current[2])
         self._form.itemAt(3).widget().setText(current[1])
         self._form.itemAt(5).widget().setText("YES" if current[3] else "NO")
