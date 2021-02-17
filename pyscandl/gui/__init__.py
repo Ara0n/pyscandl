@@ -3,4 +3,4 @@ from PyQt5.QtWidgets import QApplication
 
 app = QApplication([])
 pyscandl_qt = MainWindow()
-app.exec()
+exit(app.exec())

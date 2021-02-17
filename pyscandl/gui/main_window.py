@@ -40,6 +40,7 @@ class MainWindow(QMainWindow):
         new_button = QPushButton("new")
         edit_button = QPushButton("edit")
         delete_button = QPushButton("delete")
+        delete_button.clicked.connect(self._delete_confirm)
         top_layout.addWidget(see_chaps_button)
         top_layout.addWidget(new_button)
         top_layout.addWidget(edit_button)
@@ -76,6 +77,14 @@ class MainWindow(QMainWindow):
         chaplist.setText(f"chapter list for {self._mangas.currentText()}:")
         chaplist.setInformativeText(" ".join([str(chap) for chap in self._controller.manga_info(self._mangas.currentText())[4]]))
         chaplist.exec()
+
+    def _delete_confirm(self):
+        delete_msg = QMessageBox.question(self, "deleting manga", f"are you sure you want to delete {self._mangas.currentText()}", QMessageBox.Yes, QMessageBox.No)
+
+        if delete_msg == QMessageBox.Yes:
+            self._controller.delete_manga(self._mangas.currentText())
+            self._controller.save()
+            self._mangas.removeItem(self._mangas.currentIndex())
 
     def _update_info(self):
         sender = self.sender()
