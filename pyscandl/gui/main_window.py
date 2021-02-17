@@ -94,3 +94,15 @@ class MainWindow(QMainWindow):
         self._form.itemAt(5).widget().setText("YES" if current[3] else "NO")
         self._form.itemAt(7).widget().setText(str(len(current[4])))
         self._form.itemAt(9).widget().setText(str(current[4][0]))
+
+    def _error_popups(self, icon=QMessageBox.Critical, title="error", text=None, info_text=None, detailed_text=None):
+        error = QMessageBox()
+        error.setIcon(icon)
+        error.setWindowTitle(title)
+        if text:
+            error.setText(text)
+        if info_text:
+            error.setInformativeText(info_text)
+        if detailed_text:
+            error.setDetailedText(detailed_text)
+        error.exec()
