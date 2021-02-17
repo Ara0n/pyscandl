@@ -1,5 +1,6 @@
 from enum import Enum
 from . import NHentai, Fanfox, MangadexEN, MangadexFR, NaverWebtoon, NaverBestChallenge, NaverChallenge, FRScan, WebtoonsEN, WebtoonsFR
+from .fetcher import Fetcher
 from ..excepts import FetcherNotFound
 
 
@@ -38,9 +39,16 @@ class FetcherEnum(Enum):
 		raise FetcherNotFound(fetcher_name_request)
 
 	@classmethod
-	def list(cls):
+	def list(cls, standalone=True):
 		"""
 		Gives a list of all the available fetchers at the moment.
+
+		:param standalone: list standalone fetchers too (default True)
+		:type standalone: bool
+
 		:rtype: list[str]
 		"""
-		return [i.name for i in cls]
+		if standalone:
+			return [i.name for i in cls]
+		else:
+			return [i.name for i in FetcherEnum if issubclass(i.value, Fetcher)]
