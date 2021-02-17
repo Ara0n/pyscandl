@@ -60,11 +60,10 @@ class Controller:
 
 	def save(self):
 		"""
-		Saves the current state of the database in the ``db.sqlite`` file and closes the connection.
+		Saves the current state of the database in the ``db.sqlite`` file.
 		"""
 
 		self._conn.commit()
-		self._conn.close()
 
 	def add(self, name:str, link:str, fetcher:str, chapters:list=None, archived=False):
 		"""
