@@ -234,7 +234,7 @@ class Controller:
 		except OSError:
 			pass
 
-	def list_mangas(self, all=False, only=False):
+	def list_mangas(self, all=False, only=False, format=True):
 		"""
 		Gives the list of all the names of the mangas in the ``db.sqlite`` file. if the db is empty, returns None
 
@@ -254,6 +254,8 @@ class Controller:
 			manga = self._curs.execute("""SELECT * FROM manga WHERE archived=true ORDER BY name""").fetchall()
 		else:
 			manga = self._curs.execute("""SELECT * FROM manga WHERE archived=false ORDER BY name""").fetchall()
+		if not format:
+			return [row[1] for row in manga]
 
 		max_len_title = len(max(manga, key=lambda x: len(x[1]))[1])
 		fetchers = [row[2] for row in manga]
