@@ -56,8 +56,13 @@ class MainWindow(QMainWindow):
         self._form.addRow("- link:", QLabel(current[2]))
         self._form.addRow("- fetcher:", QLabel(current[1]))
         self._form.addRow("- archived:", QLabel("YES" if current[3] else "NO"))
-        self._form.addRow("- number of chapters downloaded:", QLabel(str(len(current[4]))))
-        self._form.addRow("- last chapter:", QLabel(str(current[4][0])))
+        if current[4]:
+            self._form.addRow("- number of chapters downloaded:", QLabel(str(len(current[4]))))
+            self._form.addRow("- last chapter:", QLabel(str(current[4][0])))
+        else:
+            self._form.addRow("- number of chapters downloaded:", QLabel("no chapters downloaded yet"))
+            self._form.addRow("- last chapter:", QLabel("no chapters downloaded yet"))
+
 
         # adding everything to the pannel
         layout.addLayout(top_layout)
@@ -159,8 +164,12 @@ class MainWindow(QMainWindow):
         self._form.itemAt(1).widget().setText(current[2])
         self._form.itemAt(3).widget().setText(current[1])
         self._form.itemAt(5).widget().setText("YES" if current[3] else "NO")
-        self._form.itemAt(7).widget().setText(str(len(current[4])))
-        self._form.itemAt(9).widget().setText(str(current[4][0]))
+        if current[4]:
+            self._form.itemAt(7).widget().setText(str(len(current[4])))
+            self._form.itemAt(9).widget().setText(str(current[4][0]))
+        else:
+            self._form.itemAt(7).widget().setText("no chapters downloaded yet")
+            self._form.itemAt(9).widget().setText("no chapters downloaded yet")
 
     def _error_popups(self, icon=QMessageBox.Critical, title="error", text=None, info_text=None, detailed_text=None):
         error = QMessageBox()
