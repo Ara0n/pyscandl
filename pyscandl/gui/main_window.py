@@ -75,7 +75,89 @@ class MainWindow(QMainWindow):
         return QWidget()
 
     def manual_panel(self):
-        return QWidget()
+        panel = QWidget()
+        layout = QVBoxLayout()
+        top_layout = QGridLayout()
+
+        # constructing 2 line form in the QGridLayout
+        ## first line: save location, quiet, tiny, download mode
+        first_line = QHBoxLayout()
+        first_line.addLayout(self._folder_widget("Save location:"))
+        quiet = QCheckBox("quiet")
+        first_line.addWidget(quiet)
+        tiny = QCheckBox("tiny")
+        tiny.setToolTip("don't write the manga name in the title (useful if using ebook libraries)")
+        first_line.addWidget(tiny)
+        mode = QComboBox()
+        mode.addItems(["PDF", "image", "keep"])
+        mode.setToolTip("""- pdf: downloads only the pdf of the manga
+- keep: downloads the pdf but also keep the images in a chapter subfolder
+- image: downloads only the images in a chapter subfolder and don't create the pdf""")
+        first_line.addWidget(mode)
+
+        ## second line: fetcher, link, starting point, end mode, end point
+        second_line = QHBoxLayout()
+        second_line.addWidget(QLabel("Fetcher:"))
+        fetchers = QComboBox()
+        fetchers.addItems(FetcherEnum.list())
+        second_line.addWidget(fetchers)
+        second_line.addWidget(QLabel("Link:"))
+        second_line.addWidget(QLineEdit())
+        all = QCheckBox("all")
+        second_line.addWidget(all)
+        second_line.addWidget(QLabel("Start:"))
+        start = QDoubleSpinBox()
+        start.setMaximum(2147483647)
+        second_line.addWidget(start)
+        second_line.addWidget(QLabel("Stop:"))
+        end_mode = QComboBox()
+        end_mode.addItems(["count chapters", "last chapter"])
+        end_mode.setToolTip("""- count chapters: once the total number of chapters downloaded equals the specified number
+        - last chapter: once the chapter downloaded equals or exceeds the the specifed number""")
+        second_line.addWidget(end_mode)
+        stop = QDoubleSpinBox()
+        stop.setMaximum(2147483647)
+        second_line.addWidget(stop)
+        all.stateChanged.connect(end_mode.setDisabled)
+        all.stateChanged.connect(stop.setDisabled)
+
+        # output
+        out = QTextEdit()
+        out.setReadOnly(True)
+
+        # launching actions
+        buttons = QHBoxLayout()
+        buttons.setAlignment(Qt.AlignRight)
+        download = QPushButton("Download")
+        buttons.addWidget(download)
+        scan = QPushButton("Scan")
+        buttons.addWidget(scan)
+
+        # building the layout
+        layout.addLayout(first_line)
+        layout.addLayout(second_line)
+        layout.addWidget(out)
+        layout.addLayout(buttons)
+        panel.setLayout(layout)
+        return panel
+
+    def _folder_widget(self, label=""):
+        folder_widget = QHBoxLayout()
+        if label:
+            folder_widget.addWidget(QLabel(label))
+        path = QLineEdit()
+        file_button = QPushButton(QFileIconProvider().icon(QFileIconProvider.Folder), "")
+        file_button.clicked.connect(self._folder_select)
+        folder_widget.addWidget(path)
+        folder_widget.addWidget(file_button)
+        return folder_widget
+
+    def _folder_select(self):
+        sender = self.sender()
+        folder_select = QFileDialog()
+        folder_select.setFileMode(QFileDialog.DirectoryOnly)
+        folder_select.fileSelected.connect(sender.parent().findChild(QLineEdit).setText)
+        folder_select.exec()
 
     def _chapter_list_message(self):
         # setting up the chapterlist message box
