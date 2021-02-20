@@ -1,8 +1,27 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 
 from ..modules.autodl import Controller
 from ..modules.fetchers import FetcherEnum
+
+
+class QStdoutText(QTextEdit):
+    _write = pyqtSignal(object)
+
+    def __init__(self):
+        super().__init__()
+        self.setReadOnly(True)
+        self._write.connect(self.new_text)
+
+    def write(self, txt):
+        self._write.emit(txt)
+
+    def new_text(self, txt):
+        self.insertPlainText(str(txt))
+
+    def flush(self):
+        pass
+
 
 
 class MainWindow(QMainWindow):
@@ -122,8 +141,7 @@ class MainWindow(QMainWindow):
         all.stateChanged.connect(stop.setDisabled)
 
         # output
-        out = QTextEdit()
-        out.setReadOnly(True)
+        self._manual_out = QStdoutText()
 
         # launching actions
         buttons = QHBoxLayout()
@@ -136,7 +154,7 @@ class MainWindow(QMainWindow):
         # building the layout
         layout.addLayout(first_line)
         layout.addLayout(second_line)
-        layout.addWidget(out)
+        layout.addWidget(self._manual_out)
         layout.addLayout(buttons)
         panel.setLayout(layout)
         return panel
