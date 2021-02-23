@@ -14,7 +14,9 @@ import xml.etree.ElementTree
 def main():
 	args = arg_parser.get_parser().parse_args()
 
-	if args.subparser == "manual":
+	if args.subparser == "gui":
+		main_gui()
+	elif args.subparser == "manual":
 		fetcher = FetcherEnum.get(args.fetcher)
 		pyscandl = Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf,
 									 keep=args.keep, image=args.image, all=args.all, link=args.link, manga=args.manga,
@@ -267,6 +269,9 @@ def main():
 			autodl.save()
 			if not args.quiet:
 				print(f"{autodl.downloads} chapters downloaded")
+
+def main_gui():
+	from .gui import pyscandl_qt
 
 
 if __name__ == "__main__":
