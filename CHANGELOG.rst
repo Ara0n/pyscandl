@@ -2,6 +2,30 @@ Changelog
 =========
 
 
+3.0.0-b2 (2021-02-23)
+---------------------
+
+New
+~~~
+- Added a GUI interface for pyscandl with pyQt, you can use it either with ``pyscandl gui`` or ``pyscandl-qt``, you have access to the same ``manual``, ``manga`` and ``autodl`` options.
+
+
+Changes
+~~~~~~~
+- You can now use filter out StandaloneFetcher of FetcherEnum.list()
+
+- Controller.save() no longer closes the connection.
+
+- Added an option to only list the manga names without the additional info and formatting.
+
+
+Fix
+~~~
+- No longer crashing when stopping ``pyscandl manga scan`` with ``Ctrl+C``
+
+- Usr fixed db creation, duplicate chapters and chapter edit from beta, a script will be given at release to update from the beta 1 version db.
+
+
 3.0.0-b1 (2021-02-13)
 ---------------------
 
