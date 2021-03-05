@@ -185,7 +185,6 @@ class Pyscandl:
 
 		:raises EmptyChapter: the images of the current chapter were all blacklisted images and the pdf was empty
 		"""
-		print("Warning: the pdf creation engine will be changed for Wand in the next major release (3.0.0). Please do not forget to install imagemagick at that time", file=stderr)
 
 		if not self._quiet:
 			print("\nconverting...", end=" ")
