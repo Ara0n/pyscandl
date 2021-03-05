@@ -48,10 +48,10 @@ class QFolderSelect(QHBoxLayout):
     def setupUI(self, label):
         if label:
             self.addWidget(QLabel(label))
-        path = QLineEdit()
+        self.path = QLineEdit()
         file_button = QPushButton(QFileIconProvider().icon(QFileIconProvider.Folder), "")
         file_button.clicked.connect(self._folder_select)
-        self.addWidget(path)
+        self.addWidget(self.path)
         self.addWidget(file_button)
 
     def _folder_select(self):
@@ -59,4 +59,6 @@ class QFolderSelect(QHBoxLayout):
         folder_select = QFileDialog()
         folder_select.setFileMode(QFileDialog.DirectoryOnly)
         folder_select.fileSelected.connect(sender.parent().findChild(QLineEdit).setText)
+        if self.path.text():
+            folder_select.setDirectory(self.path.text())
         folder_select.exec()
