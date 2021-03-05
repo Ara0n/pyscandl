@@ -3,32 +3,12 @@ import contextlib
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QThreadPool, pyqtSignal, QThread
 
+from .custom_elements import QFolderSelect, QStdoutText
+from .panels.manga import QManga
 from .worker import Worker
 from .. import Pyscandl
 from ..modules.autodl import Controller
 from ..modules.fetchers import FetcherEnum
-
-
-class QStdoutText(QTextEdit):
-    _write = pyqtSignal(object)
-
-    def __init__(self):
-        super().__init__()
-        self.setReadOnly(True)
-        self._write.connect(self.new_text)
-
-    def write(self, txt):
-        self._write.emit(txt)
-
-    def new_text(self, txt):
-        bottom = self.verticalScrollBar().value() == self.verticalScrollBar().maximum()
-        self.insertPlainText(str(txt))
-        if bottom:
-            self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
-
-    def flush(self):
-        pass
-
 
 
 class MainWindow(QMainWindow):
@@ -106,7 +86,7 @@ class MainWindow(QMainWindow):
 
         # constructing the form
         param_line = QHBoxLayout()
-        param_line.addLayout(self._folder_widget("Save location:"))
+        param_line.addLayout(QFolderSelect("Save location:"))
         quiet = QCheckBox("quiet")
         param_line.addWidget(quiet)
         tiny = QCheckBox("tiny")
@@ -217,7 +197,7 @@ class MainWindow(QMainWindow):
         # constructing 2 line form in the QGridLayout
         ## first line: save location, quiet, tiny, download mode
         first_line = QHBoxLayout()
-        first_line.addLayout(self._folder_widget("Save location:"))
+        first_line.addLayout(QFolderSelect("Save location:"))
         quiet = QCheckBox("quiet")
         first_line.addWidget(quiet)
         tiny = QCheckBox("tiny")
