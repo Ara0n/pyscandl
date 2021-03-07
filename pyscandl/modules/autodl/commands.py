@@ -35,7 +35,9 @@ class Controller:
 		# as it's in the users folder now it's OS dependent
 		platform = system()
 		if platform == "Linux":
-			folder_path = os.path.expanduser("~/.local/share/pyscandl/")
+			folder_path = os.path.expandvars("$XDG_DATA_HOME/pyscandl/")
+			if folder_path == "$XDG_DATA_HOME/pyscandl/":
+				folder_path = os.path.expanduser("~/.local/share/pyscandl/")
 		elif platform == "Windows":
 			folder_path = os.path.expandvars("%APPDATA%/pyscandl/")
 		elif platform == "Darwin":
@@ -355,7 +357,9 @@ class Controller:
 		# as it's in the users folder now it's OS dependent
 		platform = system()
 		if platform == "Linux":
-			folder_path = os.path.expanduser("~/.local/share/pyscandl/")
+			folder_path = os.path.expandvars("$XDG_DATA_HOME/pyscandl/")
+			if folder_path == "$XDG_DATA_HOME/pyscandl/":
+				folder_path = os.path.expanduser("~/.local/share/pyscandl/")
 		elif platform == "Windows":
 			folder_path = os.path.expandvars("%APPDATA%/pyscandl/")
 		elif platform == "Darwin":
@@ -376,7 +380,9 @@ class Controller:
 		# as it's in the users folder now it's OS dependent
 		platform = system()
 		if platform == "Linux":
-			folder_path = os.path.expanduser("~/.local/share/pyscandl/")
+			folder_path = os.path.expandvars("$XDG_DATA_HOME/pyscandl/")
+			if folder_path == "$XDG_DATA_HOME/pyscandl/":
+				folder_path = os.path.expanduser("~/.local/share/pyscandl/")
 		elif platform == "Windows":
 			folder_path = os.path.expandvars("%APPDATA%/pyscandl/")
 		elif platform == "Darwin":
