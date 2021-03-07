@@ -32,8 +32,12 @@ class QManga(QWidget):
         new_button.clicked.connect(self._create_dialog)
         edit_button = QPushButton("edit")
         edit_button.clicked.connect(self._edit_dialog)
+        edit_button.setEnabled(bool(current))
+        self._mangas.currentTextChanged.connect(lambda x: edit_button.setEnabled(bool(x)))
         delete_button = QPushButton("delete")
+        delete_button.setEnabled(bool(current))
         delete_button.clicked.connect(self._delete_confirm)
+        self._mangas.currentTextChanged.connect(lambda x: delete_button.setEnabled(bool(x)))
         top_layout.addWidget(refresh_button)
         top_layout.addWidget(see_chaps_button)
         top_layout.addWidget(new_button)
@@ -45,15 +49,15 @@ class QManga(QWidget):
         bottom.setTitle("info")
         self._form = QFormLayout()
         bottom.setLayout(self._form)
-        self._form.addRow("- link:", QLabel(current[2]))
-        self._form.addRow("- fetcher:", QLabel(current[1]))
-        self._form.addRow("- archived:", QLabel("YES" if current[3] else "NO"))
-        if current[4]:
-            self._form.addRow("- number of chapters downloaded:", QLabel(str(len(current[4]))))
-            self._form.addRow("- last chapter:", QLabel(str(current[4][0])))
+        self._form.addRow("- link:", QLabel(current[2] if current is not None else ""))
+        self._form.addRow("- fetcher:", QLabel(current[1] if current is not None else ""))
+        self._form.addRow("- archived:", QLabel(("YES" if current[3] else "NO") if current is not None else ""))
+        if current is not None and current[4]:
+            self._form.addRow("- number of chapters downloaded:", QLabel(str(len(current[4])) if current is not None else ""))
+            self._form.addRow("- last chapter:", QLabel(str(current[4][0]) if current is not None else ""))
         else:
-            self._form.addRow("- number of chapters downloaded:", QLabel("no chapters downloaded yet"))
-            self._form.addRow("- last chapter:", QLabel("no chapters downloaded yet"))
+            self._form.addRow("- number of chapters downloaded:", QLabel("no chapters downloaded yet" if current is not None else ""))
+            self._form.addRow("- last chapter:", QLabel("no chapters downloaded yet" if current is not None else ""))
 
         # adding everything to the pannel
         layout.addLayout(top_layout)

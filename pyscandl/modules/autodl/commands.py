@@ -48,6 +48,27 @@ class Controller:
 		try:
 			self._conn = sqlite3.connect(folder_path + "db.sqlite")
 			self._curs = self._conn.cursor()
+
+			# check if the db is empty and place the tables in if needed
+			if not self._curs.execute("SELECT COUNT(name) FROM sqlite_master WHERE type='table'").fetchone()[0]:
+				self._curs.execute("""
+				CREATE TABLE "manga" (
+					"id" INTEGER PRIMARY KEY,
+					"name" TEXT UNIQUE,
+					"fetcher" TEXT,
+					"link" TEXT,
+					"archived" BOOL DEFAULT FALSE
+				);
+				""")
+
+				self._curs.execute("""
+				CREATE TABLE "chaplist" (
+					"manga" INTEGER REFERENCES manga(id),
+					"chapter" BLOB,
+					CONSTRAINT unique_chap UNIQUE (manga, chapter)
+				);
+				""")
+				self._conn.commit()
 		except sqlite3.OperationalError as e:
 			if str(e) == "unable to open database file":
 				os.makedirs(folder_path)
@@ -70,6 +91,7 @@ class Controller:
 					CONSTRAINT unique_chap UNIQUE (manga, chapter)
 				);
 				""")
+				self._conn.commit()
 		self.output = output
 		self.quiet = quiet
 		self.tiny = tiny
