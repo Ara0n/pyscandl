@@ -7,16 +7,24 @@ from typing import Union, Dict, List
 
 DEFAULT_CONFIG = {
     "autodl": {
-        "downloadPath": f"{'%HOMEDRIVE%%HOMEPATH%' if platform.system() == 'Windows' else '$HOME'}/Documents/Books",
+        "downloadPath": f"{'%HOMEDRIVE%%HOMEPATH%' if platform.system() == 'Windows' else '$HOME'}/Documents/pyscandl/autodl",
         "downloadType": "pdf",
         "tiny": False,
+        "quiet": False,
     },
+    "manual": {
+        "downloadPath": f"{'%HOMEDRIVE%%HOMEPATH%' if platform.system() == 'Windows' else '$HOME'}/Documents/pyscandl",
+        "downloadType": "pdf",
+        "tiny": False,
+        "quiet": False,
+    }
+
 }
 
 jsonType = Union[int, float, bool, str, dict, list]
 
 class Config(object):
-    """    
+    """
     """
     path: str
     internal_repr: dict
@@ -30,35 +38,31 @@ class Config(object):
         self.path = path
         self.internal_repr = {}
 
-    def get(self, key: str) -> jsonType:
-        """Gets a value from the config
+    def __getitem__(self, key: str) -> jsonType:
+        """Defines a [] for getting elements from the config
 
-        :param key: the key to the value
-        :type key: str
-        :return: the associated value
-        :rtype: any
-        """
-        return self.internal_repr[key]
+        The key is given in a form category.subcategory.subsubcategory.etc.value
+        for example ``"autodl.downloadPath"``
         
-
-    def set(self, key: str, value: jsonType):
-        """Set a value in the config
-
-        :param key: the key to the value
+        :param key: the key for the value
         :type key: str
-        :param value: the value to write
-        :type value: any
+        :return: the configured value
+        :rtype: jsonType
         """
-        self.internal_repr[key] = value
+        keys = key.split(".")
+        val = self.internal_repr
+        for i in keys:
+            val = val[i]
+        if "path" in key or "Path" in key:
+            val = os.path.expandvars(val)
+        return val
+
 
     def read(self):
         self.internal_repr = dict(DEFAULT_CONFIG)
         with open(self.path, 'r') as f:
             self.internal_repr.update(json.load(f))
 
-    @staticmethod
-    def _expandpath(path: str) -> str:
-        pass
 
     
     def write(self):
