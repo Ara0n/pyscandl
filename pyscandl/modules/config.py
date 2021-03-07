@@ -1,14 +1,22 @@
-import json as json
+import json
+import os
+import platform
+from typing import Union, Dict, List
+
+
 
 DEFAULT_CONFIG = {
-    "paths" : {
-
-    }
+    "autodl": {
+        "downloadPath": f"{'%HOMEDRIVE%%HOMEPATH%' if platform.system() == 'Windows' else '$HOME'}/Documents/Books",
+        "downloadType": "pdf",
+        "tiny": False,
+    },
 }
 
+jsonType = Union[int, float, bool, str, dict, list]
+
 class Config(object):
-    """...
-    
+    """    
     """
     path: str
     internal_repr: dict
@@ -22,7 +30,7 @@ class Config(object):
         self.path = path
         self.internal_repr = {}
 
-    def get(self, key: str) -> any:
+    def get(self, key: str) -> jsonType:
         """Gets a value from the config
 
         :param key: the key to the value
@@ -33,7 +41,7 @@ class Config(object):
         return self.internal_repr[key]
         
 
-    def set(self, key: str, value: any):
+    def set(self, key: str, value: jsonType):
         """Set a value in the config
 
         :param key: the key to the value
@@ -47,6 +55,10 @@ class Config(object):
         self.internal_repr = dict(DEFAULT_CONFIG)
         with open(self.path, 'r') as f:
             self.internal_repr.update(json.load(f))
+
+    @staticmethod
+    def _expandpath(path: str) -> str:
+        pass
 
     
     def write(self):
