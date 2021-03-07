@@ -1,4 +1,3 @@
-from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import *
 
 from .panels.autodl import QAutodl
@@ -7,8 +6,6 @@ from .panels.manual import QManual
 
 
 class MainWindow(QMainWindow):
-    _autodl_progress_count = pyqtSignal(int)
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi()

@@ -1,5 +1,7 @@
-from PyQt5.QtCore import QRunnable, pyqtSlot, QObject, pyqtSignal
-import traceback, sys
+import sys
+import traceback
+
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 
 
 class WorkerSignals(QObject):
@@ -23,21 +25,21 @@ class WorkerSignals(QObject):
     result = pyqtSignal(object)
 
 
-class Worker(QRunnable):
+class Worker(QObject):
     def __init__(self, fn, *args, **kwargs):
         """
         Worker thread
 
         Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
 
-        :param callback: The function callback to run on this worker thread. Supplied args and
+        :param fn: The function callback to run on this worker thread. Supplied args and
                          kwargs will be passed through to the runner.
-        :type callback: function
+        :type fn: function
         :param args: Arguments to pass to the callback function
         :param kwargs: Keywords to pass to the callback function
         """
 
-        super(Worker, self).__init__()
+        super().__init__()
         self.fn = fn
         self.args = args
         self.kwargs = kwargs

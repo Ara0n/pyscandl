@@ -1,6 +1,6 @@
 import contextlib
 
-from PyQt5.QtCore import QThreadPool, Qt, pyqtSignal
+from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from PyQt5.QtWidgets import *
 
 from ..custom_elements import QFolderSelect, QStdoutText
@@ -13,7 +13,6 @@ class QAutodl(QWidget):
 
     def __init__(self):
         super().__init__()
-        self._threadpool = QThreadPool()
         self.setupUI()
 
     def setupUI(self):
@@ -89,13 +88,18 @@ class QAutodl(QWidget):
         buttons[0].setDisabled(True)
         buttons[1].setDisabled(True)
         print("starting dl")
-        worker = Worker(self._autodl_download, self.sender())
-        worker.signals.result.connect(lambda x: print(x))
-        worker.signals.finished.connect(lambda: print("finished"))
-        worker.signals.finished.connect(buttons[0].setEnabled)
-        worker.signals.finished.connect(buttons[1].setEnabled)
-
-        self._threadpool.start(worker)
+        self.thread = QThread()
+        self.worker = Worker(self._autodl_download, self.sender())
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.signals.result.connect(lambda x: print(x))
+        self.worker.signals.finished.connect(lambda: print("finished"))
+        self.worker.signals.finished.connect(buttons[0].setEnabled)
+        self.worker.signals.finished.connect(buttons[1].setEnabled)
+        self.worker.signals.finished.connect(self.thread.quit)
+        self.worker.signals.finished.connect(self.worker.deleteLater)
+        # self.worker.signals.finished.connect(self.thread.deleteLater)
+        self.thread.start()
 
 
     def _autodl_scan(self):
@@ -114,10 +118,15 @@ class QAutodl(QWidget):
         buttons[0].setDisabled(True)
         buttons[1].setDisabled(True)
         print("starting dl")
-        worker = Worker(self._autodl_scan)
-        worker.signals.result.connect(lambda x: print(x))
-        worker.signals.finished.connect(lambda: print("finished"))
-        worker.signals.finished.connect(buttons[0].setEnabled)
-        worker.signals.finished.connect(buttons[1].setEnabled)
-
-        self._threadpool.start(worker)
+        self.thread = QThread()
+        self.worker = Worker(self._autodl_scan)
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.signals.result.connect(lambda x: print(x))
+        self.worker.signals.finished.connect(lambda: print("finished"))
+        self.worker.signals.finished.connect(buttons[0].setEnabled)
+        self.worker.signals.finished.connect(buttons[1].setEnabled)
+        self.worker.signals.finished.connect(self.thread.quit)
+        self.worker.signals.finished.connect(self.worker.deleteLater)
+        # self.worker.signals.finished.connect(self.thread.deleteLater)
+        self.thread.start()

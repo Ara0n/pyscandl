@@ -1,6 +1,6 @@
 import contextlib
 
-from PyQt5.QtCore import QThreadPool, Qt
+from PyQt5.QtCore import QThread, Qt
 from PyQt5.QtWidgets import *
 
 from ..custom_elements import QFolderSelect, QStdoutText
@@ -12,7 +12,6 @@ from ...modules.fetchers import FetcherEnum
 class QManual(QWidget):
     def __init__(self,):
         super().__init__()
-        self._threadpool = QThreadPool()
         self.setupUI()
 
     def setupUI(self):
@@ -77,7 +76,7 @@ class QManual(QWidget):
         download.clicked.connect(self._worker_manual_download)
         buttons.addWidget(download)
         cancel = QPushButton("Cancel")
-        cancel.setDisabled(True)
+        cancel.setDisabled(True)  # still need to figure out how to interrupt the DL
         buttons.addWidget(cancel)
 
         # building the layout
@@ -114,9 +113,14 @@ class QManual(QWidget):
     def _worker_manual_download(self):
         self.sender().setDisabled(True)
         print("starting dl")
-        worker = Worker(self._manual_download, self.sender())
-        worker.signals.result.connect(lambda x: print(x))
-        worker.signals.finished.connect(lambda: print("finished"))
-        worker.signals.finished.connect(self.sender().setEnabled)
-
-        self._threadpool.start(worker)
+        self.thread = QThread()
+        self.worker = Worker(self._manual_download, self.sender())
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.signals.result.connect(lambda x: print(x))
+        self.worker.signals.finished.connect(lambda: print("finished"))
+        self.worker.signals.finished.connect(self.sender().setEnabled)
+        self.worker.signals.finished.connect(self.thread.quit)
+        self.worker.signals.finished.connect(self.worker.deleteLater)
+        # self.worker.signals.finished.connect(self.thread.deleteLater)
+        self.thread.start()
