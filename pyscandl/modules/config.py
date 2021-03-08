@@ -25,9 +25,11 @@ jsonType = Union[int, float, bool, str, dict, list]
 
 class Config(object):
     """
+    The configuration object
+    This handles loading the config, reloading it, and keeping it in memory to be accessed by the program
     """
-    path: str
-    internal_repr: dict
+    _path: str
+    _internal_repr: dict
 
     def __init__(self, path: str):
         """Creates a Config object
@@ -35,11 +37,11 @@ class Config(object):
         :param path: the path to the config file
         :type path: str
         """
-        self.path = path
-        if not os.path.exists(self.path):
-            self.internal_repr = dict(DEFAULT_CONFIG)
-            with open(self.path, 'w') as f:
-                json.dump(self.internal_repr, f)
+        self._path = path
+        if not os.path.exists(self._path):
+            self._internal_repr = dict(DEFAULT_CONFIG)
+            with open(self._path, 'w') as f:
+                json.dump(self._internal_repr, f)
 
     def __getitem__(self, key: str) -> jsonType:
         """Defines a [] for getting elements from the config
@@ -53,17 +55,15 @@ class Config(object):
         :rtype: jsonType
         """
         keys = key.split(".")
-        val = self.internal_repr
+        val = self._internal_repr
         for i in keys:
             val = val[i]
         if "path" in key or "Path" in key:
             val = os.path.expandvars(val)
         return val
 
-    get = __getitem__
-
     def update(self):
         """Reloads the configuration"""
-        self.internal_repr = dict(DEFAULT_CONFIG)
-        with open(self.path, 'r') as f:
-            self.internal_repr.update(json.load(f))
+        self._internal_repr = dict(DEFAULT_CONFIG)
+        with open(self._path, 'r') as f:
+            self._internal_repr.update(json.load(f))
