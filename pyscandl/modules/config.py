@@ -36,7 +36,10 @@ class Config(object):
         :type path: str
         """
         self.path = path
-        self.internal_repr = {}
+        if not os.path.exists(self.path):
+            self.internal_repr = dict(DEFAULT_CONFIG)
+            with open(self.path, 'w') as f:
+                json.dump(self.internal_repr, f)
 
     def __getitem__(self, key: str) -> jsonType:
         """Defines a [] for getting elements from the config
@@ -57,14 +60,10 @@ class Config(object):
             val = os.path.expandvars(val)
         return val
 
+    get = __getitem__
 
-    def read(self):
+    def update(self):
+        """Reloads the configuration"""
         self.internal_repr = dict(DEFAULT_CONFIG)
         with open(self.path, 'r') as f:
             self.internal_repr.update(json.load(f))
-
-
-    
-    def write(self):
-        with open(self.path, 'w') as f:
-            json.dump(self.internal_repr, f)
