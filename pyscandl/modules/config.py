@@ -42,6 +42,8 @@ class Config(object):
             self._internal_repr = dict(DEFAULT_CONFIG)
             with open(self._path, 'w') as f:
                 json.dump(self._internal_repr, f)
+        else:
+            self.load()
 
     def __getitem__(self, key: str) -> jsonType:
         """Defines a [] for getting elements from the config
@@ -62,8 +64,8 @@ class Config(object):
             val = os.path.expandvars(val)
         return val
 
-    def update(self):
-        """Reloads the configuration"""
+    def load(self):
+        """(Re)loads the configuration"""
         self._internal_repr = dict(DEFAULT_CONFIG)
         with open(self._path, 'r') as f:
             self._internal_repr.update(json.load(f))
