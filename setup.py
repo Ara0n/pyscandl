@@ -30,7 +30,7 @@ setup(
         "Bug Tracker": "https://github.com/Ara0n/pyscandl/issues",
     },
     python_requires=">=3.7",
-    entry_points={"console_scripts": ["pyscandl = pyscandl.main:main", "pyscandl-qt = pyscandl.main:main_gui"]},
+    entry_points={"console_scripts": ["pyscandl = pyscandl.__main__:main", "pyscandl-qt = pyscandl.__main__:main_gui"]},
     long_description=readme,
     long_description_content_type='text/x-rst',
     install_requires=requires,
