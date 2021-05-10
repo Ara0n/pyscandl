@@ -1,6 +1,7 @@
 import argparse
-from .fetchers import FetcherEnum
+
 from pyscandl import __version__
+from .fetchers import FetcherEnum
 
 
 def get_parser():
@@ -12,7 +13,6 @@ def get_parser():
 
 	parser = argparse.ArgumentParser()
 	subparsers = parser.add_subparsers(dest="subparser")
-	subparsers.add_parser("gui", help="launches the gui from the cli otherwise run directly with pyscandl-qt")
 	autodl = subparsers.add_parser("autodl", help="auto downloader using the mangas in the db")
 	manga = subparsers.add_parser("manga", help="tool to modify, add and remove mangas from the downloader mode list")
 	manual_pars = subparsers.add_parser("manual", help="manually download scans, it will not update the downloaded scans db, if you plan on setting up a manga with the automatic mode don't mix both commands")

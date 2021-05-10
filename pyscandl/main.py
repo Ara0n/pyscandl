@@ -1,22 +1,20 @@
-from sys import stderr, modules
-from platform import system
-from os import path, makedirs, remove
-import sqlite3
 import json
+import sqlite3
+import xml.etree.ElementTree
+from os import makedirs, path, remove
+from platform import system
+from sys import modules
 
-from pyscandl.modules import arg_parser, Pyscandl
-from pyscandl.modules.fetchers import FetcherEnum
+from pyscandl.modules import Pyscandl, arg_parser
 from pyscandl.modules.autodl import Controller
 from pyscandl.modules.excepts import DownedSite, MangaNotFound
-import xml.etree.ElementTree
+from pyscandl.modules.fetchers import FetcherEnum
 
 
 def main():
 	args = arg_parser.get_parser().parse_args()
 
-	if args.subparser == "gui":
-		main_gui()
-	elif args.subparser == "manual":
+	if args.subparser == "manual":
 		fetcher = FetcherEnum.get(args.fetcher)
 		pyscandl = Pyscandl(fetcher, chapstart=args.chapter_start, output=args.output, pdf=args.pdf,
 									 keep=args.keep, image=args.image, all=args.all, link=args.link, manga=args.manga,
@@ -266,8 +264,6 @@ def main():
 			if not args.quiet:
 				print(f"{autodl.downloads} chapters downloaded")
 
-def main_gui():
-	from .gui import pyscandl_qt
 
 
 if __name__ == "__main__":
