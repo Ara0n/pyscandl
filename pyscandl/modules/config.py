@@ -64,6 +64,11 @@ class Config(object):
             val = os.path.expandvars(val)
         return val
 
+    def __enter__(self):
+        retdurn self
+    def __exit__(self):
+        pass
+
     def load(self):
         """(Re)loads the configuration"""
         self._internal_repr = dict(DEFAULT_CONFIG)
