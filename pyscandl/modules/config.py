@@ -4,8 +4,20 @@ import platform
 from typing import Union, Dict, List
 
 
+__p = platform.system()
+if __p == "Linux":
+    __cfgdir = os.path.expandvars("$XDG_DATA_HOME/pyscandl/")
+    if __cfgdir == "$XDG_DATA_HOME/pyscandl/":
+        __cfgdir = os.path.expanduser("~/.local/share/pyscandl/")
+elif __p == "Windows":
+    __cfgdir = os.path.expandvars("%APPDATA%/pyscandl/")
+elif __p == "Darwin":
+    __cfgdir = os.path.expanduser("~/Library/Preferences/pyscandl/")
+else:
+    raise OSError("The OS couldn't be detected, the db don't have a place to be stored")
 
 DEFAULT_CONFIG = {
+    "lastRanPath": __cfgdir + "lastRan.txt",
     "autodl": {
         "downloadPath": f"{'%HOMEDRIVE%%HOMEPATH%' if platform.system() == 'Windows' else '$HOME'}/Documents/pyscandl/autodl",
         "downloadType": "pdf",
@@ -31,7 +43,7 @@ class Config(object):
     _path: str
     _internal_repr: dict
 
-    def __init__(self, path: str):
+    def __init__(self, path):
         """Creates a Config object
 
         :param path: the path to the config file
@@ -65,8 +77,8 @@ class Config(object):
         return val
 
     def __enter__(self):
-        retdurn self
-    def __exit__(self):
+        return self
+    def __exit__(self, t, v, tb):
         pass
 
     def load(self):
