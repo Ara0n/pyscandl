@@ -83,6 +83,23 @@ class EmptyChapter(Exception):
 		Exception.__init__(self, f"chapter {chap_num} of {manga} is empty")
 
 
+class CorruptedChapter(Exception):
+	__doc__ = """
+	Exception used when the current chapter has at least one currupted image
+	"""
+
+	def __init__(self, manga, chap_num):
+		"""
+		:param manga: name of the manga
+		:type manga: str
+		:param chap_num: chapter number that has corrupted images in :param manga:
+		:type chap_num: int/float/str
+		"""
+
+		Exception.__init__(self, f"chapter {chap_num} of {manga} contains corrupted images")
+
+
+
 class DelayedRelease(Exception):
 	__doc__ = "exception used if a chapter is visible on the website but will be available later, this can be the case on mangadex"
 

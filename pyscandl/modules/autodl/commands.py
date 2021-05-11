@@ -1,11 +1,12 @@
 import os
-from platform import system
-import sqlite3
 import shutil
+import sqlite3
+from platform import system
 
 import cfscrape
-from ..excepts import IsStandalone, FetcherNotFound, EmptyChapter, DelayedRelease, MangaNotFound
+
 from ..Pyscandl import Pyscandl
+from ..excepts import CorruptedChapter, DelayedRelease, EmptyChapter, FetcherNotFound, IsStandalone, MangaNotFound
 from ..fetchers import FetcherEnum
 from ..fetchers.fetcher import StandaloneFetcher
 
@@ -253,6 +254,12 @@ class Controller:
 			except EmptyChapter:
 				if not self.quiet:
 					print(f"skipping {name} chapter {self.missing_chaps[chapter_id]}: empty, wont be added in the downloaded list")
+			except CorruptedChapter:
+				if not self.quiet:
+					print(f"skipping {name} chapter {self.missing_chaps[chapter_id]}: corrupted images, wont be added in the downloaded list")
+			except MangaNotFound:
+				if not self.quiet:
+					print(f"skipping {name} chapter {self.missing_chaps[chapter_id]}: can't access, wont be added in the downloaded list")
 			except DelayedRelease as e:
 				if not self.quiet:
 					print(e)

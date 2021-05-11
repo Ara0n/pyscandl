@@ -1,13 +1,14 @@
 import contextlib
-
-from .excepts import DryNoSauceHere, TooManySauce, EmptyChapter, DelayedRelease
-from .fetchers.fetcher import StandaloneFetcher
-from PIL import Image
-import requests
 import os
 from re import sub as re_sub
-from sys import stderr
+
+import requests
+from PIL import Image
+from wand.exceptions import BlobError, MissingDelegateError
 from wand.image import Image
+
+from .excepts import CorruptedChapter, DelayedRelease, DryNoSauceHere, EmptyChapter, TooManySauce
+from .fetchers.fetcher import StandaloneFetcher
 
 
 class Pyscandl:
@@ -194,25 +195,28 @@ class Pyscandl:
 		self._img_bin_list = [img for img in self._img_bin_list if img not in self._banlist]
 
 		if len(self._img_bin_list) > 0:
-			# creating the pdf
-			with Image() as pdf:
-				for img_bin in self._img_bin_list:
-					with contextlib.redirect_stderr(None):  # to mute alpha channel and ICC warnings as wand processes the image well anyway
-						with Image(blob=img_bin) as img:
-							pdf.sequence.append(img)
-				pdf.save(filename=self._pdf_path)
+			try:
+				# creating the pdf
+				with Image() as pdf:
+					for img_bin in self._img_bin_list:
+						with contextlib.redirect_stderr(None):  # to mute alpha channel and ICC warnings as wand processes the image well anyway
+							with Image(blob=img_bin) as img:
+								pdf.sequence.append(img)
+					pdf.save(filename=self._pdf_path)
 
-			with open(self._pdf_path, "rb") as file:
-				pdf = file.read()
-			with open(self._pdf_path, "wb") as file:
-				file.write(pdf.replace(b"/Producer (https://imagemagick.org)", b"/Producer (https://pypi.org/project/pyscandl/)")
-						   .replace(
-							b"/CreationDate", b"/Author <feff"+self.fetcher.author.encode("utf-16_be").hex().encode()+
-											  b">\n/Keywords <feff"+self.fetcher.manga_name.encode("utf-16_be").hex().encode()+b">\n/CreationDate")
-						   )  # manually adding the missing metadate from the pdf creation
+				with open(self._pdf_path, "rb") as file:
+					pdf = file.read()
+				with open(self._pdf_path, "wb") as file:
+					file.write(pdf.replace(b"/Producer (https://imagemagick.org)", b"/Producer (https://pypi.org/project/pyscandl/)")
+							   .replace(
+								b"/CreationDate", b"/Author <feff"+self.fetcher.author.encode("utf-16_be").hex().encode()+
+												  b">\n/Keywords <feff"+self.fetcher.manga_name.encode("utf-16_be").hex().encode()+b">\n/CreationDate")
+							   )  # manually adding the missing metadate from the pdf creation
 
-			if not self._quiet:
-				print("converted")
+				if not self._quiet:
+					print("converted")
+			except (BlobError, MissingDelegateError): # some images were corrupted
+				raise CorruptedChapter(self.fetcher.manga_name, self.fetcher.chapter_number)
 		else:
 			raise EmptyChapter(self.fetcher.manga_name, self.fetcher.chapter_number)
 
@@ -224,13 +228,14 @@ class Pyscandl:
 		:type chap_num: int/str/float
 		"""
 
+		self.fetcher.go_to_chapter(chap_num)
+
 		# in case windows is the os, remove the banned characters
 		if os.name == "nt":
 			chapter_name = re_sub(r'[\\/*?:"<>|]', u"█", self.fetcher.chapter_name)
 		else:
 			chapter_name = self.fetcher.chapter_name
 
-		self.fetcher.go_to_chapter(chap_num)
 		self._path = f"{self._output}ch.{self.fetcher.chapter_number} {chapter_name}/"
 		self._img_bin_list = []
 		# prepares the next pdf path and name
@@ -302,6 +307,9 @@ class Pyscandl:
 					except EmptyChapter:
 						if not self._quiet:
 							print("empty")
+					except CorruptedChapter:
+						if not self._quiet:
+							print("corrupted")
 			except DelayedRelease as e:
 				if not self._quiet:
 					print(e)
@@ -320,6 +328,9 @@ class Pyscandl:
 						except EmptyChapter:
 							if not self._quiet:
 								print("empty")
+						except CorruptedChapter:
+							if not self._quiet:
+								print("corrupted")
 				except DelayedRelease as e:
 					if not self._quiet:
 						print(e)
