@@ -3,7 +3,6 @@ import os
 from re import sub as re_sub
 
 import requests
-from PIL import Image
 from wand.exceptions import BlobError, MissingDelegateError
 from wand.image import Image
 
