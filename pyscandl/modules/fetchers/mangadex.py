@@ -63,10 +63,10 @@ class Mangadex(Fetcher):
         # getting the chapter info from the feed
         feed_req = requests.get(self._api_manga_feed.format(uuid=id, locale=self._lang, offset=0))
         feed = feed_req.json()
-        self._chapinfo = [chap["data"] for chap in feed["results"]]
+        self._chapinfo = [chap["data"] for chap in feed["results"] if chap["data"]["attributes"]["chapter"] is not None]
         for i in range(500, int(feed["total"]), 500):
             feed_req = requests.get(self._api_manga_feed.format(uuid=id, locale=self._lang, offset=i))
-            self._chapinfo.extend([chap["data"] for chap in feed_req.json()["results"]])
+            self._chapinfo.extend([chap["data"] for chap in feed_req.json()["results"] if chap["data"]["attributes"]["chapter"] is not None])
 
         # checking if there are no duplicate numbers for chapters
         unique_chaps = {chap["attributes"]["chapter"] for chap in self._chapinfo}
@@ -148,7 +148,7 @@ class Mangadex(Fetcher):
         # getting the chapter info from the feed
         feed_req = requests.get(api_manga_feed.format(uuid=id, locale=cls._lang, offset=0))
         feed = feed_req.json()
-        chapinfo = [float(chap["data"]["attributes"]["chapter"]) if "." in chap["data"]["attributes"]["chapter"] else int(chap["data"]["attributes"]["chapter"]) for chap in feed["results"]]
+        chapinfo = [float(chap["data"]["attributes"]["chapter"]) if "." in chap["data"]["attributes"]["chapter"] else int(chap["data"]["attributes"]["chapter"]) for chap in feed["results"] if chap["data"]["attributes"]["chapter"] is not None]
         for i in range(500, int(feed["total"]), 500):
             feed_req = requests.get(api_manga_feed.format(uuid=id, locale=cls._lang, offset=i))
             chapinfo.extend([float(chap["data"]["attributes"]["chapter"]) if "." in chap["data"]["attributes"]["chapter"] else int(chap["data"]["attributes"]["chapter"]) for chap in feed_req.json()["results"]])
