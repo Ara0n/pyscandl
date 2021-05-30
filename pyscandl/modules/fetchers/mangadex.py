@@ -30,7 +30,7 @@ class Mangadex(Fetcher):
 
         # init some api stuff that will be useful later
         self._api_base = "https://api.mangadex.org"
-        self._api_manga_feed = self._api_base + "/manga/{uuid}/feed?limit=500&locales[]={locale}&order[chapter]=asc&offset={offset}"
+        self._api_manga_feed = self._api_base + "/manga/{uuid}/feed?limit=500&translatedLanguage[]={locale}&order[chapter]=asc&offset={offset}"
 
         # getting the legacy id from the links
         # TODO: change that when the new links are out while giving a tool to do the change
@@ -128,7 +128,7 @@ class Mangadex(Fetcher):
 
         # init some api stuff that will be useful later
         api_base = "https://api.mangadex.org"
-        api_manga_feed = api_base + "/manga/{uuid}/feed?limit=500&locales[]={locale}&order[chapter]=asc&offset={offset}"
+        api_manga_feed = api_base + "/manga/{uuid}/feed?limit=500&translatedLanguage[]={locale}&order[chapter]=asc&offset={offset}"
 
         # getting the legacy id from the links
         # TODO: change that when the new links are out while giving a tool to do the change
