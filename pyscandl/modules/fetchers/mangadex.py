@@ -1,7 +1,7 @@
 import requests
 
 from .fetcher import Fetcher
-from ..excepts import DownedSite, MangaNotFound
+from ..excepts import DownedSite, MangaNotFound, DryNoSauceHere
 
 
 class Mangadex(Fetcher):
@@ -31,21 +31,17 @@ class Mangadex(Fetcher):
         # init some api stuff that will be useful later
         self._api_base = "https://api.mangadex.org"
         self._api_manga_feed = self._api_base + "/manga/{uuid}/feed?limit=500&translatedLanguage[]={locale}&order[chapter]=asc&offset={offset}"
+        self._img_base = "{base_server_url}/data/{chap_hash}/{filename}"
 
-        # getting the legacy id from the links
-        # TODO: change that when the new links are out while giving a tool to do the change
+        # getting the id from the links
         if manga is not None:
-            legacy_id = int(manga)
+            id = manga
         elif link is not None:
             if link[-1] == "/":
                 link = link[:-1]
-            legacy_id = int(link.split("/")[-2])
-
-        # getting the new id from the legacy ones
-        req = requests.post(self._api_base + "/legacy/mapping", json={"type": "manga", "ids": [legacy_id]})
-        if req.status_code != 200:
-            raise MangaNotFound(f" legacy id {legacy_id}")
-        id = req.json()[0]["data"]["attributes"]["newId"]
+            id = link.split("/")[-2]
+        else:
+            raise DryNoSauceHere()
 
         # getting the manga title name (either english or romanji)
         manga_req = requests.get(self._api_base + f"/manga/{id}")
@@ -55,18 +51,20 @@ class Mangadex(Fetcher):
         self.manga_name = list(manga["data"]["attributes"]["title"].values())[0]
 
         # getting the author name
-        author_id = next((relation["id"] for relation in manga["relationships"] if relation["type"]=="author"), None)
-        author_req = requests.get(self._api_base + f"/author/{author_id}")
-        if author_req.status_code == 200:
-            self.author = author_req.json()["data"]["attributes"]["name"]
+        author_id = next((relation["id"] for relation in manga["data"]["relationships"] if relation["type"] == "author"), None)
+        if author_id is not None:
+            author_req = requests.get(self._api_base + f"/author/{author_id}")
+            if author_req.status_code == 200:
+                self.author = author_req.json()["data"]["attributes"]["name"]
 
         # getting the chapter info from the feed
         feed_req = requests.get(self._api_manga_feed.format(uuid=id, locale=self._lang, offset=0))
         feed = feed_req.json()
-        self._chapinfo = [chap["data"] for chap in feed["results"] if chap["data"]["attributes"]["chapter"] is not None]
+        self._chapinfo = [chap for chap in feed["data"] if chap["type"] == "chapter"]
         for i in range(500, int(feed["total"]), 500):
             feed_req = requests.get(self._api_manga_feed.format(uuid=id, locale=self._lang, offset=i))
-            self._chapinfo.extend([chap["data"] for chap in feed_req.json()["results"] if chap["data"]["attributes"]["chapter"] is not None])
+            feed = feed_req.json()
+            self._chapinfo.extend([chap for chap in feed["data"] if chap["type"] == "chapter"])
 
         # checking if there are no duplicate numbers for chapters
         unique_chaps = {chap["attributes"]["chapter"] for chap in self._chapinfo}
@@ -100,24 +98,26 @@ class Mangadex(Fetcher):
         md_at_h_server = requests.get(self._api_base + f"/at-home/server/{self._current_chap['id']}")
         if md_at_h_server.status_code != 200:
             raise DownedSite(self.domain)
-        self._server_url = md_at_h_server.json()["baseUrl"]
+        self._chap_data = md_at_h_server.json()
 
         self.npage = 1
         # creating first image url
-        self.image = f"{self._server_url}/data/{self._current_chap['attributes']['hash']}/{self._current_chap['attributes']['data'][0]}"
+        self.image = self._img_base.format(base_server_url=self._chap_data["baseUrl"], chap_hash=self._chap_data["chapter"]["hash"], filename=self._chap_data["chapter"]["data"][0])
+        self.ext = self.image.split(".")[-1]
 
     def is_last_chapter(self):
         return self._chapinfo.index(self._current_chap)+1 == len(self._chapinfo)
 
     def is_last_image(self):
-        return self.npage == len(self._current_chap["attributes"]["data"])
+        return self.npage == len(self._chap_data["chapter"]["data"])
 
     def next_chapter(self):
         next_index = self._chapinfo.index(self._current_chap) + 1
         self.go_to_chapter(self._chapinfo[next_index]["attributes"]["chapter"])
 
     def next_image(self):
-        self.image = f"{self._server_url}/data/{self._current_chap['attributes']['hash']}/{self._current_chap['attributes']['data'][self.npage]}"
+        self.image = self._img_base.format(base_server_url=self._chap_data["baseUrl"], chap_hash=self._chap_data["chapter"]["hash"], filename=self._chap_data["chapter"]["data"][self.npage])
+        self.ext = self.image.split(".")[-1]
         self.npage += 1
 
     @classmethod

@@ -1,4 +1,4 @@
-requests~=2.25.1
-wand~=0.6.6
+requests~=2.27.1
+wand~=0.6.7
 cfscrape~=2.1.1
-beautifulsoup4~=4.9.3
+beautifulsoup4~=4.10.0
